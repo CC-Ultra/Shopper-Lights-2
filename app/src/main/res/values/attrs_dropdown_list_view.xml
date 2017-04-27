@@ -1,0 +1,5 @@
+<resources>
+	<declare-styleable name="DropdownListView">
+		<attr name="title1" format="string"/>
+	</declare-styleable>
+</resources>

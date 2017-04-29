@@ -11,9 +11,6 @@ import android.widget.ListView;
 import android.widget.ToggleButton;
 import com.ultra.shopperlights2.R;
 
-/**
- * TODO: document your custom view class.
- */
 public class DropdownListView extends LinearLayout
 	 {
 	 private String title;

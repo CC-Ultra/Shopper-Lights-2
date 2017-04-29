@@ -10,6 +10,10 @@ public class O
 	{
 	 public static final String TAG="c123";
 
+	 public static final int COLOR_CODE_RED=0;
+	 public static final int COLOR_CODE_GREEN=1;
+	 public static final int COLOR_CODE_BLUE=2;
+
 	 public static class interaction
 		{
 		 public static final int SCREEN_CODE_GREEN=0;
@@ -20,35 +24,6 @@ public class O
 	 public static class db
 		{
 		 public static final String DB_FILENAME="ShopperLights.db";
-		 public static final int DB_VERSION=1;
-
-		 public static class tables
-			{
-			 public static final String PRODUCTS="products";
-			 public static final String SHOPS="shops";
-			 public static final String MANUFACTURERS="manufacturers";
-			 public static final String TAGS="tags";
-			 public static final String GROUPS="groups";
-			 public static final String NOTES="notes";
-			 public static final String PRODUCT_TO_TAG="product_to_tag";
-			 public static final String PRODUCT_TO_SHOP="product_to_shop";
-			 }
-		 public static class fields
-			{
-			 public static final String ID="_id";
-			 public static final String ID_TAG="id_tag";
-			 public static final String ID_SHOP="id_shop";
-			 public static final String ID_GROUP="id_group";
-			 public static final String ID_MANUFACTURER="id_manufacturer";
-			 public static final String ID_PRODUCT="id_product";
-			 public static final String TITLE="title";
-			 public static final String DATE="date";
-			 public static final String PERCENT="percent";
-			 public static final String WEIGHT="weight";
-			 public static final String NUM_OF="num";
-			 public static final String COLOR="color";
-			 public static final String ADR="adr";
-			 }
 		 }
 
 	 public static class prefs

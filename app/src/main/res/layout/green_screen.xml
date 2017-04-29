@@ -5,28 +5,15 @@
 		android:layout_height="match_parent"
 		android:gravity="center"
 		android:orientation="vertical">
-	<!--<ScrollView-->
-			<!--android:layout_width="match_parent"-->
-			<!--android:layout_height="wrap_content"-->
-			<!--android:layout_weight="8">-->
-		<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:orientation="vertical">
-			<ListView
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:id="@+id/listGrouped"/>
-			<ListView
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:id="@+id/listUngrouped"/>
-		</LinearLayout >
-	<!--</ScrollView >-->
+	<android.support.v7.widget.RecyclerView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_weight="2"
+			android:id="@+id/list"/>
 	<LinearLayout
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:layout_weight="1"
+			android:layout_height="match_parent"
+			android:layout_width="match_parent"
+			android:layout_weight="9"
 			android:gravity="center"
 			android:orientation="vertical">
 		<LinearLayout
@@ -37,21 +24,21 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
-					android:text="Add group"
+					android:text="Добавить группу"
 					android:layout_marginRight="5dp"
 					android:id="@+id/btn_addGroup"/>
 			<Button
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
-					android:text="Add tag"
+					android:text="Добавить тег"
 					android:layout_marginLeft="5dp"
 					android:id="@+id/btn_addTag"/>
 		</LinearLayout>
 		<Button
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="Add Record"
-				android:id="@+id/btn_addRecord"/>
+				android:text="Добавить продукт"
+				android:id="@+id/btn_addNote"/>
 	</LinearLayout>
 </LinearLayout >

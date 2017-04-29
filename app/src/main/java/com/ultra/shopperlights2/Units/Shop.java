@@ -10,40 +10,39 @@ import org.greenrobot.greendao.DaoException;
 
 /**
  * <p></p>
- * <p><sub>(28.08.2016)</sub></p>
+ * <p><sub>(28.04.2017)</sub></p>
  *
  * @author CC-Ultra
  */
 
 @Entity
-public class Tag
-	{
+public class Shop
+	 {
 	 @Id(autoincrement = true)
 	 private Long id;
 
-	 private String title;
-	 private int color;
+	 private String title,adr;
 
-	 @ToMany(referencedJoinProperty = "tagId")
-	 private List<Product> products;
+	 @ToMany(referencedJoinProperty = "shopId")
+	 private List<Purchase> purchases;
 
 		/** Used to resolve relations */
 		@Generated(hash = 2040040024)
 		private transient DaoSession daoSession;
 
 		/** Used for active entity operations. */
-		@Generated(hash = 2076396065)
-		private transient TagDao myDao;
+		@Generated(hash = 173397329)
+		private transient ShopDao myDao;
 
-		@Generated(hash = 1483909068)
-		public Tag(Long id, String title, int color) {
+		@Generated(hash = 1536133714)
+		public Shop(Long id, String title, String adr) {
 			this.id = id;
 			this.title = title;
-			this.color = color;
+			this.adr = adr;
 		}
 
-		@Generated(hash = 1605720318)
-		public Tag() {
+		@Generated(hash = 633476670)
+		public Shop() {
 		}
 
 		public Long getId() {
@@ -62,40 +61,40 @@ public class Tag
 			this.title = title;
 		}
 
-		public int getColor() {
-			return this.color;
+		public String getAdr() {
+			return this.adr;
 		}
 
-		public void setColor(int color) {
-			this.color = color;
+		public void setAdr(String adr) {
+			this.adr = adr;
 		}
 
 		/**
 		 * To-many relationship, resolved on first access (and after reset).
 		 * Changes to to-many relations are not persisted, make changes to the target entity.
 		 */
-		@Generated(hash = 1669868945)
-		public List<Product> getProducts() {
-			if (products == null) {
+		@Generated(hash = 1455014133)
+		public List<Purchase> getPurchases() {
+			if (purchases == null) {
 				final DaoSession daoSession = this.daoSession;
 				if (daoSession == null) {
 					throw new DaoException("Entity is detached from DAO context");
 				}
-				ProductDao targetDao = daoSession.getProductDao();
-				List<Product> productsNew = targetDao._queryTag_Products(id);
+				PurchaseDao targetDao = daoSession.getPurchaseDao();
+				List<Purchase> purchasesNew = targetDao._queryShop_Purchases(id);
 				synchronized (this) {
-					if (products == null) {
-						products = productsNew;
+					if (purchases == null) {
+						purchases = purchasesNew;
 					}
 				}
 			}
-			return products;
+			return purchases;
 		}
 
 		/** Resets a to-many relationship, making the next get call to query for a fresh result. */
-		@Generated(hash = 513498032)
-		public synchronized void resetProducts() {
-			products = null;
+		@Generated(hash = 528316983)
+		public synchronized void resetPurchases() {
+			purchases = null;
 		}
 
 		/**
@@ -135,9 +134,9 @@ public class Tag
 		}
 
 		/** called by internal mechanisms, do not call yourself. */
-		@Generated(hash = 441429822)
+		@Generated(hash = 1040006210)
 		public void __setDaoSession(DaoSession daoSession) {
 			this.daoSession = daoSession;
-			myDao = daoSession != null ? daoSession.getTagDao() : null;
+			myDao = daoSession != null ? daoSession.getShopDao() : null;
 		}
 	 }

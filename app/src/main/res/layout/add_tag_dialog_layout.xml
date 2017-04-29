@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:gravity="center_horizontal"
+		android:orientation="vertical">
+	<EditText
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="Имя тега"
+			android:gravity="center"
+			android:layout_marginRight="40dp"
+			android:layout_marginLeft="40dp"
+			android:id="@+id/titleInput"/>
+	<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+		<LinearLayout
+				android:layout_width="200dp"
+				android:layout_height="wrap_content"
+				android:layout_marginRight="5dp"
+				android:orientation="vertical">
+			<SeekBar
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/seekBarRed" />
+			<SeekBar
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/seekBarGreen" />
+			<SeekBar
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/seekBarBlue" />
+		</LinearLayout >
+		<View
+				android:layout_width="100dp"
+				android:layout_height="100dp"
+				android:background="#ff0000"
+				android:id="@+id/colorView"/>
+	</LinearLayout >
+	<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="ok"
+			android:id="@+id/btnOk"/>
+</LinearLayout>

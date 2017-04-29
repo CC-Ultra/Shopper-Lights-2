@@ -10,40 +10,42 @@ import org.greenrobot.greendao.DaoException;
 
 /**
  * <p></p>
- * <p><sub>(28.08.2016)</sub></p>
+ * <p><sub>(27.04.2017)</sub></p>
  *
  * @author CC-Ultra
  */
 
 @Entity
-public class Tag
-	{
+public class Group extends NoteListElement
+	 {
 	 @Id(autoincrement = true)
 	 private Long id;
 
 	 private String title;
-	 private int color;
+	 private boolean isOpen;
+	 private int priority;
 
-	 @ToMany(referencedJoinProperty = "tagId")
-	 private List<Product> products;
+	 @ToMany(referencedJoinProperty = "groupId")
+	 private List<Note> notes;
 
 		/** Used to resolve relations */
 		@Generated(hash = 2040040024)
 		private transient DaoSession daoSession;
 
 		/** Used for active entity operations. */
-		@Generated(hash = 2076396065)
-		private transient TagDao myDao;
+		@Generated(hash = 1591306109)
+		private transient GroupDao myDao;
 
-		@Generated(hash = 1483909068)
-		public Tag(Long id, String title, int color) {
+		@Generated(hash = 855874735)
+		public Group(Long id, String title, boolean isOpen, int priority) {
 			this.id = id;
 			this.title = title;
-			this.color = color;
+			this.isOpen = isOpen;
+			this.priority = priority;
 		}
 
-		@Generated(hash = 1605720318)
-		public Tag() {
+		@Generated(hash = 117982048)
+		public Group() {
 		}
 
 		public Long getId() {
@@ -62,40 +64,48 @@ public class Tag
 			this.title = title;
 		}
 
-		public int getColor() {
-			return this.color;
+		public boolean getIsOpen() {
+			return this.isOpen;
 		}
 
-		public void setColor(int color) {
-			this.color = color;
+		public void setIsOpen(boolean isOpen) {
+			this.isOpen = isOpen;
+		}
+
+		public int getPriority() {
+			return this.priority;
+		}
+
+		public void setPriority(int priority) {
+			this.priority = priority;
 		}
 
 		/**
 		 * To-many relationship, resolved on first access (and after reset).
 		 * Changes to to-many relations are not persisted, make changes to the target entity.
 		 */
-		@Generated(hash = 1669868945)
-		public List<Product> getProducts() {
-			if (products == null) {
+		@Generated(hash = 1683342289)
+		public List<Note> getNotes() {
+			if (notes == null) {
 				final DaoSession daoSession = this.daoSession;
 				if (daoSession == null) {
 					throw new DaoException("Entity is detached from DAO context");
 				}
-				ProductDao targetDao = daoSession.getProductDao();
-				List<Product> productsNew = targetDao._queryTag_Products(id);
+				NoteDao targetDao = daoSession.getNoteDao();
+				List<Note> notesNew = targetDao._queryGroup_Notes(id);
 				synchronized (this) {
-					if (products == null) {
-						products = productsNew;
+					if (notes == null) {
+						notes = notesNew;
 					}
 				}
 			}
-			return products;
+			return notes;
 		}
 
 		/** Resets a to-many relationship, making the next get call to query for a fresh result. */
-		@Generated(hash = 513498032)
-		public synchronized void resetProducts() {
-			products = null;
+		@Generated(hash = 2032098259)
+		public synchronized void resetNotes() {
+			notes = null;
 		}
 
 		/**
@@ -135,9 +145,9 @@ public class Tag
 		}
 
 		/** called by internal mechanisms, do not call yourself. */
-		@Generated(hash = 441429822)
+		@Generated(hash = 1333602095)
 		public void __setDaoSession(DaoSession daoSession) {
 			this.daoSession = daoSession;
-			myDao = daoSession != null ? daoSession.getTagDao() : null;
+			myDao = daoSession != null ? daoSession.getGroupDao() : null;
 		}
 	 }

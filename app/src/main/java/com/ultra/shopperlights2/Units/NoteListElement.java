@@ -9,6 +9,16 @@ package com.ultra.shopperlights2.Units;
 
 public class NoteListElement
 	 {
+	 private boolean tabbed;
+
+	 public void setTabbed(boolean _tabbed)
+		 {
+		 tabbed=_tabbed;
+		 }
+	 public boolean isTabbed()
+		 {
+		 return tabbed;
+		 }
 	 public boolean isGroup()
 		 {
 		 if(this instanceof Note)

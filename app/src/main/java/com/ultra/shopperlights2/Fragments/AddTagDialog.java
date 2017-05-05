@@ -77,13 +77,19 @@ public class AddTagDialog extends DialogFragment
 				 {
 				 TagDao tagDao= App.session.getTagDao();
 				 Tag tag;
-				 if(tagId ==0)
+				 if(tagId==0)
 				 	tag= new Tag();
 				 else
 				 	tag= tagDao.load(tagId);
+				 int size= tagDao.queryBuilder().where(TagDao.Properties.Title.eq(tagName) ).list().size();
+				 if( (tagId==0 && size>0) || (tagId!=0 && size>0 && !tag.getTitle().equals(tagName) ) )
+					 {
+					 Toast.makeText(getContext(),"Имя тега занято",Toast.LENGTH_SHORT).show();
+					 return;
+					 }
 				 tag.setTitle(tagName);
 				 tag.setColor(Color.rgb(r,g,b) );
-				 if(tagId ==0)
+				 if(tagId==0)
 					 tagDao.insert(tag);
 				 else
 					 tagDao.update(tag);

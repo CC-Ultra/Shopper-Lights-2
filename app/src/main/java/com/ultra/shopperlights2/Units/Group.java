@@ -22,6 +22,7 @@ public class Group extends NoteListElement
 	 private Long id;
 
 	 private String title;
+	 private String holderTitle;
 	 private boolean isOpen;
 	 private int priority;
 
@@ -36,10 +37,11 @@ public class Group extends NoteListElement
 		@Generated(hash = 1591306109)
 		private transient GroupDao myDao;
 
-		@Generated(hash = 855874735)
-		public Group(Long id, String title, boolean isOpen, int priority) {
+		@Generated(hash = 1161454468)
+		public Group(Long id, String title, String holderTitle, boolean isOpen, int priority) {
 			this.id = id;
 			this.title = title;
+			this.holderTitle = holderTitle;
 			this.isOpen = isOpen;
 			this.priority = priority;
 		}
@@ -64,7 +66,7 @@ public class Group extends NoteListElement
 			this.title = title;
 		}
 
-		public boolean getIsOpen() {
+		public boolean isOpen() {
 			return this.isOpen;
 		}
 
@@ -142,6 +144,18 @@ public class Group extends NoteListElement
 				throw new DaoException("Entity is detached from DAO context");
 			}
 			myDao.update(this);
+		}
+
+		public String getHolderTitle() {
+			return this.holderTitle;
+		}
+
+		public void setHolderTitle(String holderTitle) {
+			this.holderTitle = holderTitle;
+		}
+
+		public boolean getIsOpen() {
+			return this.isOpen;
 		}
 
 		/** called by internal mechanisms, do not call yourself. */

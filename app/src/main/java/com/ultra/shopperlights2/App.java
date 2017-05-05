@@ -15,6 +15,7 @@ import org.greenrobot.greendao.database.Database;
 public class App extends Application
 	 {
 	 public static DaoSession session;
+
 	 @Override
 	 public void onCreate()
 		 {

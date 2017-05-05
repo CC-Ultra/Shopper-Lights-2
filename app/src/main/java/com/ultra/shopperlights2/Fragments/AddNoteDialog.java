@@ -9,10 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.ultra.shopperlights2.App;
+import com.ultra.shopperlights2.Callbacks.UpdateNoteListCallback;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p></p>
@@ -26,10 +28,11 @@ public class AddNoteDialog extends DialogFragment
 	 private ListView listViewSelected,listViewRemaining;
 	 private Spinner spinner_Group;
 	 private EditText noteNameInput,noteNInput;
-	 private ArrayAdapter adapterSelected,adapterRemaining;
+	 private ArrayAdapter<String> adapterSelected,adapterRemaining;
 	 private String title;
-	 ArrayList<String> listRemaining,listSelected;
+	 private ArrayList<String> listRemaining,listSelected;
 	 private long noteId=0;
+	 private UpdateNoteListCallback callback;
 
 	 private class OkListener implements View.OnClickListener
 		 {
@@ -47,10 +50,7 @@ public class AddNoteDialog extends DialogFragment
 				 if(noteId==0)
 					 note= new Note();
 				 else
-					 {
-					 ArrayList<Note> noteList= new ArrayList<>(noteDao.queryBuilder().where(NoteDao.Properties.Title.eq(noteName) ).list() );
-					 note= noteList.get(0);
-					 }
+					 note= noteDao.load(noteId);
 				 note.setTitle(noteName);
 				 String noteNStr= noteNInput.getText().toString();
 				 if(noteNStr.length()!=0)
@@ -58,22 +58,44 @@ public class AddNoteDialog extends DialogFragment
 				 String groupStr= spinner_Group.getSelectedItem().toString();
 				 if(groupStr.length()!=0)
 					 {
+					 GroupDao groupDao= session.getGroupDao();
+					 for(Group lastGroup : groupDao.queryBuilder().list())
+						 {
+						 if(lastGroup.getNotes().contains(note) )
+							 {
+							 lastGroup.getNotes().remove(note);
+							 groupDao.update(lastGroup);
+							 }
+						 }
 					 Group group= session.getGroupDao().queryBuilder().where(GroupDao.Properties.Title.eq(groupStr) ).list().get(0);
 					 note.setGroupId(group.getId() );
+					 if(!group.getNotes().contains(note) )
+						 group.getNotes().add(note);
+					 groupDao.update(group);
 					 }
 				 if(noteId==0)
 					 noteDao.insert(note);
 				 else
 					 noteDao.update(note);
+
+				 TagToNoteDao tagToNoteDao= session.getTagToNoteDao();
+				 List<TagToNote> lastTagToNotes= tagToNoteDao.queryBuilder().where(TagToNoteDao.Properties.NoteId.eq(note.getId())).list();
+				 for(TagToNote lastTagToNote : lastTagToNotes)
+					 tagToNoteDao.delete(lastTagToNote);
+				 note.getTags().clear();
+
 				 for(String selectedTag : listSelected)
 					 {
 					 Tag tag= session.getTagDao().queryBuilder().where(TagDao.Properties.Title.eq(selectedTag) ).list().get(0);
+					 note.getTags().add(tag);
 					 TagToNote tagToNote= new TagToNote();
 					 tagToNote.setNoteId(note.getId() );
 					 tagToNote.setTagId(tag.getId() );
-					 session.getTagToNoteDao().insert(tagToNote);
+					 tagToNoteDao.insert(tagToNote);
 					 }
+				 noteDao.update(note);
 				 dismiss();
+				 callback.updateNotelist();
 				 }
 			 }
 		 }
@@ -111,12 +133,14 @@ public class AddNoteDialog extends DialogFragment
 			 }
 		 }
 
-	 public void init(String _title)
+	 public void init(UpdateNoteListCallback _callback,String _title)
 		 {
+		 callback=_callback;
 		 title=_title;
 		 }
-	 public void init(String _title,long _id)
+	 public void init(UpdateNoteListCallback _callback,String _title,long _id)
 		 {
+		 callback=_callback;
 		 noteId=_id;
 		 title=_title;
 		 }
@@ -128,29 +152,29 @@ public class AddNoteDialog extends DialogFragment
 		 for(Tag tag : session.getTagDao().queryBuilder().list() )
 		 	listRemaining.add(tag.getTitle() );
 		 ArrayList<Group> groupList= new ArrayList<>(session.getGroupDao().queryBuilder().list() );
-		 ArrayList<String> groupLstStr= new ArrayList<>();
-		 groupLstStr.add("");
+		 ArrayList<String> groupListStr= new ArrayList<>();
+		 groupListStr.add("");
 		 for(Group group : groupList)
-		 	groupLstStr.add(group.getTitle() );
-		 ArrayAdapter groupSpinnerAdapter= new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,groupLstStr);
+		 	groupListStr.add(group.getTitle() );
+		 ArrayAdapter<String> groupSpinnerAdapter= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,groupListStr);
 		 groupSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		 spinner_Group.setAdapter(groupSpinnerAdapter);
 		 if(noteId!=0)
 			 {
 			 Note note= session.getNoteDao().load(noteId);
 			 noteNameInput.setText(note.getTitle() );
-			 noteNInput.setText(note.getN() );
+			 noteNInput.setText(note.getN() +"");
 			 Group group= session.getGroupDao().load(note.getGroupId() );
 			 if(group!=null)
-				 spinner_Group.setSelection(groupLstStr.indexOf(group.getTitle() ) );
+				 spinner_Group.setSelection(groupListStr.indexOf(group.getTitle() ) );
 			 for(Tag tag : note.getTags() )
 				 {
 				 listSelected.add(tag.getTitle() );
 				 listRemaining.remove(tag.getTitle() );
 				 }
 			 }
-		 adapterSelected=new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,new ArrayList(listSelected) );
-		 adapterRemaining=new ArrayAdapter(getContext(),android.R.layout.simple_spinner_item,new ArrayList(listRemaining) );
+		 adapterSelected= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,new ArrayList(listSelected) );
+		 adapterRemaining= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,new ArrayList(listRemaining) );
 		 listViewSelected.setAdapter(adapterSelected);
 		 listViewRemaining.setAdapter(adapterRemaining);
 		 }

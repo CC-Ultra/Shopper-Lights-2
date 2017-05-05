@@ -6,48 +6,77 @@
 	<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textSize="30sp"
-			android:text="label"
+			android:textSize="20sp"
+			android:text="title"
 			android:layout_marginLeft="5dp"
 			android:layout_marginTop="5dp"
-			android:id="@+id/label"/>
-	<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textSize="30sp"
-			android:text="n"
-			android:id="@+id/n"
-			android:layout_alignParentTop="true"
-			android:layout_alignParentRight="true"
-			android:layout_marginRight="30dp"
-			android:layout_marginTop="10dp" />
+			android:id="@+id/title"/>
 	<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textSize="20sp"
-			android:text="category"
+			android:text="n"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentRight="true"
+			android:layout_marginRight="120dp"
+			android:layout_marginTop="5dp"
+			android:visibility="gone"
+			android:id="@+id/n"/>
+	<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentRight="true"
+			android:layout_marginRight="110dp"
+			android:src="@drawable/arrow_dropdown"
+			android:visibility="gone"
+			android:id="@+id/dropdownBtn"/>
+	<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentRight="true"
+			android:layout_marginRight="60dp"
+			android:src="@drawable/edit_element"
+			android:id="@+id/editBtn"/>
+	<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentRight="true"
+			android:layout_marginRight="10dp"
+			android:src="@drawable/drawer_close_red"
+			android:id="@+id/deleteBtn"/>
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="15sp"
+			android:text="tag"
 			android:layout_alignParentBottom="true"
 			android:layout_centerHorizontal="true"
 			android:layout_marginBottom="10dp"
-			android:id="@+id/category1"/>
+			android:visibility="gone"
+			android:id="@+id/tag1"/>
 	<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textSize="20sp"
-			android:text="category2"
+			android:textSize="15sp"
+			android:text="tag2"
 			android:layout_alignParentBottom="true"
-			android:layout_toLeftOf="@+id/category1"
+			android:layout_toLeftOf="@+id/tag1"
 			android:layout_marginBottom="10dp"
 			android:layout_marginRight="5dp"
-			android:id="@+id/category2"/>
+			android:visibility="gone"
+			android:id="@+id/tag2"/>
 	<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textSize="20sp"
-			android:text="category3"
+			android:textSize="15sp"
+			android:text="tag3"
 			android:layout_alignParentBottom="true"
-			android:layout_toRightOf="@+id/category1"
+			android:layout_toRightOf="@+id/tag1"
 			android:layout_marginBottom="10dp"
 			android:layout_marginLeft="5dp"
-			android:id="@+id/category3"/>
+			android:visibility="gone"
+			android:id="@+id/tag3"/>
 </RelativeLayout >

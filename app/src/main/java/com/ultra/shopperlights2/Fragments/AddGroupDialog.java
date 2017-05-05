@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.ultra.shopperlights2.App;
+import com.ultra.shopperlights2.Callbacks.UpdateNoteListCallback;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.Group;
 import com.ultra.shopperlights2.Units.GroupDao;
@@ -26,6 +27,7 @@ public class AddGroupDialog extends DialogFragment
 	 private String title;
 	 private EditText groupNameInput,groupPriorityInput;
 	 private long groupId=0;
+	 private UpdateNoteListCallback callback;
 
 	 private class OkListener implements View.OnClickListener
 		 {
@@ -44,6 +46,12 @@ public class AddGroupDialog extends DialogFragment
 					 group= new Group();
 				 else
 					 group= groupDao.load(groupId);
+				 int size= groupDao.queryBuilder().where(GroupDao.Properties.Title.eq(groupName) ).list().size();
+				 if( (groupId==0 && size>0) || (groupId!=0 && size>0 && !group.getTitle().equals(groupName) ) )
+					 {
+					 Toast.makeText(getContext(),"Это имя уже занято",Toast.LENGTH_SHORT).show();
+					 return;
+					 }
 				 group.setTitle(groupName);
 				 group.setPriority(Integer.parseInt(groupPriority) );
 				 if(groupId ==0)
@@ -51,16 +59,19 @@ public class AddGroupDialog extends DialogFragment
 				 else
 					 groupDao.update(group);
 				 dismiss();
+				 callback.updateNotelist();
 				 }
 			 }
 		 }
 
-	 public void init(String _title)
+	 public void init(UpdateNoteListCallback _callback,String _title)
 		 {
+		 callback=_callback;
 		 title=_title;
 		 }
-	 public void init(String _title,long _id)
+	 public void init(UpdateNoteListCallback _callback,String _title,long _id)
 		 {
+		 callback=_callback;
 		 groupId=_id;
 		 title=_title;
 		 }
@@ -80,7 +91,7 @@ public class AddGroupDialog extends DialogFragment
 			 {
 			 Group group= App.session.getGroupDao().load(groupId);
 			 groupNameInput.setText(group.getTitle() );
-			 groupPriorityInput.setText(group.getPriority() );
+			 groupPriorityInput.setText(group.getPriority() +"");
 			 }
 		 okBtn.setOnClickListener(new OkListener() );
 		 return mainView;

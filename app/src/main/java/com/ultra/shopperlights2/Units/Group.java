@@ -16,7 +16,7 @@ import org.greenrobot.greendao.DaoException;
  */
 
 @Entity
-public class Group extends NoteListElement
+public class Group extends RecyclerListElement
 	 {
 	 @Id(autoincrement = true)
 	 private Long id;

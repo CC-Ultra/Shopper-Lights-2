@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Toast;
 import com.ultra.shopperlights2.App;
+import com.ultra.shopperlights2.Callbacks.UpdateListCallback;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.Tag;
 import com.ultra.shopperlights2.Units.TagDao;
@@ -32,6 +33,7 @@ public class AddTagDialog extends DialogFragment
 	 private EditText tagNameInput;
 	 private String title;
 	 private long tagId=0;
+	 private UpdateListCallback callback;
 
 	 private class SeekBarListener implements SeekBar.OnSeekBarChangeListener
 		 {
@@ -94,16 +96,19 @@ public class AddTagDialog extends DialogFragment
 				 else
 					 tagDao.update(tag);
 				 dismiss();
+				 callback.updateList();
 				 }
 			 }
 		 }
 
-	 public void init(String _title)
+	 public void init(UpdateListCallback _callback,String _title)
 		 {
+		 callback=_callback;
 		 title=_title;
 		 }
-	 public void init(String _title,long _id)
+	 public void init(UpdateListCallback _callback,String _title,long _id)
 		 {
+		 callback=_callback;
 		 tagId=_id;
 		 title=_title;
 		 }

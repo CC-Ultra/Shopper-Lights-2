@@ -22,6 +22,7 @@ public class Purchase
 	 @Id(autoincrement = true)
 	 private Long id;
 
+	 private boolean completed;
 	 private Date date;
 	 private float price;
 	 private long shopId;
@@ -37,9 +38,10 @@ public class Purchase
 		@Generated(hash = 1807587041)
 		private transient PurchaseDao myDao;
 
-		@Generated(hash = 418095188)
-		public Purchase(Long id, Date date, float price, long shopId) {
+		@Generated(hash = 1668777648)
+		public Purchase(Long id, boolean completed, Date date, float price, long shopId) {
 			this.id = id;
+			this.completed = completed;
 			this.date = date;
 			this.price = price;
 			this.shopId = shopId;
@@ -143,6 +145,14 @@ public class Purchase
 				throw new DaoException("Entity is detached from DAO context");
 			}
 			myDao.update(this);
+		}
+
+		public boolean getCompleted() {
+			return this.completed;
+		}
+
+		public void setCompleted(boolean completed) {
+			this.completed = completed;
 		}
 
 		/** called by internal mechanisms, do not call yourself. */

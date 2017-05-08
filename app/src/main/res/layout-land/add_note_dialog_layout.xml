@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_height="match_parent"
+		android:layout_width="match_parent"
+		android:gravity="center_horizontal"
+		android:orientation="vertical">
+	<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+		<EditText
+				android:layout_width="400dp"
+				android:layout_height="wrap_content"
+				android:hint="Название продукта"
+				android:gravity="center"
+				android:layout_marginRight="20dp"
+				android:layout_marginLeft="10dp"
+				android:id="@+id/titleInput"/>
+		<EditText
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="Количество"
+				android:gravity="center"
+				android:layout_marginRight="10dp"
+				android:inputType="number"
+				android:id="@+id/nInput"/>
+	</LinearLayout >
+	<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp"
+			android:orientation="horizontal">
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="10dp"
+				android:text="Группа"/>
+		<Spinner
+				android:layout_width="200dp"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="20dp"
+				android:id="@+id/spinnerGroup"/>
+	</LinearLayout>
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Теги"/>
+	<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="75dp" >
+		<ListView
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="1"
+				android:id="@+id/listSelected"/>
+		<View
+				android:layout_width="2dp"
+				android:layout_height="match_parent"
+				android:background="#999999"/>
+		<ListView
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_weight="1"
+				android:id="@+id/listRemaining"/>
+	</LinearLayout >
+	<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="ok"
+			android:id="@+id/btnOk"/>
+</LinearLayout>

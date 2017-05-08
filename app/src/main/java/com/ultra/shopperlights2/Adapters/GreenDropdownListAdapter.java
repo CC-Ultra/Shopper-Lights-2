@@ -1,13 +1,11 @@
 package com.ultra.shopperlights2.Adapters;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +14,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.DialogDecision;
-import com.ultra.shopperlights2.Callbacks.UpdateNoteListCallback;
+import com.ultra.shopperlights2.Callbacks.UpdateListCallback;
 import com.ultra.shopperlights2.Fragments.AddGroupDialog;
 import com.ultra.shopperlights2.Fragments.AddNoteDialog;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
+import com.ultra.shopperlights2.Utils.Calc;
 import com.ultra.shopperlights2.Utils.ConfirmDialog;
 
 import java.util.ArrayList;
@@ -36,17 +35,17 @@ import static android.content.ContentValues.TAG;
 
 public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdownListAdapter.Holder>
 	 {
-	 private ArrayList<NoteListElement> elements;
+	 private ArrayList<RecyclerListElement> elements;
 	 private Context context;
-	 private UpdateNoteListCallback callback;
+	 private UpdateListCallback callback;
 	 FragmentManager fragmentManager;
 
 	 class ConfirmDialogDecision implements DialogDecision
 		 {
-		 NoteListElement element;
+		 RecyclerListElement element;
 		 int position;
 
-		 void init(NoteListElement _element,int _position)
+		 void init(RecyclerListElement _element,int _position)
 			 {
 			 position=_position;
 			 element=_element;
@@ -61,9 +60,9 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 		 }
 	 private class EditListener implements View.OnClickListener
 		 {
-		 NoteListElement element;
+		 RecyclerListElement element;
 
-		 void setElement(NoteListElement _element)
+		 void setElement(RecyclerListElement _element)
 			 {
 			 element=_element;
 			 }
@@ -88,10 +87,10 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 		 }
 	 private class DelListener implements View.OnClickListener
 		 {
-		 NoteListElement element;
+		 RecyclerListElement element;
 		 ConfirmDialogDecision decision= new ConfirmDialogDecision();
 
-		 void setElement(NoteListElement _element)
+		 void setElement(RecyclerListElement _element)
 			 {
 			 element=_element;
 			 }
@@ -129,9 +128,9 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 		 }
 	 private class DropdownListener implements View.OnClickListener
 		 {
-		 NoteListElement element;
+		 RecyclerListElement element;
 
-		 void setElement(NoteListElement _element)
+		 void setElement(RecyclerListElement _element)
 			 {
 			 element=_element;
 			 }
@@ -190,20 +189,14 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 			 }
 		 }
 
-	 public GreenDropdownListAdapter(Context _context,ArrayList<NoteListElement> _elements,UpdateNoteListCallback _callback,FragmentManager _fragmentManager)
+	 public GreenDropdownListAdapter(Context _context,ArrayList<RecyclerListElement> _elements,UpdateListCallback _callback,FragmentManager _fragmentManager)
 		 {
 		 fragmentManager=_fragmentManager;
 		 callback=_callback;
 		 context=_context;
 		 elements=_elements;
 		 }
-	 private int dpInPX(int dp)
-		 {
-		 Resources r = context.getResources();
-		 int px= (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics() );
-		 return px;
-		 }
-	 private void delGroup(NoteListElement element,int position)
+	 private void delGroup(RecyclerListElement element,int position)
 		 {
 		 DaoSession session= App.session;
 		 Group group= (Group)element;
@@ -220,12 +213,12 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 		 session.getGroupDao().delete(group);
 		 delElement(element,position);
 		 }
-	 private void addElement(NoteListElement element,int position)
+	 private void addElement(RecyclerListElement element,int position)
 		 {
 		 elements.add(position,element);
 		 notifyItemInserted(position);
 		 }
-	 private void delElement(NoteListElement element,int position)
+	 private void delElement(RecyclerListElement element,int position)
 		 {
 		 elements.remove(element);
 		 notifyItemRemoved(position);
@@ -240,12 +233,12 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 	 @Override
 	 public void onBindViewHolder(Holder holder,int position)
 		 {
-		 NoteListElement noteListElement= elements.get(position);
-		 if(noteListElement.isGroup() )
+		 RecyclerListElement recyclerListElement= elements.get(position);
+		 if(recyclerListElement.isGroup() )
 			 {
-			 Group group= (Group)noteListElement;
+			 Group group= (Group) recyclerListElement;
 			 holder.btnDropdown.setVisibility(View.VISIBLE);
-			 holder.dropdownListener.setElement(noteListElement);
+			 holder.dropdownListener.setElement(recyclerListElement);
 			 group.setHolderTitle(group.getTitle() +" ("+ group.getNotes().size() +")");
 			 holder.title.setText(group.getHolderTitle() );
 			 holder.title.setTextColor(Color.GREEN);
@@ -257,14 +250,14 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 			 }
 		 else
 			 {
-			 Note note= (Note)noteListElement;
+			 Note note= (Note) recyclerListElement;
 			 holder.title.setText(note.getTitle() );
 			 holder.title.setTextColor(Color.YELLOW);
 			 if(note.isTabbed() )
 				 {
 				 Log.d(TAG,"onBindViewHolder: "+ note.getTitle() +" tabbed");
 				 RelativeLayout.LayoutParams layoutParams= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-				 layoutParams.setMargins(dpInPX(50),dpInPX(5),0,0);
+				 layoutParams.setMargins(Calc.dpToPx(context,50),Calc.dpToPx(context,5),0,0);
 				 holder.title.setLayoutParams(layoutParams);
 				 }
 			 holder.n.setVisibility(View.VISIBLE);
@@ -281,8 +274,8 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 				 }
 			 holder.btnDropdown.setVisibility(View.GONE);
 			 }
-		 holder.editListener.setElement(noteListElement);
-		 holder.delListener.setElement(noteListElement);
+		 holder.editListener.setElement(recyclerListElement);
+		 holder.delListener.setElement(recyclerListElement);
 		 }
 
 	 @Override

@@ -7,7 +7,7 @@ package com.ultra.shopperlights2.Callbacks;
  * @author CC-Ultra
  */
 
-public interface UpdateNoteListCallback
+public interface UpdateListCallback
 	 {
-	 void updateNotelist();
+	 void updateList();
 	 }

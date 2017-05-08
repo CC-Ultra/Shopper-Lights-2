@@ -19,6 +19,9 @@ public class O
 		 public static final int SCREEN_CODE_GREEN=0;
 		 public static final int SCREEN_CODE_YELLOW=1;
 		 public static final int SCREEN_CODE_RED=2;
+		 public static final int ELEMENT_TYPE_GROUP=0;
+		 public static final int ELEMENT_TYPE_TAG=1;
+		 public static final int ELEMENT_TYPE_SHOP=2;
 		 }
 
 	 public static class db
@@ -26,16 +29,20 @@ public class O
 		 public static final String DB_FILENAME="ShopperLights.db";
 		 }
 
-	 public static class prefs
+	 public static class dimens
 		{
-		 ;
+		 public static final int LIGHTS_PAGER_WIDTH_PORT=100;
+		 public static final int LIGHTS_PAGER_WIDTH_LAND=155;
+		 public static final int ARROW_PAGER_WIDTH=25;
 		 }
 
 	 public static class mapKeys
 		{
 		 public static class extra
 			{
+			 public static final String SAVED_STATE_PENDING_INTENT="Pending intent";
 			 public static final String START_COLOR="Start color";
+			 public static final String LIST_ELEMENT_TYPE="List element type";
 			 }
 
 		 public static class prefs

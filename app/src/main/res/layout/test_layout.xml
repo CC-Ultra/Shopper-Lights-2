@@ -4,16 +4,17 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:orientation="vertical">
-	<ToggleButton
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:drawableRight="@drawable/switch_expanded"
-			style="?android:attr/buttonStyleSmall"
-			android:textAllCaps="false"
-			android:id="@+id/btnTitle"/>
-	<ListView
+	<AutoCompleteTextView
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_marginLeft="20dp"
-			android:id="@+id/list"/>
+			android:hint="autotext"
+			android:gravity="center"
+			android:id="@+id/autotext"/>
+	<EditText
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="50dp"
+			android:hint="simple txt"
+			android:gravity="center"
+			android:id="@+id/simpleTxt"/>
 </LinearLayout>

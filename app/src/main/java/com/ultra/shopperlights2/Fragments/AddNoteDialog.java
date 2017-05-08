@@ -2,14 +2,13 @@ package com.ultra.shopperlights2.Fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.ultra.shopperlights2.App;
-import com.ultra.shopperlights2.Callbacks.UpdateNoteListCallback;
+import com.ultra.shopperlights2.Callbacks.UpdateListCallback;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
 
@@ -32,7 +31,7 @@ public class AddNoteDialog extends DialogFragment
 	 private String title;
 	 private ArrayList<String> listRemaining,listSelected;
 	 private long noteId=0;
-	 private UpdateNoteListCallback callback;
+	 private UpdateListCallback callback;
 
 	 private class OkListener implements View.OnClickListener
 		 {
@@ -95,7 +94,7 @@ public class AddNoteDialog extends DialogFragment
 					 }
 				 noteDao.update(note);
 				 dismiss();
-				 callback.updateNotelist();
+				 callback.updateList();
 				 }
 			 }
 		 }
@@ -133,12 +132,12 @@ public class AddNoteDialog extends DialogFragment
 			 }
 		 }
 
-	 public void init(UpdateNoteListCallback _callback,String _title)
+	 public void init(UpdateListCallback _callback,String _title)
 		 {
 		 callback=_callback;
 		 title=_title;
 		 }
-	 public void init(UpdateNoteListCallback _callback,String _title,long _id)
+	 public void init(UpdateListCallback _callback,String _title,long _id)
 		 {
 		 callback=_callback;
 		 noteId=_id;

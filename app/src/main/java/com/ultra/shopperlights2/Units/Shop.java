@@ -16,12 +16,12 @@ import org.greenrobot.greendao.DaoException;
  */
 
 @Entity
-public class Shop
+public class Shop extends RecyclerListElement
 	 {
 	 @Id(autoincrement = true)
 	 private Long id;
 
-	 private String title,adr;
+	 private String title,city,adr;
 
 	 @ToMany(referencedJoinProperty = "shopId")
 	 private List<Purchase> purchases;
@@ -34,10 +34,11 @@ public class Shop
 		@Generated(hash = 173397329)
 		private transient ShopDao myDao;
 
-		@Generated(hash = 1536133714)
-		public Shop(Long id, String title, String adr) {
+		@Generated(hash = 738091609)
+		public Shop(Long id, String title, String city, String adr) {
 			this.id = id;
 			this.title = title;
+			this.city = city;
 			this.adr = adr;
 		}
 
@@ -131,6 +132,14 @@ public class Shop
 				throw new DaoException("Entity is detached from DAO context");
 			}
 			myDao.update(this);
+		}
+
+		public String getCity() {
+			return this.city;
+		}
+
+		public void setCity(String city) {
+			this.city = city;
 		}
 
 		/** called by internal mechanisms, do not call yourself. */

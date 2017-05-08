@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.ultra.shopperlights2.App;
-import com.ultra.shopperlights2.Callbacks.UpdateNoteListCallback;
+import com.ultra.shopperlights2.Callbacks.UpdateListCallback;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.Group;
 import com.ultra.shopperlights2.Units.GroupDao;
@@ -27,7 +27,7 @@ public class AddGroupDialog extends DialogFragment
 	 private String title;
 	 private EditText groupNameInput,groupPriorityInput;
 	 private long groupId=0;
-	 private UpdateNoteListCallback callback;
+	 private UpdateListCallback callback;
 
 	 private class OkListener implements View.OnClickListener
 		 {
@@ -59,17 +59,17 @@ public class AddGroupDialog extends DialogFragment
 				 else
 					 groupDao.update(group);
 				 dismiss();
-				 callback.updateNotelist();
+				 callback.updateList();
 				 }
 			 }
 		 }
 
-	 public void init(UpdateNoteListCallback _callback,String _title)
+	 public void init(UpdateListCallback _callback,String _title)
 		 {
 		 callback=_callback;
 		 title=_title;
 		 }
-	 public void init(UpdateNoteListCallback _callback,String _title,long _id)
+	 public void init(UpdateListCallback _callback,String _title,long _id)
 		 {
 		 callback=_callback;
 		 groupId=_id;

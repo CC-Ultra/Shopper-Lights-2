@@ -6,7 +6,7 @@
 		android:orientation="horizontal">
 	<ImageButton
 			android:layout_width="25dp"
-			android:src="@drawable/drawer_open_red"
+			android:src="@drawable/arrow_right_red"
 			android:layout_height="match_parent"
 			android:id="@+id/btn_openDrawer"/>
 	<ImageView

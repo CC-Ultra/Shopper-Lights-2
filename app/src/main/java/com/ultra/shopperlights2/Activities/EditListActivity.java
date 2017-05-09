@@ -69,7 +69,7 @@ public class EditListActivity extends AppCompatActivity implements UpdateListCal
 		}
 
 	@Override
-	public void updateList()
+	public void updateLists()
 		{
 		GTSAdapter adapter= new GTSAdapter(this,getList(),this,getSupportFragmentManager() );
 		recyclerList.setAdapter(adapter);
@@ -104,7 +104,7 @@ public class EditListActivity extends AppCompatActivity implements UpdateListCal
 		recyclerList= (RecyclerView)findViewById(R.id.list);
 		Button btn= (Button)findViewById(R.id.btn_add);
 
-		updateList();
+		updateLists();
 		switch(type)
 			{
 			case O.interaction.ELEMENT_TYPE_GROUP:

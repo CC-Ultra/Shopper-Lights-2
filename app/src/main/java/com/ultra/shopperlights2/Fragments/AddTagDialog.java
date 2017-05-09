@@ -96,7 +96,7 @@ public class AddTagDialog extends DialogFragment
 				 else
 					 tagDao.update(tag);
 				 dismiss();
-				 callback.updateList();
+				 callback.updateLists();
 				 }
 			 }
 		 }

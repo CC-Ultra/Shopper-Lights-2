@@ -94,7 +94,7 @@ public class AddNoteDialog extends DialogFragment
 					 }
 				 noteDao.update(note);
 				 dismiss();
-				 callback.updateList();
+				 callback.updateLists();
 				 }
 			 }
 		 }

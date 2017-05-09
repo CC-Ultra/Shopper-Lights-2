@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_height="match_parent"
+		android:layout_width="match_parent"
+		android:layout_margin="5dp"
+		android:gravity="center_horizontal"
+		android:orientation="vertical">
+	<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Магазин"/>
+		<Spinner
+				android:layout_width="120dp"
+				android:layout_height="wrap_content"
+				android:id="@+id/inputTitle"/>
+	</LinearLayout >
+	<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="5dp"
+			android:orientation="horizontal">
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Город"/>
+		<Spinner
+				android:layout_width="150dp"
+				android:layout_height="wrap_content"
+				android:id="@+id/inputCity"/>
+	</LinearLayout >
+	<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="5dp"
+			android:orientation="horizontal">
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Адрес"/>
+		<Spinner
+				android:layout_width="220dp"
+				android:layout_height="wrap_content"
+				android:id="@+id/inputAdr"/>
+	</LinearLayout >
+	<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Начать покупку"
+			android:id="@+id/btnOk"/>
+	<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="100dp"
+			android:text="Добавить магазин"
+			android:id="@+id/btnAdd"/>
+</LinearLayout >

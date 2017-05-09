@@ -42,7 +42,7 @@ public class Fragment_Green extends Fragment implements UpdateListCallback
 		 }
 
 	 @Override
-	 public void updateList()
+	 public void updateLists()
 		 {
 		 initAdapter();
 		 }

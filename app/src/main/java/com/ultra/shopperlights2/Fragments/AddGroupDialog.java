@@ -59,7 +59,7 @@ public class AddGroupDialog extends DialogFragment
 				 else
 					 groupDao.update(group);
 				 dismiss();
-				 callback.updateList();
+				 callback.updateLists();
 				 }
 			 }
 		 }

@@ -20,15 +20,19 @@ import android.view.ViewGroup;
 import android.widget.*;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.ultra.shopperlights2.App;
+import com.ultra.shopperlights2.Callbacks.ChangeYellowFragmentCallback;
 import com.ultra.shopperlights2.Fragments.*;
 import com.ultra.shopperlights2.R;
+import com.ultra.shopperlights2.Units.PurchaseDao;
 import com.ultra.shopperlights2.Utils.Calc;
 import com.ultra.shopperlights2.Utils.O;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements ChangeYellowFragmentCallback
 	 {
+	 public static boolean purchaseState;
 	 private Drawer drawer;
 	 private Fragment fragments[]= new Fragment[3];
 	 private ViewPager pager;
@@ -128,12 +132,31 @@ public class MainActivity extends AppCompatActivity
 			 }
 		 }
 
+	 private void checkPurchaseState()
+		 {
+		 int size= App.session.getPurchaseDao().queryBuilder().where(PurchaseDao.Properties.Completed.eq(false) ).list().size();
+		 purchaseState= size!=0;
+		 }
+	 @Override
+	 public void changeYellowFragment(boolean state)
+		 {
+		 purchaseState=state;
+		 refreshFragments();
+		 }
 	 private void refreshFragments()
 		 {
 		 fragments[O.interaction.SCREEN_CODE_GREEN]= new Fragment_Green();
-		 fragments[O.interaction.SCREEN_CODE_YELLOW]= new Fragment_Yellow();
+		 if(purchaseState)
+			 {
+			 fragments[O.interaction.SCREEN_CODE_YELLOW]= new Fragment_Yellow_Purchase();
+			 ( (Fragment_Yellow_Purchase)fragments[O.interaction.SCREEN_CODE_YELLOW] ).initFragment(drawer,this);
+			 }
+		 else
+			 {
+			 fragments[O.interaction.SCREEN_CODE_YELLOW]= new Fragment_Yellow_Shop();
+			 ( (Fragment_Yellow_Shop)fragments[O.interaction.SCREEN_CODE_YELLOW] ).initFragment(this,getSupportFragmentManager() );
+			 }
 		 fragments[O.interaction.SCREEN_CODE_RED]= new Fragment_Red();
-		 ( (Fragment_Yellow)fragments[O.interaction.SCREEN_CODE_YELLOW] ).initFragment(drawer);
 		 selectScreen(selectedScreen);
 		 }
 	 private void selectScreen(int code)
@@ -187,6 +210,7 @@ public class MainActivity extends AppCompatActivity
 	 protected void onResume()
 		 {
 		 super.onResume();
+		 checkPurchaseState();
 		 refreshFragments();
 		 }
 	 @Override

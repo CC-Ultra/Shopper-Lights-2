@@ -3,6 +3,7 @@ package com.ultra.shopperlights2.Fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.ultra.shopperlights2.Callbacks.ChangeYellowFragmentCallback;
 import com.ultra.shopperlights2.R;
 
 import java.util.ArrayList;
@@ -22,8 +24,9 @@ import java.util.ArrayList;
  *
  * @author CC-Ultra
  */
-public class Fragment_Yellow extends Fragment
+public class Fragment_Yellow_Purchase extends Fragment
 	{
+	 private ChangeYellowFragmentCallback callback;
 	 private Drawer drawer;
 	 private ArrayList<String> strs= new ArrayList<>();
 
@@ -40,18 +43,21 @@ public class Fragment_Yellow extends Fragment
 		 @Override
 		 public boolean onItemClick(View view,int position,IDrawerItem drawerItem)
 			{
+			 long drawerItemId= drawerItem.getIdentifier();
 			 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
-			 String toastTxt= strs.get(position-1);
+			 String toastTxt= drawerItem.getTag().toString();
 			 Toast.makeText(getActivity(),toastTxt,Toast.LENGTH_SHORT).show();
 			 strs.remove(position-1);
-			 initDrawerList();
+			 drawer.removeItem(drawerItemId);
+//			 initDrawerList();
 			 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 			 return true;
 			 }
 		 }
 
-	 public void initFragment(Drawer _drawer)
+	 public void initFragment(Drawer _drawer,ChangeYellowFragmentCallback _callback)
 		{
+		 callback=_callback;
 		 drawer=_drawer;
 		 strs.add("Молоко");
 		 strs.add("Сметана");
@@ -64,7 +70,11 @@ public class Fragment_Yellow extends Fragment
 		{
 		 drawer.removeAllItems();
 		 for(String str : strs)
-			 drawer.addItem(new PrimaryDrawerItem().withName(str) );
+			 {
+			 PrimaryDrawerItem drawerItem= new PrimaryDrawerItem().withName(str);
+			 drawerItem.withTag(2);
+			 drawer.addItem(drawerItem);
+			 }
 		 drawer.deselect();
 		 }
 

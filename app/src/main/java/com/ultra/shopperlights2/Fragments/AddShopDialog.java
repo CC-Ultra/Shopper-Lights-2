@@ -10,8 +10,6 @@ import android.widget.*;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.UpdateListCallback;
 import com.ultra.shopperlights2.R;
-import com.ultra.shopperlights2.Units.Group;
-import com.ultra.shopperlights2.Units.GroupDao;
 import com.ultra.shopperlights2.Units.Shop;
 import com.ultra.shopperlights2.Units.ShopDao;
 
@@ -85,7 +83,7 @@ public class AddShopDialog extends DialogFragment
 				 else
 					 shopDao.update(shop);
 				 dismiss();
-				 callback.updateList();
+				 callback.updateLists();
 				 }
 			 }
 		 }

@@ -9,5 +9,5 @@ package com.ultra.shopperlights2.Callbacks;
 
 public interface UpdateListCallback
 	 {
-	 void updateList();
+	 void updateLists();
 	 }

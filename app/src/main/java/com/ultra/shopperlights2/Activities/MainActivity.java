@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 public void onLayoutChange(View v,int left,int top,int right,int bottom,int oldLeft,int oldTop,int oldRight,int oldBottom)
 			 {
 			 int delta=right-left;
-			 Log.d(O.TAG,"onLayoutChange: delta="+ delta +"\tMinSize="+ Calc.dpToPx(MainActivity.this,O.dimens.ARROW_PAGER_WIDTH) );
 			 if(delta == Calc.dpToPx(MainActivity.this,O.dimens.ARROW_PAGER_WIDTH) )
 				 {
 				 pager.setCurrentItem(1);
@@ -115,20 +114,6 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 public int getCount()
 			 {
 			 return fragments.size();
-			 }
-		 }
-	 private class DrawerHeaderClickListener implements View.OnClickListener
-		 {
-		 @Override
-		 public void onClick(View v)
-			 {
-			 if(v.getId() == R.id.btn_close)
-				 {
-				 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-				 drawer.closeDrawer();
-				 }
-			 else
-				 Toast.makeText(MainActivity.this,"Add",Toast.LENGTH_SHORT).show();
 			 }
 		 }
 
@@ -174,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 super.onCreate(savedInstanceState);
 		 setContentView(R.layout.main_layout);
 
-		 selectedScreen= getIntent().getIntExtra(O.mapKeys.extra.START_COLOR, O.interaction.SCREEN_CODE_GREEN);
+		 selectedScreen= getIntent().getIntExtra(O.mapKeys.extra.START_COLOR, O.interaction.SCREEN_CODE_YELLOW);
 		 if(savedInstanceState!=null)
 			 selectedScreen= savedInstanceState.getInt(O.mapKeys.extra.START_COLOR);
 
@@ -185,11 +170,8 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 			 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 		 else
 			 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-		 View drawerHeader= drawer.getHeader();
 
 		 Toolbar toolbar= (Toolbar)findViewById(R.id.toolbar);
-		 ImageButton drawerButton_close= (ImageButton)drawerHeader.findViewById(R.id.btn_close);
-		 Button drawerButton_add= (Button)drawerHeader.findViewById(R.id.btn_add);
 		 pager= (ViewPager)findViewById(R.id.pager);
 
 		 pagerAdapter= new XPagerAdapter(getSupportFragmentManager() );
@@ -202,9 +184,6 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 ViewGroup.LayoutParams layoutParams= pager.getLayoutParams();
 		 layoutParams.width= Calc.dpToPx(MainActivity.this,O.dimens.ARROW_PAGER_WIDTH);
 		 pager.setLayoutParams(layoutParams);
-
-		 drawerButton_add.setOnClickListener(new DrawerHeaderClickListener() );
-		 drawerButton_close.setOnClickListener(new DrawerHeaderClickListener() );
 		 }
 	 @Override
 	 protected void onResume()

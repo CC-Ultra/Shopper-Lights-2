@@ -251,6 +251,16 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 		 else
 			 {
 			 Note note= (Note) recyclerListElement;
+			 if(note.isLocked() )
+				 {
+				 holder.btnDel.setEnabled(false);
+				 holder.btnEdit.setEnabled(false);
+				 }
+			 else
+				 {
+				 holder.btnDel.setEnabled(true);
+				 holder.btnEdit.setEnabled(true);
+				 }
 			 holder.title.setText(note.getTitle() );
 			 holder.title.setTextColor(Color.YELLOW);
 			 if(note.isTabbed() )

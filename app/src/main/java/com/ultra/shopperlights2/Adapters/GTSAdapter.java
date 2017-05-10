@@ -1,5 +1,6 @@
 package com.ultra.shopperlights2.Adapters;
 
+
 import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -166,13 +167,12 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 	private void deleteTag(Tag tag)
 		{
 		DaoSession session= App.session;
-		List<TagToNote> tagToNotesSrc= session.getTagToNoteDao().queryBuilder().where(TagToNoteDao.Properties.TagId.eq(tag.getId())).list();
-		ArrayList<TagToNote> tagToNotes= new ArrayList<>(tagToNotesSrc);
-		for(TagToNote tagToNote : tagToNotes)
+		List<TagToNote> tagToNotesSrc= session.getTagToNoteDao().queryBuilder().where(TagToNoteDao.Properties.TagId.eq(tag.getId() ) ).list();
+		for(TagToNote tagToNote : tagToNotesSrc)
 			session.getTagToNoteDao().delete(tagToNote);
-		ArrayList<Product> products= new ArrayList<>(tag.getProducts() );
-		for(Product product : products)
-			product.setTagId(0);
+		List<TagToProduct> tagToProductsSrc= session.getTagToProductDao().queryBuilder().where(TagToProductDao.Properties.TagId.eq(tag.getId() ) ).list();
+		for(TagToProduct tagToProduct : tagToProductsSrc)
+			session.getTagToProductDao().delete(tagToProduct);
 		session.getTagDao().delete(tag);
 		}
 	private void deleteGroup(Group group)

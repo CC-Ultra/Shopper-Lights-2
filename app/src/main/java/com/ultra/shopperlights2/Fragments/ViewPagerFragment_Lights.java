@@ -85,7 +85,6 @@ public class ViewPagerFragment_Lights extends ViewPagerFragment_Basic
 	public View onCreateView(LayoutInflater inflater,@Nullable ViewGroup container,@Nullable Bundle savedInstanceState)
 		{
 		mainView= inflater.inflate(R.layout.lights_buttons_fragment,container,false);
-		Log.d(O.TAG,"onCreateView: Lights "+ this.toString() );
 		if(savedInstanceState!=null)
 			pendingIntent= savedInstanceState.getParcelable(O.mapKeys.extra.SAVED_STATE_PENDING_INTENT);
 

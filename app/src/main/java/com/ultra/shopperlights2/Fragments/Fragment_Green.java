@@ -84,7 +84,13 @@ public class Fragment_Green extends Fragment implements UpdateListCallback
 		 recyclerList= (RecyclerView)mainView.findViewById(R.id.list);
 
 		 btnAddNote.setOnClickListener(new AddNoteListener() );
-		 initAdapter();
 		 return mainView;
+		 }
+
+	 @Override
+	 public void onResume()
+		 {
+		 super.onResume();
+		 initAdapter();
 		 }
 	 }

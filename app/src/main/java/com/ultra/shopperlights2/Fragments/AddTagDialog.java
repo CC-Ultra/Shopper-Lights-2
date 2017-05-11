@@ -1,5 +1,6 @@
 package com.ultra.shopperlights2.Fragments;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -13,7 +14,6 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Toast;
 import com.ultra.shopperlights2.App;
-import com.ultra.shopperlights2.Callbacks.UpdateListCallback;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.Tag;
 import com.ultra.shopperlights2.Units.TagDao;
@@ -33,7 +33,7 @@ public class AddTagDialog extends DialogFragment
 	 private EditText tagNameInput;
 	 private String title;
 	 private long tagId=0;
-	 private UpdateListCallback callback;
+	 private String action;
 
 	 private class SeekBarListener implements SeekBar.OnSeekBarChangeListener
 		 {
@@ -96,19 +96,19 @@ public class AddTagDialog extends DialogFragment
 				 else
 					 tagDao.update(tag);
 				 dismiss();
-				 callback.updateLists();
+				 getContext().sendBroadcast(new Intent(action) );
 				 }
 			 }
 		 }
 
-	 public void init(UpdateListCallback _callback,String _title)
+	 public void init(String _action,String _title)
 		 {
-		 callback=_callback;
+		 action=_action;
 		 title=_title;
 		 }
-	 public void init(UpdateListCallback _callback,String _title,long _id)
+	 public void init(String _action,String _title,long _id)
 		 {
-		 callback=_callback;
+		 action=_action;
 		 tagId=_id;
 		 title=_title;
 		 }
@@ -119,6 +119,11 @@ public class AddTagDialog extends DialogFragment
 		 {
 		 getDialog().setTitle(title);
 		 View mainView= inflater.inflate(R.layout.add_tag_dialog_layout,container,false);
+		 if(savedInstanceState!=null)
+			 {
+			 tagId= savedInstanceState.getLong(O.mapKeys.savedState.SAVED_STATE_TAG_ID,0);
+			 action= savedInstanceState.getString(O.mapKeys.savedState.SAVED_STATE_ACTION);
+			 }
 
 		 SeekBar seekBar_Red= (SeekBar)mainView.findViewById(R.id.seekBarRed);
 		 SeekBar seekBar_Green= (SeekBar)mainView.findViewById(R.id.seekBarGreen);
@@ -150,5 +155,13 @@ public class AddTagDialog extends DialogFragment
 			 seekBar_Blue.setProgress(Color.blue(tag.getColor() ) );
 			 }
 		 return mainView;
+		 }
+	 @Override
+	 public void onSaveInstanceState(Bundle outState)
+		 {
+		 if(tagId!=0)
+			 outState.putLong(O.mapKeys.savedState.SAVED_STATE_TAG_ID,tagId);
+		 outState.putString(O.mapKeys.savedState.SAVED_STATE_ACTION,action);
+		 super.onSaveInstanceState(outState);
 		 }
 	 }

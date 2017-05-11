@@ -1,5 +1,9 @@
 package com.ultra.shopperlights2.Fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,14 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import com.mikepenz.materialdrawer.Drawer;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.ChangeYellowFragmentCallback;
-import com.ultra.shopperlights2.Callbacks.UpdateListCallback;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.Purchase;
 import com.ultra.shopperlights2.Units.Shop;
 import com.ultra.shopperlights2.Units.ShopDao;
+import com.ultra.shopperlights2.Utils.O;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,7 +33,7 @@ import java.util.List;
  * @author CC-Ultra
  */
 
-public class Fragment_Yellow_Shop extends Fragment implements UpdateListCallback
+public class Fragment_Yellow_Shop extends Fragment
 	{
 	private ChangeYellowFragmentCallback callback;
 	private Spinner inputTitle,inputCity,inputAdr;
@@ -38,7 +41,16 @@ public class Fragment_Yellow_Shop extends Fragment implements UpdateListCallback
 	private View mainView;
 	private FragmentManager fragmentManager;
 	private Button startBtn;
+	private BroadcastReceiver receiver;
 
+	private class Receiver extends BroadcastReceiver
+		{
+		@Override
+		public void onReceive(Context context,Intent intent)
+			{
+			updateLists();
+			}
+		}
 	private class StartPurchasesListener implements View.OnClickListener
 		{
 		@Override
@@ -66,7 +78,7 @@ public class Fragment_Yellow_Shop extends Fragment implements UpdateListCallback
 		public void onClick(View v)
 			{
 			AddShopDialog dialog= new AddShopDialog();
-			dialog.init(Fragment_Yellow_Shop.this,"Создать магазин");
+			dialog.init(O.actions.ACTION_FRAGMENT_YELLOW_SHOP,"Создать магазин");
 			FragmentTransaction transaction= fragmentManager.beginTransaction();
 			dialog.show(transaction,"");
 			}
@@ -153,7 +165,6 @@ public class Fragment_Yellow_Shop extends Fragment implements UpdateListCallback
 		fragmentManager=_fragmentManager;
 		callback=_callback;
 		}
-	@Override
 	public void updateLists()
 		{
 		ArrayList<String> shops= new ArrayList<>();
@@ -196,7 +207,17 @@ public class Fragment_Yellow_Shop extends Fragment implements UpdateListCallback
 		adapterTitle.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		adapterCity.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		adapterAdr.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		receiver= new Receiver();
+		IntentFilter filter= new IntentFilter(O.actions.ACTION_FRAGMENT_YELLOW_SHOP);
+		getContext().registerReceiver(receiver,filter);
 
 		return mainView;
+		}
+
+	@Override
+	public void onDestroy()
+		{
+		super.onDestroy();
+		getContext().unregisterReceiver(receiver);
 		}
 	}

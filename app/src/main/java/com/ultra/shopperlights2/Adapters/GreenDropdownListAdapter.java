@@ -14,7 +14,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.DialogDecision;
-import com.ultra.shopperlights2.Callbacks.UpdateListCallback;
 import com.ultra.shopperlights2.Fragments.AddGroupDialog;
 import com.ultra.shopperlights2.Fragments.AddNoteDialog;
 import com.ultra.shopperlights2.R;
@@ -37,8 +36,8 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 	 {
 	 private ArrayList<RecyclerListElement> elements;
 	 private Context context;
-	 private UpdateListCallback callback;
-	 FragmentManager fragmentManager;
+	 private FragmentManager fragmentManager;
+	 private String action;
 
 	 class ConfirmDialogDecision implements DialogDecision
 		 {
@@ -74,13 +73,13 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 			 if(element.isGroup() )
 				 {
 				 AddGroupDialog dialog= new AddGroupDialog();
-				 dialog.init(callback,"Изменить группу",( (Group)element).getId() );
+				 dialog.init(action,"Изменить группу",( (Group)element).getId() );
 				 dialog.show(transaction,"");
 				 }
 			 else
 				 {
 				 AddNoteDialog dialog= new AddNoteDialog();
-				 dialog.init(callback,"Изменить продукт",( (Note)element).getId() );
+				 dialog.init(action,"Изменить продукт",( (Note)element).getId() );
 				 dialog.show(transaction,"");
 				 }
 			 }
@@ -189,10 +188,10 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 			 }
 		 }
 
-	 public GreenDropdownListAdapter(Context _context,ArrayList<RecyclerListElement> _elements,UpdateListCallback _callback,FragmentManager _fragmentManager)
+	 public GreenDropdownListAdapter(Context _context,ArrayList<RecyclerListElement> _elements,String _action,FragmentManager _fragmentManager)
 		 {
 		 fragmentManager=_fragmentManager;
-		 callback=_callback;
+		 action=_action;
 		 context=_context;
 		 elements=_elements;
 		 }

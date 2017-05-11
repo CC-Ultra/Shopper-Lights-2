@@ -1,5 +1,9 @@
 package com.ultra.shopperlights2.Fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -7,7 +11,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +20,10 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.ultra.shopperlights2.Adapters.YellowPurchaseListAdapter;
 import com.ultra.shopperlights2.App;
-import com.ultra.shopperlights2.Callbacks.ChangeYellowFragmentCallback;
-import com.ultra.shopperlights2.Callbacks.UpdateListCallback;
-import com.ultra.shopperlights2.Callbacks.YellowScreenDelElement;
-import com.ultra.shopperlights2.Callbacks.YellowScreenInitFragment;
+import com.ultra.shopperlights2.Callbacks.*;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
+import com.ultra.shopperlights2.Utils.ConfirmDialog;
 import com.ultra.shopperlights2.Utils.O;
 
 import java.util.ArrayList;
@@ -35,15 +36,40 @@ import java.util.List;
  *
  * @author CC-Ultra
  */
-public class Fragment_Yellow_Purchase extends Fragment implements UpdateListCallback,YellowScreenDelElement,YellowScreenInitFragment
+public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDelElement,YellowScreenInitFragment,DialogDecision
 	 {
 	 private ChangeYellowFragmentCallback callback;
 	 private YellowPurchaseListAdapter adapter;
 	 private Drawer drawer;
 	 private Spinner groupInput;
+	 private TextView statusTxt,totalPriceTxt;
 	 private RecyclerView recyclerList;
 	 private long purchaseId;
 	 private HashMap<String,Boolean> usedMap;
+	 private BroadcastReceiver receiver;
+
+	 private class Receiver extends BroadcastReceiver
+		 {
+		 @Override
+		 public void onReceive(Context context,Intent intent)
+			 {
+			 updateLists();
+			 }
+		 }
+	 private class PurchaseButtonsListener implements View.OnClickListener
+		 {
+		 @Override
+		 public void onClick(View v)
+			 {
+			 List<Product> products= App.session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId),
+					 ProductDao.Properties.Complete.eq(false)).list();
+			 if(v.getId()==R.id.completePurchase && products.size() != 0)
+				 {
+				 Toast.makeText(getContext(),"Есть незаполненные продукты: "+ products.size() +" шт",Toast.LENGTH_SHORT).show();
+				 }
+			 ConfirmDialog.ask(getContext(),Fragment_Yellow_Purchase.this,v.getId(),0);
+			 }
+		 }
 
 	 private class DrawerHeaderClickListener implements View.OnClickListener
 		 {
@@ -54,11 +80,12 @@ public class Fragment_Yellow_Purchase extends Fragment implements UpdateListCall
 				 {
 				 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 				 drawer.closeDrawer();
+				 updateLists();
 				 }
 			 else if(v.getId()==R.id.btn_add)
 				 {
 				 AddNoteDialog dialog= new AddNoteDialog();
-				 dialog.init(Fragment_Yellow_Purchase.this,"Добавить продукт");
+				 dialog.init(O.actions.ACTION_FRAGMENT_YELLOW_PURCHASE,"Добавить продукт");
 				 FragmentTransaction transaction= getFragmentManager().beginTransaction();
 				 dialog.show(transaction,"");
 				 }
@@ -94,6 +121,109 @@ public class Fragment_Yellow_Purchase extends Fragment implements UpdateListCall
 		 @Override
 		 public void onItemSelected(AdapterView<?> parent,View view,int position,long id)
 			 {
+			 selectGroupSpinner();
+			 }
+		 @Override
+		 public void onNothingSelected(AdapterView<?> parent) {}
+		 }
+
+	 @Override
+	 public void sayNo(int noId) {}
+	 @Override
+	 public void sayYes(int yesId)
+		 {
+		 if(yesId==R.id.completePurchase)
+			 completePurchase();
+		 else if(yesId==R.id.cancelPurchase)
+			 cancelPurchase();
+		 }
+	 private void completePurchase()
+		 {
+		 DaoSession session= App.session;
+		 Purchase purchase= session.getPurchaseDao().load(purchaseId);
+		 purchase.setCompleted(true);
+		 purchase.getProducts().clear();
+		 List<Product> products= session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId)).list();
+		 float totalPrice=0;
+		 for(Product product : products)
+			 {
+			 totalPrice+= product.getPrice();
+			 purchase.getProducts().add(product);
+			 }
+		 purchase.setPrice(totalPrice);
+		 session.getPurchaseDao().update(purchase);
+		 for(Note note : session.getNoteDao().queryBuilder().where(NoteDao.Properties.Locked.eq(true) ).list())
+			 {
+			 List<TagToNote> tagToNotes= session.getTagToNoteDao().queryBuilder().where(TagToNoteDao.Properties.NoteId.eq(note.getId())).list();
+			 for(TagToNote tagToNote : tagToNotes)
+				 session.getTagToNoteDao().delete(tagToNote);
+			 session.getNoteDao().delete(note);
+			 }
+		 callback.changeYellowFragment(false);
+		 }
+	 private void cancelPurchase()
+		 {
+		 DaoSession session= App.session;
+		 List<Product> products= session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId) ).list();
+		 for(Product product : products)
+			 session.getProductDao().delete(product);
+		 Purchase purchase= session.getPurchaseDao().load(purchaseId);
+		 session.getPurchaseDao().delete(purchase);
+		 List<Note> notes= session.getNoteDao().queryBuilder().where(NoteDao.Properties.Locked.eq(true) ).list();
+		 for(Note note : notes)
+			 {
+			 note.setLocked(false);
+			 session.getNoteDao().update(note);
+			 }
+		 callback.changeYellowFragment(false);
+		 }
+	 @Override
+	 public void delElement(String title)
+		 {
+		 Note note= App.session.getNoteDao().queryBuilder().where(NoteDao.Properties.Title.eq(title),NoteDao.Properties.Locked.eq(true) ).list().get(0);
+		 note.setLocked(false);
+		 App.session.getNoteDao().update(note);
+		 usedMap.put(title,false);
+		 }
+	 @Override
+	 public void initFragment(long id)
+		 {
+		 EditProductDialog dialog= new EditProductDialog();
+		 dialog.init(O.actions.ACTION_FRAGMENT_YELLOW_PURCHASE,id);
+		 FragmentTransaction transaction= getFragmentManager().beginTransaction();
+		 dialog.show(transaction,"");
+		 }
+	 public void updateLists()
+		 {
+		 ArrayList<String> groups= new ArrayList<>();
+		 groups.add("");
+		 DaoSession session= App.session;
+		 for(Group group : session.getGroupDao().loadAll() )
+			 groups.add(group.getTitle() );
+		 ArrayAdapter<String> spinnerAdapter= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,groups);
+		 spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		 if(groupInput!=null)
+			 groupInput.setAdapter(spinnerAdapter);
+		 initAdapter();
+		 selectGroupSpinner();
+		 List<Product> productsAll= session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId) ).list();
+		 List<Product> productsCompleted= session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId),
+				 ProductDao.Properties.Complete.eq(true) ).list();
+		 statusTxt.setText(productsCompleted.size() +"/"+ productsAll.size() );
+		 float totalPrice=0;
+		 for(Product product : productsCompleted)
+			 totalPrice+= product.getPrice();
+		 totalPriceTxt.setText(""+ totalPrice);
+		 }
+	 public void initFragment(Drawer _drawer,ChangeYellowFragmentCallback _callback)
+		{
+		 callback=_callback;
+		 drawer=_drawer;
+		 }
+	 private void selectGroupSpinner()
+		 {
+		 if(groupInput!=null)
+			 {
 			 String groupStr= groupInput.getSelectedItem().toString();
 			 if(groupStr.length()==0)
 				 {
@@ -106,39 +236,6 @@ public class Fragment_Yellow_Purchase extends Fragment implements UpdateListCall
 				 initDrawerList(new ArrayList<>(group.getNotes() ) );
 				 }
 			 }
-		 @Override
-		 public void onNothingSelected(AdapterView<?> parent) {}
-		 }
-
-	 @Override
-	 public void delElement(String title)
-		 {
-		 Note note= App.session.getNoteDao().queryBuilder().where(NoteDao.Properties.Title.eq(title),NoteDao.Properties.Locked.eq(true) ).list().get(0);
-		 note.setLocked(false);
-		 App.session.getNoteDao().update(note);
-		 usedMap.put(title,false);
-		 }
-	 @Override
-	 public void initFragment(long id)
-		 {
-		 Toast.makeText(getContext(),""+ id,Toast.LENGTH_SHORT).show();;
-		 }
-	 @Override
-	 public void updateLists()
-		 {
-		 ArrayList<String> groups= new ArrayList<>();
-		 groups.add("");
-		 for(Group group : App.session.getGroupDao().loadAll())
-			 groups.add(group.getTitle() );
-		 ArrayAdapter<String> spinnerAdapter= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,groups);
-		 spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		 groupInput.setAdapter(spinnerAdapter);
-		 }
-	 public void initFragment(Drawer _drawer,ChangeYellowFragmentCallback _callback)
-		{
-		 callback=_callback;
-		 drawer=_drawer;
-		 Log.d(O.TAG,"initFragment: drawer="+ drawer.toString());
 		 }
 	 private void initDrawerList(ArrayList<Note> src)
 		{
@@ -166,11 +263,11 @@ public class Fragment_Yellow_Purchase extends Fragment implements UpdateListCall
 		 }
 	 private void initAdapter()
 		 {
-		 List<Product> products=App.session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId)).list();
+		 List<Product> products= App.session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId)).list();
 		 for(Product product : products)
 			 if(usedMap.containsKey(product.getTitle() ) )
 				 usedMap.put(product.getTitle(),true);
-		 adapter= new YellowPurchaseListAdapter(new ArrayList<>(products),purchaseId,this,this);
+		 adapter= new YellowPurchaseListAdapter(getContext(),new ArrayList<>(products),purchaseId,O.actions.ACTION_FRAGMENT_YELLOW_PURCHASE,this,this);
 		 recyclerList.setAdapter(adapter);
 		 recyclerList.setLayoutManager(new LinearLayoutManager(getContext() ) );
 		 }
@@ -185,9 +282,13 @@ public class Fragment_Yellow_Purchase extends Fragment implements UpdateListCall
 		 initMap();
 		 ImageButton buttonOpen= (ImageButton)mainView.findViewById(R.id.btn_openDrawer);
 		 recyclerList= (RecyclerView)mainView.findViewById(R.id.list);
+		 Button btnComplete= (Button)mainView.findViewById(R.id.completePurchase);
+		 ImageButton btnCancel= (ImageButton)mainView.findViewById(R.id.cancelPurchase);
+		 statusTxt= (TextView)mainView.findViewById(R.id.completeStatus);
+		 totalPriceTxt= (TextView)mainView.findViewById(R.id.totalPrice);
+
 		 if(drawer!=null)
 			 {
-			 Log.d(O.TAG,"onCreateView: МЫ ВНУТРИ!");
 			 View header= drawer.getHeader();
 			 ImageButton drawerClose= (ImageButton)header.findViewById(R.id.btn_close);
 			 Button btnAddNote= (Button)header.findViewById(R.id.btn_add);
@@ -200,6 +301,11 @@ public class Fragment_Yellow_Purchase extends Fragment implements UpdateListCall
 			 updateLists();
 			 }
 		 buttonOpen.setOnClickListener(new DrawerButtonClickListener() );
+		 btnComplete.setOnClickListener(new PurchaseButtonsListener() );
+		 btnCancel.setOnClickListener(new PurchaseButtonsListener() );
+		 receiver= new Receiver();
+		 IntentFilter filter= new IntentFilter(O.actions.ACTION_FRAGMENT_YELLOW_PURCHASE);
+		 getContext().registerReceiver(receiver,filter);
 
 		 return mainView;
 		 }
@@ -207,6 +313,12 @@ public class Fragment_Yellow_Purchase extends Fragment implements UpdateListCall
 	 public void onResume()
 		 {
 		 super.onResume();
-		 initAdapter();
+		 updateLists();
+		 }
+	 @Override
+	 public void onDestroy()
+		 {
+		 super.onDestroy();
+		 getContext().unregisterReceiver(receiver);
 		 }
 	 }

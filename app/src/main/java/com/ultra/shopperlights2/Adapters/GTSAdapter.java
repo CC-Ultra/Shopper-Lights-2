@@ -12,7 +12,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.DialogDecision;
-import com.ultra.shopperlights2.Callbacks.UpdateListCallback;
 import com.ultra.shopperlights2.Fragments.AddGroupDialog;
 import com.ultra.shopperlights2.Fragments.AddShopDialog;
 import com.ultra.shopperlights2.Fragments.AddTagDialog;
@@ -32,9 +31,9 @@ import java.util.List;
 
 public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 	{
+	private String action;
 	private FragmentManager fragmentManager;
 	private ArrayList<RecyclerListElement> elements= new ArrayList<>();
-	private UpdateListCallback callback;
 	private Context context;
 
 	class ConfirmDialogDecision implements DialogDecision
@@ -105,7 +104,7 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 					{
 					Group group= (Group)element;
 					AddGroupDialog dialog= new AddGroupDialog();
-					dialog.init(callback,"Изменить группу",group.getId() );
+					dialog.init(action,"Изменить группу",group.getId() );
 					dialog.show(transaction,"");
 					break;
 					}
@@ -113,7 +112,7 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 					{
 					Tag tag=(Tag) element;
 					AddTagDialog dialog=new AddTagDialog();
-					dialog.init(callback,"Изменить группу",tag.getId());
+					dialog.init(action,"Изменить группу",tag.getId());
 					dialog.show(transaction,"");
 					break;
 					}
@@ -121,7 +120,7 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 					{
 					Shop shop= (Shop)element;
 					AddShopDialog dialog=new AddShopDialog();
-					dialog.init(callback,"Изменить магазин",shop.getId() );
+					dialog.init(action,"Изменить магазин",shop.getId() );
 					dialog.show(transaction,"");
 					break;
 					}
@@ -150,11 +149,11 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 			}
 		}
 
-	public GTSAdapter(Context _context,ArrayList<RecyclerListElement> _elements,UpdateListCallback _callback,FragmentManager _fragmentManager)
+	public GTSAdapter(Context _context,ArrayList<RecyclerListElement> _elements,String _action,FragmentManager _fragmentManager)
 		{
+		action=_action;
 		fragmentManager=_fragmentManager;
 		context=_context;
-		callback=_callback;
 		elements=_elements;
 		}
 	private void deleteShop(Shop shop)

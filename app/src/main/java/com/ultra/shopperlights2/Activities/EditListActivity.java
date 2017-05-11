@@ -1,5 +1,9 @@
 package com.ultra.shopperlights2.Activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
@@ -10,7 +14,6 @@ import android.view.View;
 import android.widget.Button;
 import com.ultra.shopperlights2.Adapters.GTSAdapter;
 import com.ultra.shopperlights2.App;
-import com.ultra.shopperlights2.Callbacks.UpdateListCallback;
 import com.ultra.shopperlights2.Fragments.AddGroupDialog;
 import com.ultra.shopperlights2.Fragments.AddShopDialog;
 import com.ultra.shopperlights2.Fragments.AddTagDialog;
@@ -28,11 +31,20 @@ import java.util.ArrayList;
  * @author CC-Ultra
  */
 
-public class EditListActivity extends AppCompatActivity implements UpdateListCallback
+public class EditListActivity extends AppCompatActivity
 	{
 	private RecyclerView recyclerList;
 	private int type;
+	private BroadcastReceiver receiver;
 
+	private class Receiver extends BroadcastReceiver
+		{
+		@Override
+		public void onReceive(Context context,Intent intent)
+			{
+			updateLists();
+			}
+		}
 	private class AddListener implements View.OnClickListener
 		{
 		@Override
@@ -43,7 +55,7 @@ public class EditListActivity extends AppCompatActivity implements UpdateListCal
 				case O.interaction.ELEMENT_TYPE_GROUP:
 					{
 					AddGroupDialog dialog= new AddGroupDialog();
-					dialog.init(EditListActivity.this,"Создать группу");
+					dialog.init(O.actions.ACTION_EDIT_LIST_ACTIVITY,"Создать группу");
 					FragmentTransaction transaction= getSupportFragmentManager().beginTransaction();
 					dialog.show(transaction,"");
 					break;
@@ -51,7 +63,7 @@ public class EditListActivity extends AppCompatActivity implements UpdateListCal
 				case O.interaction.ELEMENT_TYPE_TAG:
 					{
 					AddTagDialog dialog= new AddTagDialog();
-					dialog.init(EditListActivity.this,"Создать тег");
+					dialog.init(O.actions.ACTION_EDIT_LIST_ACTIVITY,"Создать тег");
 					FragmentTransaction transaction= getSupportFragmentManager().beginTransaction();
 					dialog.show(transaction,"");
 					break;
@@ -59,7 +71,7 @@ public class EditListActivity extends AppCompatActivity implements UpdateListCal
 				case O.interaction.ELEMENT_TYPE_SHOP:
 					{
 					AddShopDialog dialog= new AddShopDialog();
-					dialog.init(EditListActivity.this,"Создать магазин");
+					dialog.init(O.actions.ACTION_EDIT_LIST_ACTIVITY,"Создать магазин");
 					FragmentTransaction transaction= getSupportFragmentManager().beginTransaction();
 					dialog.show(transaction,"");
 					break;
@@ -68,10 +80,9 @@ public class EditListActivity extends AppCompatActivity implements UpdateListCal
 			}
 		}
 
-	@Override
 	public void updateLists()
 		{
-		GTSAdapter adapter= new GTSAdapter(this,getList(),this,getSupportFragmentManager() );
+		GTSAdapter adapter= new GTSAdapter(this,getList(),O.actions.ACTION_EDIT_LIST_ACTIVITY,getSupportFragmentManager() );
 		recyclerList.setAdapter(adapter);
 		recyclerList.setLayoutManager(new LinearLayoutManager(this) );
 		}
@@ -118,5 +129,14 @@ public class EditListActivity extends AppCompatActivity implements UpdateListCal
 				break;
 			}
 		btn.setOnClickListener(new AddListener() );
+		receiver= new Receiver();
+		IntentFilter filter= new IntentFilter(O.actions.ACTION_EDIT_LIST_ACTIVITY);
+		registerReceiver(receiver,filter);
+		}
+	@Override
+	protected void onDestroy()
+		{
+		super.onDestroy();
+		unregisterReceiver(receiver);
 		}
 	}

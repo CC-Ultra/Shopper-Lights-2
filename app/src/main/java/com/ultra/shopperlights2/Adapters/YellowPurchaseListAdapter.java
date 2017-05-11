@@ -1,5 +1,7 @@
 package com.ultra.shopperlights2.Adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,10 +10,12 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import com.ultra.shopperlights2.App;
+import com.ultra.shopperlights2.Callbacks.DialogDecision;
 import com.ultra.shopperlights2.Callbacks.YellowScreenDelElement;
 import com.ultra.shopperlights2.Callbacks.YellowScreenInitFragment;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
+import com.ultra.shopperlights2.Utils.ConfirmDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,12 +29,33 @@ import java.util.List;
 
 public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurchaseListAdapter.Holder>
 	{
+	private String action;
+	private Context context;
 	private long purchaseId;
-	private int selected=-1;
 	private YellowScreenDelElement delCallback;
 	private YellowScreenInitFragment initCallback;
 	private ArrayList<Product> elements;
 
+	private class DelDecision implements DialogDecision
+		{
+		Product product;
+
+		public DelDecision(Product _product)
+			{
+			product=_product;
+			}
+
+		@Override
+		public void sayNo(int noId) {}
+		@Override
+		public void sayYes(int yesId)
+			{
+			int position= elements.indexOf(product);
+			delElement(position);
+			context.sendBroadcast(new Intent(action) );
+			delCallback.delElement(product.getTitle() );
+			}
+		}
 	private class SelectListener implements View.OnClickListener
 		{
 		private Product product;
@@ -43,9 +68,8 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 		@Override
 		public void onClick(View v)
 			{
-			deselect();
-			selected= elements.indexOf(product);
-			notifyItemChanged(selected);
+			int position= elements.indexOf(product);
+			notifyItemChanged(position);
 			initCallback.initFragment(product.getId() );
 			}
 		}
@@ -61,10 +85,8 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 		@Override
 		public void onClick(View v)
 			{
-			int position= elements.indexOf(product);
-			delElement(position);
-			delCallback.delElement(product.getTitle() );
-			deselect();
+			DelDecision decision= new DelDecision(product);
+			ConfirmDialog.ask(context,decision,0,0);
 			}
 		}
 	class Holder extends RecyclerView.ViewHolder
@@ -88,18 +110,15 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 			}
 		}
 
-	public YellowPurchaseListAdapter(ArrayList<Product> _elements,long _purchaseId,YellowScreenDelElement _delCallback,YellowScreenInitFragment _initCallback)
+	public YellowPurchaseListAdapter(Context _context,ArrayList<Product> _elements,long _purchaseId,String _action,
+									 YellowScreenDelElement _delCallback,YellowScreenInitFragment _initCallback)
 		{
+		action=_action;
+		context=_context;
 		purchaseId=_purchaseId;
 		delCallback=_delCallback;
 		initCallback=_initCallback;
 		elements=_elements;
-		}
-	private void deselect()
-		{
-		int lastSelected=selected;
-		selected=-1;
-		notifyItemChanged(lastSelected);
 		}
 	public void addElement(Note note)
 		{
@@ -111,6 +130,7 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 		App.session.getProductDao().insert(product);
 		for(Tag tag : note.getTags())
 			{
+			product.getTags().add(tag);
 			TagToProduct tagToProduct= new TagToProduct();
 			tagToProduct.setProductId(product.getId() );
 			tagToProduct.setTagId(tag.getId() );
@@ -144,9 +164,7 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 		holder.titleTxt.setText(product.getTitle() );
 		holder.selectListener.setProduct(product);
 		holder.delListener.setProduct(product);
-		if(position==selected)
-			holder.mainView.setBackgroundColor(Color.parseColor("#fff200") );
-		else if(product.isComplete() )
+		if(product.isComplete() )
 			holder.mainView.setBackgroundColor(Color.parseColor("#00dd00") );
 		else
 			holder.mainView.setBackgroundColor(Color.parseColor("#222222") );

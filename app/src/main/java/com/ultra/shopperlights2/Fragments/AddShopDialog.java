@@ -1,5 +1,6 @@
 package com.ultra.shopperlights2.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -8,10 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.ultra.shopperlights2.App;
-import com.ultra.shopperlights2.Callbacks.UpdateListCallback;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.Shop;
 import com.ultra.shopperlights2.Units.ShopDao;
+import com.ultra.shopperlights2.Utils.O;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class AddShopDialog extends DialogFragment
 	 private AutoCompleteTextView shopNameInput,shopCityInput;
 	 private EditText adrInput;
 	 private long shopId=0;
-	 private UpdateListCallback callback;
+	 private String action;
 
 	 private class OkListener implements View.OnClickListener
 		 {
@@ -83,19 +84,19 @@ public class AddShopDialog extends DialogFragment
 				 else
 					 shopDao.update(shop);
 				 dismiss();
-				 callback.updateLists();
+				 getContext().sendBroadcast(new Intent(action) );
 				 }
 			 }
 		 }
 
-	 public void init(UpdateListCallback _callback,String _title)
+	 public void init(String _action,String _title)
 		 {
-		 callback=_callback;
+		 action=_action;
 		 title=_title;
 		 }
-	 public void init(UpdateListCallback _callback,String _title,long _id)
+	 public void init(String _action,String _title,long _id)
 		 {
-		 callback=_callback;
+		 action=_action;
 		 shopId=_id;
 		 title=_title;
 		 }
@@ -126,6 +127,11 @@ public class AddShopDialog extends DialogFragment
 		 {
 		 getDialog().setTitle(title);
 		 View mainView= inflater.inflate(R.layout.add_shop_dialog_layout,container,false);
+		 if(savedInstanceState!=null)
+			 {
+			 shopId= savedInstanceState.getLong(O.mapKeys.savedState.SAVED_STATE_SHOP_ID,0);
+			 action= savedInstanceState.getString(O.mapKeys.savedState.SAVED_STATE_ACTION);
+			 }
 
 		 Button okBtn= (Button)mainView.findViewById(R.id.btnOk);
 		 shopNameInput= (AutoCompleteTextView) mainView.findViewById(R.id.autoTitle);
@@ -146,5 +152,13 @@ public class AddShopDialog extends DialogFragment
 			 }
 		 okBtn.setOnClickListener(new OkListener() );
 		 return mainView;
+		 }
+	 @Override
+	 public void onSaveInstanceState(Bundle outState)
+		 {
+		 if(shopId!=0)
+			 outState.putLong(O.mapKeys.savedState.SAVED_STATE_SHOP_ID,shopId);
+		 outState.putString(O.mapKeys.savedState.SAVED_STATE_ACTION,action);
+		 super.onSaveInstanceState(outState);
 		 }
 	 }

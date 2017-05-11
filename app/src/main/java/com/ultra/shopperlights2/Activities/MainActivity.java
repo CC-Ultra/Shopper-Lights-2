@@ -95,12 +95,12 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 public XPagerAdapter(FragmentManager fm)
 			 {
 			 super(fm);
-			 ViewPagerFragment_Arrow fragment_arrow=new ViewPagerFragment_Arrow();
-			 fragment_arrow.init(pager);
-			 fragments.add(fragment_arrow);
-			 lightsFragment= new ViewPagerFragment_Lights();
 			 PendingIntent pendingIntent= createPendingResult(0,new Intent(),0);
-			 lightsFragment.init(pendingIntent,pager);
+			 ViewPagerFragment_Arrow fragment_arrow=new ViewPagerFragment_Arrow();
+			 lightsFragment= new ViewPagerFragment_Lights();
+			 fragment_arrow.init(pendingIntent);
+			 lightsFragment.init(pendingIntent);
+			 fragments.add(fragment_arrow);
 			 fragments.add(lightsFragment);
 			 notifyDataSetChanged();
 			 }
@@ -195,7 +195,16 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 	 @Override
 	 protected void onActivityResult(int requestCode,int resultCode,Intent data)
 		 {
-		 selectScreen(resultCode);
+		 if(resultCode==O.interaction.RESULT_CODE_LIGHTS)
+			 selectScreen(data.getIntExtra(O.mapKeys.extra.SCREEN_CODE,O.interaction.SCREEN_CODE_GREEN) );
+		 else if(resultCode==O.interaction.RESULT_CODE_ARROW)
+			 {
+			 boolean order= data.getBooleanExtra(O.mapKeys.extra.PAGER_ORDER,false);
+			 if(order)
+				 pager.setCurrentItem(1);
+			 else
+				 pager.setCurrentItem(0);
+			 }
 		 }
 	 @Override
 	 protected void onSaveInstanceState(Bundle outState)
@@ -208,6 +217,12 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 {
 		 getMenuInflater().inflate(R.menu.main_nenu, menu);
 		 return true;
+		 }
+	 @Override
+	 public boolean onPrepareOptionsMenu(Menu menu)
+		 {
+		 menu.setGroupVisible(R.id.editGroup,!purchaseState);
+		 return super.onPrepareOptionsMenu(menu);
 		 }
 	 @Override
 	 public boolean onOptionsItemSelected(MenuItem item)

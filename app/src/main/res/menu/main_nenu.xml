@@ -8,18 +8,21 @@
 			android:title="Тема"
 			app:showAsAction="never"
 			android:id="@+id/theme"/>
-	<item
-			android:title="Группы"
-			app:showAsAction="never"
-			android:id="@+id/groups"/>
-	<item
-			android:title="Теги"
-			app:showAsAction="never"
-			android:id="@+id/tags"/>
-	<item
-			android:title="Магазины"
-			app:showAsAction="never"
-			android:id="@+id/shops"/>
+	<group
+			android:id="@+id/editGroup">
+		<item
+				android:title="Группы"
+				app:showAsAction="never"
+				android:id="@+id/groups"/>
+		<item
+				android:title="Теги"
+				app:showAsAction="never"
+				android:id="@+id/tags"/>
+		<item
+				android:title="Магазины"
+				app:showAsAction="never"
+				android:id="@+id/shops"/>
+	</group>
 	<item
 			android:title="Помощь"
 			app:showAsAction="never"

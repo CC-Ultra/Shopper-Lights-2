@@ -1,5 +1,6 @@
 package com.ultra.shopperlights2.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -8,9 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.ultra.shopperlights2.App;
-import com.ultra.shopperlights2.Callbacks.UpdateListCallback;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
+import com.ultra.shopperlights2.Utils.O;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class AddNoteDialog extends DialogFragment
 	 private String title;
 	 private ArrayList<String> listRemaining,listSelected;
 	 private long noteId=0;
-	 private UpdateListCallback callback;
+	 private String action;
 
 	 private class OkListener implements View.OnClickListener
 		 {
@@ -94,7 +95,7 @@ public class AddNoteDialog extends DialogFragment
 					 }
 				 noteDao.update(note);
 				 dismiss();
-				 callback.updateLists();
+				 getContext().sendBroadcast(new Intent(action) );
 				 }
 			 }
 		 }
@@ -132,14 +133,14 @@ public class AddNoteDialog extends DialogFragment
 			 }
 		 }
 
-	 public void init(UpdateListCallback _callback,String _title)
+	 public void init(String _action,String _title)
 		 {
-		 callback=_callback;
+		 action=_action;
 		 title=_title;
 		 }
-	 public void init(UpdateListCallback _callback,String _title,long _id)
+	 public void init(String _action,String _title,long _id)
 		 {
-		 callback=_callback;
+		 action=_action;
 		 noteId=_id;
 		 title=_title;
 		 }
@@ -184,6 +185,11 @@ public class AddNoteDialog extends DialogFragment
 		 {
 		 getDialog().setTitle(title);
 		 View mainView= inflater.inflate(R.layout.add_note_dialog_layout,container,false);
+		 if(savedInstanceState!=null)
+			 {
+			 noteId= savedInstanceState.getLong(O.mapKeys.savedState.SAVED_STATE_NOTE_ID,0);
+			 action= savedInstanceState.getString(O.mapKeys.savedState.SAVED_STATE_ACTION);
+			 }
 
 		 Button okBtn= (Button)mainView.findViewById(R.id.btnOk);
 		 spinner_Group= (Spinner)mainView.findViewById(R.id.spinnerGroup);
@@ -198,5 +204,13 @@ public class AddNoteDialog extends DialogFragment
 		 listViewRemaining.setOnItemClickListener(new OnItemClickListener(false) );
 
 		 return mainView;
+		 }
+	 @Override
+	 public void onSaveInstanceState(Bundle outState)
+		 {
+		 if(noteId!=0)
+			 outState.putLong(O.mapKeys.savedState.SAVED_STATE_NOTE_ID,noteId);
+		 outState.putString(O.mapKeys.savedState.SAVED_STATE_ACTION,action);
+		 super.onSaveInstanceState(outState);
 		 }
 	 }

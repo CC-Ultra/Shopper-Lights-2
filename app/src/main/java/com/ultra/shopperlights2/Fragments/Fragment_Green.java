@@ -56,11 +56,11 @@ public class Fragment_Green extends Fragment
 
 	 private void initAdapter()
 		 {
-		 ArrayList<RecyclerListElement> elements= new ArrayList<>();
+		 ArrayList<GreenRecyclerListElement> elements= new ArrayList<>();
 		 elements.addAll(App.session.getGroupDao().queryBuilder().orderAsc(GroupDao.Properties.Priority).list() );
 		 for(int i=0; i<elements.size(); i++)
 			 {
-			 RecyclerListElement element= elements.get(i);
+			 GreenRecyclerListElement element= elements.get(i);
 			 if(element.isGroup() )
 				 {
 				 Group group= (Group)element;

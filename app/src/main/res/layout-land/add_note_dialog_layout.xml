@@ -10,7 +10,7 @@
 			android:layout_height="wrap_content"
 			android:orientation="horizontal">
 		<EditText
-				android:layout_width="400dp"
+				android:layout_width="350dp"
 				android:layout_height="wrap_content"
 				android:hint="Название продукта"
 				android:gravity="center"
@@ -18,9 +18,9 @@
 				android:layout_marginLeft="10dp"
 				android:id="@+id/titleInput"/>
 		<EditText
-				android:layout_width="match_parent"
+				android:layout_width="60dp"
 				android:layout_height="wrap_content"
-				android:hint="Количество"
+				android:hint="штук"
 				android:gravity="center"
 				android:layout_marginRight="10dp"
 				android:inputType="number"

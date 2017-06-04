@@ -36,6 +36,10 @@ public class O
 
 	 public static class dimens
 		{
+		 public static final int GREEN_DROPDOWN_TABBED_N_MARGIN=180;
+		 public static final int GREEN_DROPDOWN_TABBED_TITLE_WIDTH=170;
+		 public static final int GREEN_DROPDOWN_ELEMENT_HEIGHT=80;
+		 public static final int GREEN_DROPDOWN_TAB=50;
 		 public static final int LIGHTS_PAGER_WIDTH_PORT=100;
 		 public static final int LIGHTS_PAGER_WIDTH_LAND=155;
 		 public static final int ARROW_PAGER_WIDTH=25;

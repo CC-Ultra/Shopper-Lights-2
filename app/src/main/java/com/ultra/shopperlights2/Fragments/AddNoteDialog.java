@@ -25,9 +25,10 @@ import java.util.List;
 
 public class AddNoteDialog extends DialogFragment
 	 {
+	 private static String lastTimeGroup=null;
 	 private ListView listViewSelected,listViewRemaining;
 	 private Spinner spinner_Group;
-	 private EditText noteNameInput,noteNInput;
+	 private EditText inputName, inputN;
 	 private ArrayAdapter<String> adapterSelected,adapterRemaining;
 	 private String title;
 	 private ArrayList<String> listRemaining,listSelected;
@@ -40,9 +41,9 @@ public class AddNoteDialog extends DialogFragment
 		 public void onClick(View v)
 			 {
 			 DaoSession session= App.session;
-			 String noteName= noteNameInput.getText().toString();
+			 String noteName= inputName.getText().toString();
 			 if(noteName.length() == 0)
-				 Toast.makeText(getContext(),"Введите название продукта",Toast.LENGTH_SHORT).show();
+				 inputName.setError("Введите название продукта");
 			 else
 				 {
 				 NoteDao noteDao= session.getNoteDao();
@@ -52,22 +53,27 @@ public class AddNoteDialog extends DialogFragment
 				 else
 					 note= noteDao.load(noteId);
 				 note.setTitle(noteName);
-				 String noteNStr= noteNInput.getText().toString();
+				 String noteNStr= inputN.getText().toString();
 				 if(noteNStr.length()!=0)
 					 note.setN(Integer.parseInt(noteNStr) );
-				 String groupStr= spinner_Group.getSelectedItem().toString();
-				 if(groupStr.length()!=0)
+				 lastTimeGroup= spinner_Group.getSelectedItem().toString();
+				 GroupDao groupDao= session.getGroupDao();
+				 for(Group lastGroup : groupDao.loadAll() )
 					 {
-					 GroupDao groupDao= session.getGroupDao();
-					 for(Group lastGroup : groupDao.queryBuilder().list())
+					 if(lastGroup.getNotes().contains(note) )
 						 {
-						 if(lastGroup.getNotes().contains(note) )
-							 {
-							 lastGroup.getNotes().remove(note);
-							 groupDao.update(lastGroup);
-							 }
+						 lastGroup.getNotes().remove(note);
+						 groupDao.update(lastGroup);
 						 }
-					 Group group= session.getGroupDao().queryBuilder().where(GroupDao.Properties.Title.eq(groupStr) ).list().get(0);
+					 }
+				 if(lastTimeGroup.length()==0)
+					 {
+					 note.setGroupId(0);
+					 note.setTabbed(false);
+					 }
+				 else
+					 {
+					 Group group= session.getGroupDao().queryBuilder().where(GroupDao.Properties.Title.eq(lastTimeGroup) ).list().get(0);
 					 note.setGroupId(group.getId() );
 					 if(!group.getNotes().contains(note) )
 						 group.getNotes().add(note);
@@ -159,11 +165,13 @@ public class AddNoteDialog extends DialogFragment
 		 ArrayAdapter<String> groupSpinnerAdapter= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,groupListStr);
 		 groupSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		 spinner_Group.setAdapter(groupSpinnerAdapter);
+		 if(groupListStr.contains(lastTimeGroup) )
+			 spinner_Group.setSelection(groupListStr.indexOf(lastTimeGroup) );
 		 if(noteId!=0)
 			 {
 			 Note note= session.getNoteDao().load(noteId);
-			 noteNameInput.setText(note.getTitle() );
-			 noteNInput.setText(note.getN() +"");
+			 inputName.setText(note.getTitle() );
+			 inputN.setText(note.getN() +"");
 			 Group group= session.getGroupDao().load(note.getGroupId() );
 			 if(group!=null)
 				 spinner_Group.setSelection(groupListStr.indexOf(group.getTitle() ) );
@@ -193,8 +201,8 @@ public class AddNoteDialog extends DialogFragment
 
 		 Button okBtn= (Button)mainView.findViewById(R.id.btnOk);
 		 spinner_Group= (Spinner)mainView.findViewById(R.id.spinnerGroup);
-		 noteNameInput= (EditText)mainView.findViewById(R.id.titleInput);
-		 noteNInput= (EditText)mainView.findViewById(R.id.nInput);
+		 inputName= (EditText)mainView.findViewById(R.id.titleInput);
+		 inputN= (EditText)mainView.findViewById(R.id.nInput);
 		 listViewRemaining= (ListView)mainView.findViewById(R.id.listRemaining);
 		 listViewSelected= (ListView)mainView.findViewById(R.id.listSelected);
 

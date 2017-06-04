@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.DialogDecision;
 import com.ultra.shopperlights2.Callbacks.YellowScreenDelElement;
-import com.ultra.shopperlights2.Callbacks.YellowScreenInitFragment;
+import com.ultra.shopperlights2.Callbacks.YellowScreenInitDialogFragment;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
 import com.ultra.shopperlights2.Utils.ConfirmDialog;
@@ -33,7 +33,7 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 	private Context context;
 	private long purchaseId;
 	private YellowScreenDelElement delCallback;
-	private YellowScreenInitFragment initCallback;
+	private YellowScreenInitDialogFragment initCallback;
 	private ArrayList<Product> elements;
 
 	private class DelDecision implements DialogDecision
@@ -70,7 +70,7 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 			{
 			int position= elements.indexOf(product);
 			notifyItemChanged(position);
-			initCallback.initFragment(product.getId() );
+			initCallback.initDialog(product.getId() );
 			}
 		}
 	private class DelListener implements View.OnClickListener
@@ -111,7 +111,7 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 		}
 
 	public YellowPurchaseListAdapter(Context _context,ArrayList<Product> _elements,long _purchaseId,String _action,
-									 YellowScreenDelElement _delCallback,YellowScreenInitFragment _initCallback)
+									 YellowScreenDelElement _delCallback,YellowScreenInitDialogFragment _initCallback)
 		{
 		action=_action;
 		context=_context;
@@ -143,8 +143,8 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 		{
 		Product product= elements.get(position);
 		DaoSession session= App.session;
-		List<TagToProduct> tTPs= session.getTagToProductDao().queryBuilder().where(TagToProductDao.Properties.ProductId.eq(product.getId())).list();
-		for(TagToProduct tagToProduct : tTPs)
+		List<TagToProduct> ttps= session.getTagToProductDao().queryBuilder().where(TagToProductDao.Properties.ProductId.eq(product.getId() ) ).list();
+		for(TagToProduct tagToProduct : ttps)
 			session.getTagToProductDao().delete(tagToProduct);
 		session.getProductDao().delete(product);
 		elements.remove(position);

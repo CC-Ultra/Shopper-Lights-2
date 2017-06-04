@@ -16,7 +16,7 @@ import org.greenrobot.greendao.DaoException;
  * @author CC-Ultra
  */
 @Entity
-public class Tag extends RecyclerListElement
+public class Tag extends GreenRecyclerListElement
 	{
 	@Id(autoincrement = true)
 	private Long id;

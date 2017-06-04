@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ import com.ultra.shopperlights2.Utils.O;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.ultra.shopperlights2.Utils.O.TAG;
+
 /**
  * <p></p>
  * <p><sub>(07.05.2017)</sub></p>
@@ -33,14 +36,14 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 	{
 	private String action;
 	private FragmentManager fragmentManager;
-	private ArrayList<RecyclerListElement> elements= new ArrayList<>();
+	private ArrayList<GreenRecyclerListElement> elements= new ArrayList<>();
 	private Context context;
 
 	class ConfirmDialogDecision implements DialogDecision
 		{
-		RecyclerListElement element;
+		GreenRecyclerListElement element;
 
-		public ConfirmDialogDecision(RecyclerListElement _element)
+		public ConfirmDialogDecision(GreenRecyclerListElement _element)
 			{
 			element=_element;
 			}
@@ -69,10 +72,10 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 		}
 	class DelListener implements View.OnClickListener
 		{
-		RecyclerListElement element;
+		GreenRecyclerListElement element;
 		ConfirmDialogDecision dialogDecision;
 
-		void setElement(RecyclerListElement _element)
+		void setElement(GreenRecyclerListElement _element)
 			{
 			element=_element;
 			dialogDecision= new ConfirmDialogDecision(element);
@@ -87,9 +90,9 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 
 	class EditListener implements View.OnClickListener
 		{
-		RecyclerListElement element;
+		GreenRecyclerListElement element;
 
-		void setElement(RecyclerListElement _element)
+		void setElement(GreenRecyclerListElement _element)
 			{
 			element=_element;
 			}
@@ -130,26 +133,25 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 	class Holder extends RecyclerView.ViewHolder
 		{
 		TextView title,city,adr;
-		ImageButton btnEdit,btnDel;
+		ImageButton btnDel;
 		DelListener delListener;
 		EditListener editListener;
 
-		public Holder(View itemView)
+		public Holder(View mainView)
 			{
-			super(itemView);
+			super(mainView);
 			delListener= new DelListener();
 			editListener= new EditListener();
-			title= (TextView)itemView.findViewById(R.id.title);
-			city= (TextView)itemView.findViewById(R.id.city);
-			adr= (TextView)itemView.findViewById(R.id.adr);
-			btnDel= (ImageButton)itemView.findViewById(R.id.deleteBtn);
-			btnEdit= (ImageButton)itemView.findViewById(R.id.editBtn);
+			title= (TextView)mainView.findViewById(R.id.title);
+			city= (TextView)mainView.findViewById(R.id.city);
+			adr= (TextView)mainView.findViewById(R.id.adr);
+			btnDel= (ImageButton)mainView.findViewById(R.id.deleteBtn);
 			btnDel.setOnClickListener(delListener);
-			btnEdit.setOnClickListener(editListener);
+			mainView.setOnClickListener(editListener);
 			}
 		}
 
-	public GTSAdapter(Context _context,ArrayList<RecyclerListElement> _elements,String _action,FragmentManager _fragmentManager)
+	public GTSAdapter(Context _context,ArrayList<GreenRecyclerListElement> _elements,String _action,FragmentManager _fragmentManager)
 		{
 		action=_action;
 		fragmentManager=_fragmentManager;
@@ -181,7 +183,7 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 			note.setGroupId(0);
 		App.session.getGroupDao().delete(group);
 		}
-	private void delElement(RecyclerListElement element,int position)
+	private void delElement(GreenRecyclerListElement element,int position)
 		{
 		elements.remove(element);
 		notifyItemRemoved(position);
@@ -196,7 +198,7 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 	@Override
 	public void onBindViewHolder(Holder holder,int position)
 		{
-		RecyclerListElement element= elements.get(position);
+		GreenRecyclerListElement element= elements.get(position);
 		switch(element.getGTSType() )
 			{
 			case O.interaction.ELEMENT_TYPE_TAG:

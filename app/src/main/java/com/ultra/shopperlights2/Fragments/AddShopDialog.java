@@ -28,8 +28,8 @@ import java.util.TreeSet;
 public class AddShopDialog extends DialogFragment
 	 {
 	 private String title;
-	 private AutoCompleteTextView shopNameInput,shopCityInput;
-	 private EditText adrInput;
+	 private AutoCompleteTextView inputShopName, inputShopCity;
+	 private EditText inputAdr;
 	 private long shopId=0;
 	 private String action;
 
@@ -38,9 +38,9 @@ public class AddShopDialog extends DialogFragment
 		 @Override
 		 public void onClick(View v)
 			 {
-			 String shopName= shopNameInput.getText().toString();
-			 String shopCity= shopCityInput.getText().toString();
-			 String shopAdr= adrInput.getText().toString();
+			 String shopName= inputShopName.getText().toString();
+			 String shopCity= inputShopCity.getText().toString();
+			 String shopAdr= inputAdr.getText().toString();
 			 if(shopName.length() == 0 || shopAdr.length() == 0 || shopCity.length() == 0)
 				 Toast.makeText(getContext(),"Не все поля заполнены",Toast.LENGTH_SHORT).show();
 			 else
@@ -60,7 +60,7 @@ public class AddShopDialog extends DialogFragment
 					 {
 					 if(size>0)
 						 {
-						 Toast.makeText(getContext(),"Это имя уже занято",Toast.LENGTH_SHORT).show();
+						 inputShopName.setError("Это имя уже занято");
 						 return;
 						 }
 					 }
@@ -72,7 +72,7 @@ public class AddShopDialog extends DialogFragment
 					 c= shop.getAdr().equals(shopAdr);
 					 if(size>0 && (!a || !b || !c) )
 						 {
-						 Toast.makeText(getContext(),"Это имя уже занято",Toast.LENGTH_SHORT).show();
+						 inputShopName.setError("Это имя уже занято");
 						 return;
 						 }
 					 }
@@ -134,21 +134,21 @@ public class AddShopDialog extends DialogFragment
 			 }
 
 		 Button okBtn= (Button)mainView.findViewById(R.id.btnOk);
-		 shopNameInput= (AutoCompleteTextView) mainView.findViewById(R.id.autoTitle);
-		 shopCityInput= (AutoCompleteTextView)mainView.findViewById(R.id.autoCity);
-		 adrInput= (EditText)mainView.findViewById(R.id.adrInput);
+		 inputShopName= (AutoCompleteTextView) mainView.findViewById(R.id.autoTitle);
+		 inputShopCity= (AutoCompleteTextView)mainView.findViewById(R.id.autoCity);
+		 inputAdr= (EditText)mainView.findViewById(R.id.adrInput);
 
 		 ArrayAdapter<String> adapterTitle= new ArrayAdapter<>(getContext(),android.R.layout.simple_dropdown_item_1line,getShopStrs() );
 		 ArrayAdapter<String> adapterCity= new ArrayAdapter<>(getContext(),android.R.layout.simple_dropdown_item_1line,getCityStrs() );
-		 shopNameInput.setAdapter(adapterTitle);
-		 shopCityInput.setAdapter(adapterCity);
+		 inputShopName.setAdapter(adapterTitle);
+		 inputShopCity.setAdapter(adapterCity);
 
 		 if(shopId!=0)
 			 {
 			 Shop shop= App.session.getShopDao().load(shopId);
-			 shopNameInput.setText(shop.getTitle() );
-			 shopCityInput.setText(shop.getCity() );
-			 adrInput.setText(shop.getAdr() );
+			 inputShopName.setText(shop.getTitle() );
+			 inputShopCity.setText(shop.getCity() );
+			 inputAdr.setText(shop.getAdr() );
 			 }
 		 okBtn.setOnClickListener(new OkListener() );
 		 return mainView;

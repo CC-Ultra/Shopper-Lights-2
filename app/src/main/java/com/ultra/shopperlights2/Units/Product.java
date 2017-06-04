@@ -21,7 +21,7 @@ public class Product
 	@Id(autoincrement = true)
 	private Long id;
 
-	private boolean complete;
+	private boolean complete,ethereal;
 	private String title,weightUnit;
 	private float price,weight,quality;
 	private int n;
@@ -44,12 +44,13 @@ public class Product
 	@Generated(hash = 694336451)
 	private transient ProductDao myDao;
 
-	@Generated(hash = 1646973332)
-	public Product(Long id, boolean complete, String title, String weightUnit,
-			float price, float weight, float quality, int n, long manufacturerId,
-			long purchaseId) {
+	@Generated(hash = 218269412)
+	public Product(Long id, boolean complete, boolean ethereal, String title,
+			String weightUnit, float price, float weight, float quality, int n,
+			long manufacturerId, long purchaseId) {
 		this.id = id;
 		this.complete = complete;
+		this.ethereal = ethereal;
 		this.title = title;
 		this.weightUnit = weightUnit;
 		this.price = price;
@@ -78,6 +79,14 @@ public class Product
 
 	public void setComplete(boolean complete) {
 		this.complete = complete;
+	}
+
+	public boolean isEthereal() {
+		return this.ethereal;
+	}
+
+	public void setEthereal(boolean ethereal) {
+		this.ethereal = ethereal;
 	}
 
 	public String getTitle() {
@@ -212,10 +221,15 @@ public class Product
 		return this.complete;
 	}
 
+	public boolean getEthereal() {
+		return this.ethereal;
+	}
+
 	/** called by internal mechanisms, do not call yourself. */
 	@Generated(hash = 1171535257)
 	public void __setDaoSession(DaoSession daoSession) {
 		this.daoSession = daoSession;
 		myDao = daoSession != null ? daoSession.getProductDao() : null;
 	}
+
 	}

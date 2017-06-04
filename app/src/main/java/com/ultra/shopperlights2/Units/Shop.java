@@ -16,7 +16,7 @@ import org.greenrobot.greendao.DaoException;
  */
 
 @Entity
-public class Shop extends RecyclerListElement
+public class Shop extends GreenRecyclerListElement
 	 {
 	 @Id(autoincrement = true)
 	 private Long id;

@@ -1,6 +1,7 @@
 package com.ultra.shopperlights2.Adapters;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.ultra.shopperlights2.App;
@@ -20,6 +22,7 @@ import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
 import com.ultra.shopperlights2.Utils.Calc;
 import com.ultra.shopperlights2.Utils.ConfirmDialog;
+import com.ultra.shopperlights2.Utils.O;
 
 import java.util.ArrayList;
 
@@ -34,17 +37,17 @@ import static android.content.ContentValues.TAG;
 
 public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdownListAdapter.Holder>
 	 {
-	 private ArrayList<RecyclerListElement> elements;
+	 private ArrayList<GreenRecyclerListElement> elements;
 	 private Context context;
 	 private FragmentManager fragmentManager;
 	 private String action;
 
 	 class ConfirmDialogDecision implements DialogDecision
 		 {
-		 RecyclerListElement element;
+		 GreenRecyclerListElement element;
 		 int position;
 
-		 void init(RecyclerListElement _element,int _position)
+		 void init(GreenRecyclerListElement _element,int _position)
 			 {
 			 position=_position;
 			 element=_element;
@@ -59,9 +62,9 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 		 }
 	 private class EditListener implements View.OnClickListener
 		 {
-		 RecyclerListElement element;
+		 GreenRecyclerListElement element;
 
-		 void setElement(RecyclerListElement _element)
+		 void setElement(GreenRecyclerListElement _element)
 			 {
 			 element=_element;
 			 }
@@ -86,10 +89,10 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 		 }
 	 private class DelListener implements View.OnClickListener
 		 {
-		 RecyclerListElement element;
+		 GreenRecyclerListElement element;
 		 ConfirmDialogDecision decision= new ConfirmDialogDecision();
 
-		 void setElement(RecyclerListElement _element)
+		 void setElement(GreenRecyclerListElement _element)
 			 {
 			 element=_element;
 			 }
@@ -127,17 +130,18 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 		 }
 	 private class DropdownListener implements View.OnClickListener
 		 {
-		 RecyclerListElement element;
+		 GreenRecyclerListElement element;
+		 ImageView img;
 
-		 void setElement(RecyclerListElement _element)
+		 void init(GreenRecyclerListElement _element,ImageView _img)
 			 {
 			 element=_element;
+			 img=_img;
 			 }
 
 		 @Override
 		 public void onClick(View v)
 			 {
-			 ImageButton btn= (ImageButton)v;
 			 int position= elements.indexOf(element);
 			 Group group= (Group)element;
 			 boolean isOpen= group.isOpen();
@@ -153,49 +157,49 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 					 delElement(note,position+1);
 			 group.setIsOpen(!isOpen);
 			 if(isOpen)
-				 btn.setImageResource(R.drawable.arrow_dropdown);
+				 img.setImageResource(R.drawable.arrow_dropdown);
 			 else
-				 btn.setImageResource(R.drawable.arrow_dropup);
+				 img.setImageResource(R.drawable.arrow_dropup);
 			 App.session.getGroupDao().update(group);
 			 }
 		 }
 	 class Holder extends RecyclerView.ViewHolder
 		 {
-		 ImageButton btnDel,btnEdit,btnDropdown;
+		 ImageButton btnDel;
+		 ImageView img;
 		 TextView title,n;
 		 TextView tag[]= new TextView[3];
 		 DelListener delListener;
 		 DropdownListener dropdownListener;
 		 EditListener editListener;
+		 View mainView;
 
-		 public Holder(View itemView)
+		 public Holder(View _mainView)
 			 {
-			 super(itemView);
-			 btnDel= (ImageButton)itemView.findViewById(R.id.deleteBtn);
-			 btnEdit= (ImageButton)itemView.findViewById(R.id.editBtn);
-			 btnDropdown= (ImageButton)itemView.findViewById(R.id.dropdownBtn);
-			 title= (TextView)itemView.findViewById(R.id.title);
-			 n= (TextView)itemView.findViewById(R.id.n);
-			 tag[0]= (TextView)itemView.findViewById(R.id.tag1);
-			 tag[1]= (TextView)itemView.findViewById(R.id.tag2);
-			 tag[2]= (TextView)itemView.findViewById(R.id.tag3);
+			 super(_mainView);
+			 mainView=_mainView;
+			 img= (ImageView)mainView.findViewById(R.id.dropdownImg);
+			 btnDel= (ImageButton)mainView.findViewById(R.id.deleteBtn);
+			 title= (TextView)mainView.findViewById(R.id.title);
+			 n= (TextView)mainView.findViewById(R.id.n);
+			 tag[0]= (TextView)mainView.findViewById(R.id.tag1);
+			 tag[1]= (TextView)mainView.findViewById(R.id.tag2);
+			 tag[2]= (TextView)mainView.findViewById(R.id.tag3);
 			 delListener= new DelListener();
 			 dropdownListener= new DropdownListener();
 			 editListener= new EditListener();
 			 btnDel.setOnClickListener(delListener);
-			 btnEdit.setOnClickListener(editListener);
-			 btnDropdown.setOnClickListener(dropdownListener);
 			 }
 		 }
 
-	 public GreenDropdownListAdapter(Context _context,ArrayList<RecyclerListElement> _elements,String _action,FragmentManager _fragmentManager)
+	 public GreenDropdownListAdapter(Context _context,ArrayList<GreenRecyclerListElement> _elements,String _action,FragmentManager _fragmentManager)
 		 {
 		 fragmentManager=_fragmentManager;
 		 action=_action;
 		 context=_context;
 		 elements=_elements;
 		 }
-	 private void delGroup(RecyclerListElement element,int position)
+	 private void delGroup(GreenRecyclerListElement element,int position)
 		 {
 		 DaoSession session= App.session;
 		 Group group= (Group)element;
@@ -212,12 +216,12 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 		 session.getGroupDao().delete(group);
 		 delElement(element,position);
 		 }
-	 private void addElement(RecyclerListElement element,int position)
+	 private void addElement(GreenRecyclerListElement element,int position)
 		 {
 		 elements.add(position,element);
 		 notifyItemInserted(position);
 		 }
-	 private void delElement(RecyclerListElement element,int position)
+	 private void delElement(GreenRecyclerListElement element,int position)
 		 {
 		 elements.remove(element);
 		 notifyItemRemoved(position);
@@ -232,20 +236,21 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 	 @Override
 	 public void onBindViewHolder(Holder holder,int position)
 		 {
-		 RecyclerListElement recyclerListElement= elements.get(position);
+		 GreenRecyclerListElement recyclerListElement= elements.get(position);
 		 if(recyclerListElement.isGroup() )
 			 {
 			 Group group= (Group) recyclerListElement;
-			 holder.btnDropdown.setVisibility(View.VISIBLE);
-			 holder.dropdownListener.setElement(recyclerListElement);
+			 holder.img.setVisibility(View.VISIBLE);
+			 holder.dropdownListener.init(recyclerListElement,holder.img);
 			 group.setHolderTitle(group.getTitle() +" ("+ group.getNotes().size() +")");
 			 holder.title.setText(group.getHolderTitle() );
 			 holder.title.setTextColor(Color.GREEN);
 			 for(int i=0; i<3; i++)
 				 holder.tag[i].setVisibility(View.GONE);
 			 holder.n.setVisibility(View.GONE);
+			 holder.mainView.setOnClickListener(holder.dropdownListener);
 			 if(group.isOpen() )
-				 holder.btnDropdown.setImageResource(R.drawable.arrow_dropup);
+				 holder.img.setImageResource(R.drawable.arrow_dropup);
 			 }
 		 else
 			 {
@@ -253,21 +258,30 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 			 if(note.isLocked() )
 				 {
 				 holder.btnDel.setEnabled(false);
-				 holder.btnEdit.setEnabled(false);
 				 }
 			 else
 				 {
 				 holder.btnDel.setEnabled(true);
-				 holder.btnEdit.setEnabled(true);
 				 }
 			 holder.title.setText(note.getTitle() );
 			 holder.title.setTextColor(Color.YELLOW);
 			 if(note.isTabbed() )
 				 {
+				 float k=1;
+				 int orientation= context.getResources().getConfiguration().orientation;
+				 if(orientation==Configuration.ORIENTATION_LANDSCAPE)
+				 	k=1.9F;
 				 Log.d(TAG,"onBindViewHolder: "+ note.getTitle() +" tabbed");
 				 RelativeLayout.LayoutParams layoutParams= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-				 layoutParams.setMargins(Calc.dpToPx(context,50),Calc.dpToPx(context,5),0,0);
-				 holder.title.setLayoutParams(layoutParams);
+				 layoutParams.setMargins(Calc.dpToPx(context,O.dimens.GREEN_DROPDOWN_TAB),Calc.dpToPx(context,2),Calc.dpToPx(context,2),Calc.dpToPx(context,2) );
+				 layoutParams.height= Calc.dpToPx(context,O.dimens.GREEN_DROPDOWN_ELEMENT_HEIGHT);
+				 holder.mainView.setLayoutParams(layoutParams);
+				 ViewGroup.LayoutParams titleParams= holder.title.getLayoutParams();
+				 titleParams.width= Calc.dpToPx(context,(int)(O.dimens.GREEN_DROPDOWN_TABBED_TITLE_WIDTH * k) );
+				 holder.title.setLayoutParams(titleParams);
+				 RelativeLayout.LayoutParams nParams= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+				 nParams.setMargins(Calc.dpToPx(context,(int)(O.dimens.GREEN_DROPDOWN_TABBED_N_MARGIN * k) ),Calc.dpToPx(context,5),0,0);
+				 holder.n.setLayoutParams(nParams);
 				 }
 			 holder.n.setVisibility(View.VISIBLE);
 			 holder.n.setText(note.getN() +"");
@@ -281,7 +295,8 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 				 holder.tag[i].setTextColor(tag.getColor() );
 				 i++;
 				 }
-			 holder.btnDropdown.setVisibility(View.GONE);
+			 holder.mainView.setOnClickListener(holder.editListener);
+			 holder.img.setVisibility(View.GONE);
 			 }
 		 holder.editListener.setElement(recyclerListElement);
 		 holder.delListener.setElement(recyclerListElement);

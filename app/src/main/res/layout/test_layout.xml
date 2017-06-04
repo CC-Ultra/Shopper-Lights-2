@@ -4,17 +4,16 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:orientation="vertical">
-	<AutoCompleteTextView
-			android:layout_width="match_parent"
+	<TextView
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:hint="autotext"
-			android:gravity="center"
-			android:id="@+id/autotext"/>
-	<EditText
-			android:layout_width="match_parent"
+			android:ellipsize="end"
+			android:layout_marginBottom="10dp"
+			android:maxLines="1"
+			android:id="@+id/txt"/>
+	<Button
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="50dp"
-			android:hint="simple txt"
-			android:gravity="center"
-			android:id="@+id/simpleTxt"/>
+			android:text="123"
+			android:id="@+id/btn"/>
 </LinearLayout>

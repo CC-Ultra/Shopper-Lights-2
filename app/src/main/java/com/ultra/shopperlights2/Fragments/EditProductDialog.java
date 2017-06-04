@@ -14,6 +14,7 @@ import android.widget.*;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
+import com.ultra.shopperlights2.Utils.Calc;
 import com.ultra.shopperlights2.Utils.O;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import static com.ultra.shopperlights2.Utils.O.TAG;
 
 public class EditProductDialog extends DialogFragment
 	{
+	private boolean editTitleFlag= false;
 	private Product product;
 	private EditText inputN,inputQuality,inputPrice,inputWeight,inputWeightPrice;
 	private AutoCompleteTextView inputManufacturer;
@@ -37,12 +39,22 @@ public class EditProductDialog extends DialogFragment
 	private long productId=0;
 	private String action;
 	private View mainView;
+	private WeightListener weightListener= new WeightListener();
+	private PriceListener priceListener= new PriceListener();
+	private EditText inputTitle;
 
 	private class SaveListener implements View.OnClickListener
 		{
 		@Override
 		public void onClick(View v)
 			{
+			if(editTitleFlag && inputTitle.getText().toString().length() == 0)
+				{
+				inputTitle.setError("Введи название");
+				return;
+				}
+			if(editTitleFlag)
+				product.setTitle(inputTitle.getText().toString() );
 			product.setComplete(true);
 			if(inputN.length()!=0)
 				product.setN(Integer.parseInt(inputN.getText().toString() ) );
@@ -73,14 +85,28 @@ public class EditProductDialog extends DialogFragment
 			dismiss();
 			}
 		}
-	private class DummyListener implements TextWatcher
+	private class PriceListener implements TextWatcher
 		{
 		@Override
 		public void beforeTextChanged(CharSequence s,int start,int count,int after) {}
 		@Override
 		public void onTextChanged(CharSequence s,int start,int before,int count) {}
 		@Override
-		public void afterTextChanged(Editable s) {}
+		public void afterTextChanged(Editable s)
+			{
+			String priceStr= s.toString();
+			String weightStr= inputWeight.getText().toString();
+			if(priceStr.equals("") || priceStr.equals(".") )
+				priceStr="0.";
+			if(weightStr.equals("") || weightStr.equals(".") )
+				priceStr="1";
+			float priceF= Float.parseFloat(priceStr);
+			float weightF= Float.parseFloat(weightStr);
+			if(weightF==0)
+				weightF=1F;
+			float result= Calc.round(priceF/weightF);
+			inputWeightPrice.setText(""+ result);
+			}
 		}
 	private class WeightListener implements TextWatcher
 		{
@@ -91,16 +117,18 @@ public class EditProductDialog extends DialogFragment
 		@Override
 		public void afterTextChanged(Editable s)
 			{
-			if(inputWeightPrice.length()!=0)
-				{
-				String str=s.toString();
-				if(str.equals(".") )
-					str="0.";
-				if(str.equals("") )
-					str="0";
-				float q= Float.parseFloat(inputWeightPrice.getText().toString() );
-				inputPrice.setText(""+ (Float.parseFloat(str) * q) );
-				}
+			String weightStr= s.toString();
+			String weightPriceStr= inputWeightPrice.getText().toString();
+			if(weightStr.equals(".") || weightStr.equals("") )
+				weightStr="0.";
+			if(weightPriceStr.equals(".") || weightPriceStr.equals("") )
+				weightPriceStr="0.";
+			float weightF= Float.parseFloat(weightStr);
+			float weightPriceF= Float.parseFloat(weightPriceStr);
+			float result= Calc.round(weightF*weightPriceF);
+			inputPrice.removeTextChangedListener(priceListener);
+			inputPrice.setText(""+ result);
+			inputPrice.addTextChangedListener(priceListener);
 			}
 		}
 	private class WeightUnitsListener implements AdapterView.OnItemSelectedListener
@@ -111,23 +139,27 @@ public class EditProductDialog extends DialogFragment
 			if(position==1)
 				{
 				inputWeightPrice.setVisibility(View.VISIBLE);
-				inputWeight=null;
-				inputWeight= (EditText)mainView.findViewById(R.id.inputWeight);
-				inputWeight.addTextChangedListener(new WeightListener() );
+				inputWeight.addTextChangedListener(weightListener);
+				inputPrice.addTextChangedListener(priceListener);
 				}
 			else
 				{
 				inputWeightPrice.setText("");
 				inputWeightPrice.setVisibility(View.GONE);
-				inputWeight=null;
-				inputWeight= (EditText)mainView.findViewById(R.id.inputWeight);
-				inputWeight.addTextChangedListener(new DummyListener() );
+				inputPrice.removeTextChangedListener(priceListener);
+				inputWeight.removeTextChangedListener(weightListener);
 				}
 			}
 		@Override
 		public void onNothingSelected(AdapterView<?> parent) {}
 		}
 
+	public void init(String _action,long _id,boolean _editTitleFlag)
+		{
+		editTitleFlag=_editTitleFlag;
+		action=_action;
+		productId=_id;
+		}
 	public void init(String _action,long _id)
 		{
 		action=_action;
@@ -147,6 +179,7 @@ public class EditProductDialog extends DialogFragment
 			}
 
 		Button btnSave= (Button)mainView.findViewById(R.id.btnSave);
+		inputTitle= (EditText)mainView.findViewById(R.id.inputTitle);
 		inputN= (EditText)mainView.findViewById(R.id.inputN);
 		inputQuality= (EditText)mainView.findViewById(R.id.inputQuality);
 		inputPrice= (EditText)mainView.findViewById(R.id.inputPrice);
@@ -159,6 +192,12 @@ public class EditProductDialog extends DialogFragment
 		product= App.session.getProductDao().load(productId);
 		Log.d(TAG,"onCreateView: titleTxt:"+ titleTxt);
 		titleTxt.setText(product.getTitle() );
+		if(editTitleFlag)
+			{
+			titleTxt.setVisibility(View.GONE);
+			inputTitle.setVisibility(View.VISIBLE);
+			inputTitle.setText(product.getTitle() );
+			}
 		if(product.getN()!=0)
 			inputN.setText(""+ product.getN() );
 		if(product.getManufacturerId()!=0)

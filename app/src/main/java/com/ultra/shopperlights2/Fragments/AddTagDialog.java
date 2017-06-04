@@ -30,7 +30,7 @@ public class AddTagDialog extends DialogFragment
 	 {
 	 private int r,g,b;
 	 private View colorView;
-	 private EditText tagNameInput;
+	 private EditText inputTagName;
 	 private String title;
 	 private long tagId=0;
 	 private String action;
@@ -72,31 +72,31 @@ public class AddTagDialog extends DialogFragment
 		 @Override
 		 public void onClick(View v)
 			 {
-			 String tagName= tagNameInput.getText().toString();
+			 String tagName= inputTagName.getText().toString();
 			 if(tagName.length() == 0)
-				 Toast.makeText(getContext(),"Введите имя тега",Toast.LENGTH_SHORT).show();
+				 inputTagName.setError("Введите имя тега");
 			 else
 				 {
-				 TagDao tagDao= App.session.getTagDao();
+				 TagDao tagDao=App.session.getTagDao();
 				 Tag tag;
-				 if(tagId==0)
-				 	tag= new Tag();
+				 if(tagId == 0)
+					 tag=new Tag();
 				 else
-				 	tag= tagDao.load(tagId);
-				 int size= tagDao.queryBuilder().where(TagDao.Properties.Title.eq(tagName) ).list().size();
-				 if( (tagId==0 && size>0) || (tagId!=0 && size>0 && !tag.getTitle().equals(tagName) ) )
+					 tag=tagDao.load(tagId);
+				 int size=tagDao.queryBuilder().where(TagDao.Properties.Title.eq(tagName)).list().size();
+				 if((tagId == 0 && size>0) || (tagId != 0 && size>0 && !tag.getTitle().equals(tagName)))
 					 {
-					 Toast.makeText(getContext(),"Имя тега занято",Toast.LENGTH_SHORT).show();
+					 inputTagName.setError("Имя тега занято");
 					 return;
 					 }
 				 tag.setTitle(tagName);
-				 tag.setColor(Color.rgb(r,g,b) );
-				 if(tagId==0)
+				 tag.setColor(Color.rgb(r,g,b));
+				 if(tagId == 0)
 					 tagDao.insert(tag);
 				 else
 					 tagDao.update(tag);
 				 dismiss();
-				 getContext().sendBroadcast(new Intent(action) );
+				 getContext().sendBroadcast(new Intent(action));
 				 }
 			 }
 		 }
@@ -130,7 +130,7 @@ public class AddTagDialog extends DialogFragment
 		 SeekBar seekBar_Blue= (SeekBar)mainView.findViewById(R.id.seekBarBlue);
 		 Button okBtn= (Button)mainView.findViewById(R.id.btnOk);
 		 colorView= mainView.findViewById(R.id.colorView);
-		 tagNameInput= (EditText)mainView.findViewById(R.id.titleInput);
+		 inputTagName= (EditText)mainView.findViewById(R.id.titleInput);
 
 		 seekBar_Red.setMax(255);
 		 seekBar_Green.setMax(255);
@@ -148,7 +148,7 @@ public class AddTagDialog extends DialogFragment
 		 else
 			 {
 			 Tag tag= App.session.getTagDao().load(tagId);
-			 tagNameInput.setText(tag.getTitle() );
+			 inputTagName.setText(tag.getTitle() );
 			 colorView.setBackgroundColor(tag.getColor() );
 			 seekBar_Red.setProgress(Color.red(tag.getColor() ) );
 			 seekBar_Green.setProgress(Color.green(tag.getColor() ) );

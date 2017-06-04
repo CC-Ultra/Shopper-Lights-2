@@ -83,49 +83,56 @@ public class Fragment_Yellow_Shop extends Fragment
 			dialog.show(transaction,"");
 			}
 		}
-	private class TitleSelectListener implements AdapterView.OnItemSelectedListener
+	private class CitySelectListener implements AdapterView.OnItemSelectedListener
 		{
 		@Override
 		public void onItemSelected(AdapterView<?> parent,View view,int position,long id)
 			{
 			ArrayList<String> adrs= new ArrayList<>();
 			adrs.add("");
+			inputAdr.setEnabled(false);
 			adapterAdr.clear();
 			adapterAdr.addAll(adrs);
-			String selectedTitle= inputTitle.getSelectedItem().toString();
-			if(selectedTitle.length() == 0)
+			inputAdr.setSelection(0);
+			inputTitle.setSelection(0);
+			String selectedCity= inputCity.getSelectedItem().toString();
+			if(selectedCity.length() == 0)
 				{
-				ArrayList<String> cities= new ArrayList<>();
-				cities.add("");
-				adapterCity.clear();
-				adapterCity.addAll(cities);
+				ArrayList<String> titles= new ArrayList<>();
+				titles.add("");
+				adapterTitle.clear();
+				adapterTitle.addAll(titles);
+				inputTitle.setEnabled(false);
 				}
 			else
 				{
-				ArrayList<String> cities= new ArrayList<>();
-				cities.add("");
-				List<Shop> shops= App.session.getShopDao().queryBuilder().where(ShopDao.Properties.Title.eq(selectedTitle)).list();
-				TreeSet<String> citySet= new TreeSet<>();
+				ArrayList<String> titles= new ArrayList<>();
+				titles.add("");
+				inputTitle.setEnabled(true);
+				List<Shop> shops= App.session.getShopDao().queryBuilder().where(ShopDao.Properties.City.eq(selectedCity)).list();
+				TreeSet<String> titleSet= new TreeSet<>();
 				for(Shop shop : shops)
-					citySet.add(shop.getCity() );
-				cities.addAll(citySet);
-				adapterCity.clear();
-				adapterCity.addAll(cities);
+					titleSet.add(shop.getTitle() );
+				titles.addAll(titleSet);
+				adapterTitle.clear();
+				adapterTitle.addAll(titles);
 				}
 			}
 		@Override
 		public void onNothingSelected(AdapterView<?> parent) {}
 		}
-	private class CitySelectListener implements AdapterView.OnItemSelectedListener
+	private class TitleSelectListener implements AdapterView.OnItemSelectedListener
 		{
 		@Override
 		public void onItemSelected(AdapterView<?> parent,View view,int position,long id)
 			{
-			if(inputCity.getSelectedItem().toString().length() != 0)
+			inputAdr.setSelection(0);
+			if(inputTitle.getSelectedItem().toString().length() != 0)
 				{
 				String title= inputTitle.getSelectedItem().toString();
 				String city= inputCity.getSelectedItem().toString();
 				List<Shop> shops= App.session.getShopDao().queryBuilder().where(ShopDao.Properties.Title.eq(title),ShopDao.Properties.City.eq(city) ).list();
+				inputAdr.setEnabled(true);
 				ArrayList<String> adrs= new ArrayList<>();
 				adrs.add("");
 				TreeSet<String> adrSet= new TreeSet<>();
@@ -138,6 +145,7 @@ public class Fragment_Yellow_Shop extends Fragment
 			else
 				{
 				ArrayList<String> adrs= new ArrayList<>();
+				inputAdr.setEnabled(false);
 				adrs.add("");
 				adapterAdr.clear();
 				adapterAdr.addAll(adrs);
@@ -173,12 +181,12 @@ public class Fragment_Yellow_Shop extends Fragment
 		shops.add("");
 		cities.add("");
 		adrs.add("");
-		TreeSet<String> shopSet= new TreeSet<>();
+		TreeSet<String> citySet= new TreeSet<>();
 		for(Shop shop : App.session.getShopDao().loadAll() )
-			shopSet.add(shop.getTitle() );
-		shops.addAll(shopSet);
-		adapterTitle= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,shops);
+			citySet.add(shop.getCity() );
+		cities.addAll(citySet);
 		adapterCity= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,cities);
+		adapterTitle= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,shops);
 		adapterAdr= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,adrs);
 		inputTitle.setAdapter(adapterTitle);
 		inputCity.setAdapter(adapterCity);

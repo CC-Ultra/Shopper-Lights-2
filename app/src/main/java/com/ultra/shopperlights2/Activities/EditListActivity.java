@@ -19,7 +19,7 @@ import com.ultra.shopperlights2.Fragments.AddShopDialog;
 import com.ultra.shopperlights2.Fragments.AddTagDialog;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.GroupDao;
-import com.ultra.shopperlights2.Units.RecyclerListElement;
+import com.ultra.shopperlights2.Units.GreenRecyclerListElement;
 import com.ultra.shopperlights2.Utils.O;
 
 import java.util.ArrayList;
@@ -86,9 +86,9 @@ public class EditListActivity extends AppCompatActivity
 		recyclerList.setAdapter(adapter);
 		recyclerList.setLayoutManager(new LinearLayoutManager(this) );
 		}
-	private ArrayList<RecyclerListElement> getList()
+	private ArrayList<GreenRecyclerListElement> getList()
 		{
-		ArrayList<RecyclerListElement> result= new ArrayList<>();
+		ArrayList<GreenRecyclerListElement> result= new ArrayList<>();
 		switch(type)
 			{
 			case O.interaction.ELEMENT_TYPE_GROUP:

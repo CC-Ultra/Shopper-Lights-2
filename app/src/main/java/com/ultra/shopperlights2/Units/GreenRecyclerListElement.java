@@ -9,7 +9,7 @@ import com.ultra.shopperlights2.Utils.O;
  * @author CC-Ultra
  */
 
-public class RecyclerListElement
+public class GreenRecyclerListElement
 	 {
 	 private boolean tabbed;
 

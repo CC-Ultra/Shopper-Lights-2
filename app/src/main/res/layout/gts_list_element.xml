@@ -2,23 +2,17 @@
 <RelativeLayout
 		xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="match_parent"
-		android:layout_height="80dp">
+		android:layout_height="80dp"
+		android:background="@drawable/list_element_border">
 	<TextView
-			android:layout_width="wrap_content"
+			android:layout_width="300dp"
 			android:layout_height="wrap_content"
 			android:textSize="20sp"
 			android:text="title"
 			android:layout_marginLeft="5dp"
 			android:layout_marginTop="5dp"
+			android:ellipsize="end"
 			android:id="@+id/title"/>
-	<ImageButton
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentTop="true"
-			android:layout_alignParentRight="true"
-			android:layout_marginRight="60dp"
-			android:src="@drawable/edit_element"
-			android:id="@+id/editBtn"/>
 	<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -33,7 +27,7 @@
 			android:textSize="15sp"
 			android:text="Город"
 			android:visibility="gone"
-			android:layout_below="@+id/editBtn"
+			android:layout_below="@+id/deleteBtn"
 			android:layout_alignLeft="@+id/title"
 			android:id="@+id/city"/>
 	<TextView

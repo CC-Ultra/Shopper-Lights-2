@@ -12,6 +12,7 @@
 			android:layout_marginRight="50dp"
 			android:gravity="center"
 			android:hint="Название"
+			android:inputType="textCapSentences"
 			android:id="@+id/autoTitle"/>
 	<AutoCompleteTextView
 			android:layout_width="match_parent"
@@ -20,6 +21,7 @@
 			android:layout_marginRight="80dp"
 			android:gravity="center"
 			android:hint="Город"
+			android:inputType="textCapSentences"
 			android:id="@+id/autoCity"/>
 	<EditText
 			android:layout_width="match_parent"
@@ -28,6 +30,7 @@
 			android:layout_marginRight="20dp"
 			android:gravity="center"
 			android:hint="Адрес"
+			android:inputType="textCapSentences"
 			android:id="@+id/adrInput"/>
 	<Button
 			android:layout_width="wrap_content"

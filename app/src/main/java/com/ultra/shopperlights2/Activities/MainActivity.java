@@ -158,18 +158,19 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 {
 		 super.onCreate(savedInstanceState);
 		 setContentView(R.layout.main_layout);
+		 Log.d(O.TAG,"onCreate: ");
 
-		 selectedScreen= getIntent().getIntExtra(O.mapKeys.extra.START_COLOR, O.interaction.SCREEN_CODE_YELLOW);
+		 selectedScreen= getIntent().getIntExtra(O.mapKeys.extra.START_COLOR, O.interaction.SCREEN_CODE_GREEN);
 		 if(savedInstanceState!=null)
 			 selectedScreen= savedInstanceState.getInt(O.mapKeys.extra.START_COLOR);
 
 		 DrawerBuilder builder= new DrawerBuilder();
 		 builder.withActivity(this).withHeader(R.layout.drawer_header);
 		 drawer= builder.build();
-		 if(selectedScreen == O.interaction.SCREEN_CODE_YELLOW)
-			 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-		 else
-			 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+//		 if(selectedScreen == O.interaction.SCREEN_CODE_YELLOW)
+//			 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+//		 else
+		 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
 		 Toolbar toolbar= (Toolbar)findViewById(R.id.toolbar);
 		 pager= (ViewPager)findViewById(R.id.pager);
@@ -182,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 lightsFragment.lightMemory= selectedScreen;
 
 		 ViewGroup.LayoutParams layoutParams= pager.getLayoutParams();
-		 layoutParams.width= Calc.dpToPx(MainActivity.this,O.dimens.ARROW_PAGER_WIDTH);
+		 layoutParams.width= Calc.dpToPx(this,O.dimens.ARROW_PAGER_WIDTH);
 		 pager.setLayoutParams(layoutParams);
 		 }
 	 @Override
@@ -211,6 +212,14 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 {
 		 super.onSaveInstanceState(outState);
 		 outState.putInt(O.mapKeys.extra.START_COLOR,selectedScreen);
+		 }
+	 @Override
+	 public void onBackPressed()
+		 {
+		 if(drawer.isDrawerOpen() )
+		 	drawer.closeDrawer();
+		 else
+			 super.onBackPressed();
 		 }
 	 @Override
 	 public boolean onCreateOptionsMenu(Menu menu)
@@ -258,4 +267,3 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 return true;
 		 }
 	 }
-

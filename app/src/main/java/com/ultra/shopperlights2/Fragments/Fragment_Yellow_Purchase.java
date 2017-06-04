@@ -23,9 +23,9 @@ import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.*;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
+import com.ultra.shopperlights2.Utils.Calc;
 import com.ultra.shopperlights2.Utils.ConfirmDialog;
 import com.ultra.shopperlights2.Utils.O;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +36,7 @@ import java.util.List;
  *
  * @author CC-Ultra
  */
-public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDelElement,YellowScreenInitFragment,DialogDecision
+public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDelElement,YellowScreenInitDialogFragment,DialogDecision
 	 {
 	 private ChangeYellowFragmentCallback callback;
 	 private YellowPurchaseListAdapter adapter;
@@ -47,6 +47,7 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 	 private long purchaseId;
 	 private HashMap<String,Boolean> usedMap;
 	 private BroadcastReceiver receiver;
+	 private static String lastTimeGroup;
 
 	 private class Receiver extends BroadcastReceiver
 		 {
@@ -64,9 +65,7 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 			 List<Product> products= App.session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId),
 					 ProductDao.Properties.Complete.eq(false)).list();
 			 if(v.getId()==R.id.completePurchase && products.size() != 0)
-				 {
 				 Toast.makeText(getContext(),"Есть незаполненные продукты: "+ products.size() +" шт",Toast.LENGTH_SHORT).show();
-				 }
 			 ConfirmDialog.ask(getContext(),Fragment_Yellow_Purchase.this,v.getId(),0);
 			 }
 		 }
@@ -113,6 +112,10 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 			 usedMap.put(note.getTitle(),true);
 			 drawer.removeItem(drawerItemId);
 			 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+			 List<Product> productsAll= App.session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId) ).list();
+			 List<Product> productsCompleted= App.session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId),
+					ProductDao.Properties.Complete.eq(true) ).list();
+			 statusTxt.setText(productsCompleted.size() +"/"+ productsAll.size() );
 			 return true;
 			 }
 		 }
@@ -139,27 +142,47 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 }
 	 private void completePurchase()
 		 {
-		 DaoSession session= App.session;
-		 Purchase purchase= session.getPurchaseDao().load(purchaseId);
-		 purchase.setCompleted(true);
-		 purchase.getProducts().clear();
-		 List<Product> products= session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId)).list();
-		 float totalPrice=0;
-		 for(Product product : products)
+		 try
 			 {
-			 totalPrice+= product.getPrice();
-			 purchase.getProducts().add(product);
+			 DaoSession session= App.session;
+			 Purchase purchase= session.getPurchaseDao().load(purchaseId);
+			 purchase.setCompleted(true);
+			 List<Product> products= session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId)).list();
+			 if(products.size()==0)
+				 {
+				 session.getPurchaseDao().delete(purchase);
+				 Toast.makeText(getContext(),"Пустая покупка, удалено",Toast.LENGTH_SHORT).show();
+				 return;
+				 }
+			 float totalPrice=0;
+			 purchase.getProducts().clear();
+			 for(Product product : products)
+				 {
+				 totalPrice+= product.getPrice() * (product.getN()==0 ? 1 : product.getN() );
+				 purchase.getProducts().add(product);
+				 }
+			 Toast.makeText(getContext(),""+ Calc.round(totalPrice),Toast.LENGTH_SHORT).show();
+			 purchase.setPrice(totalPrice);
+			 session.getPurchaseDao().update(purchase);
+			 for(Note note : session.getNoteDao().queryBuilder().where(NoteDao.Properties.Locked.eq(true) ).list() )
+				 {
+				 List<TagToNote> tagToNotes= session.getTagToNoteDao().queryBuilder().where(TagToNoteDao.Properties.NoteId.eq(note.getId() ) ).list();
+				 for(TagToNote tagToNote : tagToNotes)
+					 session.getTagToNoteDao().delete(tagToNote);
+				 if(note.getGroupId()!=0)
+					 {
+					 Group group= session.getGroupDao().load(note.getGroupId() );
+					 group.getNotes().remove(note);
+					 session.getGroupDao().update(group);
+					 }
+				 session.getNoteDao().delete(note);
+				 }
 			 }
-		 purchase.setPrice(totalPrice);
-		 session.getPurchaseDao().update(purchase);
-		 for(Note note : session.getNoteDao().queryBuilder().where(NoteDao.Properties.Locked.eq(true) ).list())
+		 finally
 			 {
-			 List<TagToNote> tagToNotes= session.getTagToNoteDao().queryBuilder().where(TagToNoteDao.Properties.NoteId.eq(note.getId())).list();
-			 for(TagToNote tagToNote : tagToNotes)
-				 session.getTagToNoteDao().delete(tagToNote);
-			 session.getNoteDao().delete(note);
+			 callback.changeYellowFragment(false);
+			 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 			 }
-		 callback.changeYellowFragment(false);
 		 }
 	 private void cancelPurchase()
 		 {
@@ -176,6 +199,7 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 			 session.getNoteDao().update(note);
 			 }
 		 callback.changeYellowFragment(false);
+		 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 		 }
 	 @Override
 	 public void delElement(String title)
@@ -186,7 +210,7 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 usedMap.put(title,false);
 		 }
 	 @Override
-	 public void initFragment(long id)
+	 public void initDialog(long id)
 		 {
 		 EditProductDialog dialog= new EditProductDialog();
 		 dialog.init(O.actions.ACTION_FRAGMENT_YELLOW_PURCHASE,id);
@@ -195,6 +219,7 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 }
 	 public void updateLists()
 		 {
+		 initMap();
 		 ArrayList<String> groups= new ArrayList<>();
 		 groups.add("");
 		 DaoSession session= App.session;
@@ -203,7 +228,11 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 ArrayAdapter<String> spinnerAdapter= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,groups);
 		 spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		 if(groupInput!=null)
+			{
 			 groupInput.setAdapter(spinnerAdapter);
+			 if(groups.contains(lastTimeGroup) )
+				 groupInput.setSelection(groups.indexOf(lastTimeGroup) );
+			 }
 		 initAdapter();
 		 selectGroupSpinner();
 		 List<Product> productsAll= session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId) ).list();
@@ -212,8 +241,8 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 statusTxt.setText(productsCompleted.size() +"/"+ productsAll.size() );
 		 float totalPrice=0;
 		 for(Product product : productsCompleted)
-			 totalPrice+= product.getPrice();
-		 totalPriceTxt.setText(""+ totalPrice);
+			 totalPrice+= product.getPrice() * (product.getN()==0 ? 1 : product.getN() );
+		 totalPriceTxt.setText(""+ Calc.round(totalPrice) );
 		 }
 	 public void initFragment(Drawer _drawer,ChangeYellowFragmentCallback _callback)
 		{
@@ -224,15 +253,15 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 {
 		 if(groupInput!=null)
 			 {
-			 String groupStr= groupInput.getSelectedItem().toString();
-			 if(groupStr.length()==0)
+			 lastTimeGroup= groupInput.getSelectedItem().toString();
+			 if(lastTimeGroup.length()==0)
 				 {
 				 ArrayList<Note> notes= new ArrayList<>(App.session.getNoteDao().queryBuilder().where(NoteDao.Properties.GroupId.eq(0) ).list() );
 				 initDrawerList(notes);
 				 }
 			 else
 				 {
-				 Group group= App.session.getGroupDao().queryBuilder().where(GroupDao.Properties.Title.eq(groupStr) ).list().get(0);
+				 Group group= App.session.getGroupDao().queryBuilder().where(GroupDao.Properties.Title.eq(lastTimeGroup) ).list().get(0);
 				 initDrawerList(new ArrayList<>(group.getNotes() ) );
 				 }
 			 }
@@ -242,6 +271,12 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 drawer.removeAllItems();
 		 for(Note note : src)
 			 {
+//			 if(usedMap == null)
+//				 Log.d(TAG,"initDrawerList: usedMap");
+//			 if(note==null)
+//				 Log.d(TAG,"initDrawerList: note");
+//			 if(usedMap.get(note.getTitle() )==null)
+//				 Log.d(TAG,"initDrawerList: get");
 			 if(usedMap.get(note.getTitle() ) )
 				 continue;
 			 PrimaryDrawerItem drawerItem= new PrimaryDrawerItem().withName(note.getTitle() );
@@ -252,11 +287,11 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 }
 	 private void getPurchaseId()
 		 {
-		 purchaseId= App.session.getPurchaseDao().queryBuilder().where(PurchaseDao.Properties.Completed.eq(false)).list().get(0).getId();
+		 purchaseId= App.session.getPurchaseDao().queryBuilder().where(PurchaseDao.Properties.Completed.eq(false) ).list().get(0).getId();
 		 }
 	 private void initMap()
 		 {
-		 usedMap=new HashMap<>();
+		 usedMap= new HashMap<>();
 		 ArrayList<Note> notes=new ArrayList<>(App.session.getNoteDao().loadAll());
 		 for(Note note : notes)
 			 usedMap.put(note.getTitle(),false);
@@ -279,7 +314,6 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 View mainView= inflater.inflate(R.layout.yellow_screen,container,false);
 
 		 getPurchaseId();
-		 initMap();
 		 ImageButton buttonOpen= (ImageButton)mainView.findViewById(R.id.btn_openDrawer);
 		 recyclerList= (RecyclerView)mainView.findViewById(R.id.list);
 		 Button btnComplete= (Button)mainView.findViewById(R.id.completePurchase);
@@ -289,6 +323,7 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 
 		 if(drawer!=null)
 			 {
+			 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 			 View header= drawer.getHeader();
 			 ImageButton drawerClose= (ImageButton)header.findViewById(R.id.btn_close);
 			 Button btnAddNote= (Button)header.findViewById(R.id.btn_add);
@@ -298,7 +333,7 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 			 drawerClose.setOnClickListener(new DrawerHeaderClickListener() );
 			 drawer.setOnDrawerItemClickListener(new DrawerItemClickListener() );
 			 groupInput.setOnItemSelectedListener(new GroupSelectListener() );
-			 updateLists();
+//			 updateLists();
 			 }
 		 buttonOpen.setOnClickListener(new DrawerButtonClickListener() );
 		 btnComplete.setOnClickListener(new PurchaseButtonsListener() );

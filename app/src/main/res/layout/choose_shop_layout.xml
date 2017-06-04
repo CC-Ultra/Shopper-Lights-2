@@ -9,19 +9,6 @@
 	<LinearLayout
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:orientation="horizontal">
-		<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="Магазин"/>
-		<Spinner
-				android:layout_width="120dp"
-				android:layout_height="wrap_content"
-				android:id="@+id/inputTitle"/>
-	</LinearLayout >
-	<LinearLayout
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
 			android:layout_marginTop="5dp"
 			android:orientation="horizontal">
 		<TextView
@@ -32,6 +19,19 @@
 				android:layout_width="150dp"
 				android:layout_height="wrap_content"
 				android:id="@+id/inputCity"/>
+	</LinearLayout >
+	<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Магазин"/>
+		<Spinner
+				android:layout_width="120dp"
+				android:layout_height="wrap_content"
+				android:id="@+id/inputTitle"/>
 	</LinearLayout >
 	<LinearLayout
 			android:layout_width="wrap_content"

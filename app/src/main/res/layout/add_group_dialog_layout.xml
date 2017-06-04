@@ -8,10 +8,11 @@
 	<EditText
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:hint="Имя тега"
+			android:hint="Имя группы"
 			android:gravity="center"
 			android:layout_marginRight="40dp"
 			android:layout_marginLeft="40dp"
+			android:inputType="textCapSentences"
 			android:id="@+id/titleInput"/>
 	<EditText
 			android:layout_width="match_parent"

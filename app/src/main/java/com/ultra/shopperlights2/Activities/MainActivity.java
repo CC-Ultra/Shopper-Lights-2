@@ -243,18 +243,22 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 				 Toast.makeText(this,"Theme",Toast.LENGTH_SHORT).show();
 				 break;
 			 case R.id.groups:
-				 jumper= new Intent(this,EditListActivity.class);
+				 jumper= new Intent(this,GTSListActivity.class);
 				 jumper.putExtra(O.mapKeys.extra.LIST_ELEMENT_TYPE, O.interaction.ELEMENT_TYPE_GROUP);
 				 startActivity(jumper);
 				 break;
 			 case R.id.tags:
-				 jumper= new Intent(this,EditListActivity.class);
+				 jumper= new Intent(this,GTSListActivity.class);
 				 jumper.putExtra(O.mapKeys.extra.LIST_ELEMENT_TYPE, O.interaction.ELEMENT_TYPE_TAG);
 				 startActivity(jumper);
 				 break;
 			 case R.id.shops:
-				 jumper= new Intent(this,EditListActivity.class);
+				 jumper= new Intent(this,GTSListActivity.class);
 				 jumper.putExtra(O.mapKeys.extra.LIST_ELEMENT_TYPE, O.interaction.ELEMENT_TYPE_SHOP);
+				 startActivity(jumper);
+				 break;
+			 case R.id.templates:
+				 jumper= new Intent(this,AddTemplateActivity.class);
 				 startActivity(jumper);
 				 break;
 			 case R.id.help:

@@ -31,7 +31,7 @@ import java.util.ArrayList;
  * @author CC-Ultra
  */
 
-public class EditListActivity extends AppCompatActivity
+public class GTSListActivity extends AppCompatActivity
 	{
 	private RecyclerView recyclerList;
 	private int type;

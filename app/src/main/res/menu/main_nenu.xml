@@ -22,6 +22,10 @@
 				android:title="Магазины"
 				app:showAsAction="never"
 				android:id="@+id/shops"/>
+		<item
+				android:title="Шаблоны"
+				app:showAsAction="never"
+				android:id="@+id/templates"/>
 	</group>
 	<item
 			android:title="Помощь"

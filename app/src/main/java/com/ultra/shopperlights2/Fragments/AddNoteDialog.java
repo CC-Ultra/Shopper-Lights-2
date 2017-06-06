@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ public class AddNoteDialog extends DialogFragment
 	 private ArrayList<String> listRemaining,listSelected;
 	 private long noteId=0;
 	 private String action;
+	 private long templateId;
 
 	 private class OkListener implements View.OnClickListener
 		 {
@@ -85,7 +87,7 @@ public class AddNoteDialog extends DialogFragment
 					 noteDao.update(note);
 
 				 TagToNoteDao tagToNoteDao= session.getTagToNoteDao();
-				 List<TagToNote> lastTagToNotes= tagToNoteDao.queryBuilder().where(TagToNoteDao.Properties.NoteId.eq(note.getId())).list();
+				 List<TagToNote> lastTagToNotes= tagToNoteDao.queryBuilder().where(TagToNoteDao.Properties.NoteId.eq(note.getId() ) ).list();
 				 for(TagToNote lastTagToNote : lastTagToNotes)
 					 tagToNoteDao.delete(lastTagToNote);
 				 note.getTags().clear();
@@ -98,6 +100,15 @@ public class AddNoteDialog extends DialogFragment
 					 tagToNote.setNoteId(note.getId() );
 					 tagToNote.setTagId(tag.getId() );
 					 tagToNoteDao.insert(tagToNote);
+					 }
+				 if(templateId!=0)
+					 {
+					 note.setEthereal(true);
+					 note.setTemplateId(templateId);
+					 Template template= session.getTemplateDao().load(templateId);
+					 if(!template.getNotes().contains(note) )
+						 template.getNotes().add(note);
+					 session.getTemplateDao().update(template);
 					 }
 				 noteDao.update(note);
 				 dismiss();
@@ -150,14 +161,29 @@ public class AddNoteDialog extends DialogFragment
 		 noteId=_id;
 		 title=_title;
 		 }
+	 public void init(String _action,long _templateId,String _title)
+		 {
+		 action=_action;
+		 title=_title;
+		 templateId=_templateId;
+		 Log.d(O.TAG,"init: templateId="+ templateId);
+		 }
+	 public void init(String _action,String _title,long _id,long _templateId)
+		 {
+		 action=_action;
+		 noteId=_id;
+		 title=_title;
+		 templateId=_templateId;
+		 Log.d(O.TAG,"init: templateId="+ templateId);
+		 }
 	 private void initViews()
 		 {
 		 DaoSession session= App.session;
 		 listRemaining= new ArrayList<>();
 		 listSelected= new ArrayList<>();
-		 for(Tag tag : session.getTagDao().queryBuilder().list() )
+		 for(Tag tag : session.getTagDao().loadAll() )
 		 	listRemaining.add(tag.getTitle() );
-		 ArrayList<Group> groupList= new ArrayList<>(session.getGroupDao().queryBuilder().list() );
+		 ArrayList<Group> groupList= new ArrayList<>(session.getGroupDao().queryBuilder().orderAsc(GroupDao.Properties.Priority).list() );
 		 ArrayList<String> groupListStr= new ArrayList<>();
 		 groupListStr.add("");
 		 for(Group group : groupList)
@@ -181,10 +207,18 @@ public class AddNoteDialog extends DialogFragment
 				 listRemaining.remove(tag.getTitle() );
 				 }
 			 }
+		 if(listSelected.size()!=3)
+			 {
+			 adapterRemaining= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,new ArrayList(listRemaining) );
+			 listViewRemaining.setAdapter(adapterRemaining);
+			 }
+		 else
+			 {
+			 adapterRemaining= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,new ArrayList() );
+			 listViewRemaining.setAdapter(adapterRemaining);
+			 }
 		 adapterSelected= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,new ArrayList(listSelected) );
-		 adapterRemaining= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,new ArrayList(listRemaining) );
 		 listViewSelected.setAdapter(adapterSelected);
-		 listViewRemaining.setAdapter(adapterRemaining);
 		 }
 
 	 @Nullable
@@ -200,7 +234,13 @@ public class AddNoteDialog extends DialogFragment
 			 }
 
 		 Button okBtn= (Button)mainView.findViewById(R.id.btnOk);
+		 TextView groupTxt= (TextView)mainView.findViewById(R.id.groupTxt);
 		 spinner_Group= (Spinner)mainView.findViewById(R.id.spinnerGroup);
+		 if(templateId!=0)
+			 {
+			 spinner_Group.setVisibility(View.GONE);
+			 groupTxt.setVisibility(View.GONE);
+			 }
 		 inputName= (EditText)mainView.findViewById(R.id.titleInput);
 		 inputN= (EditText)mainView.findViewById(R.id.nInput);
 		 listViewRemaining= (ListView)mainView.findViewById(R.id.listRemaining);

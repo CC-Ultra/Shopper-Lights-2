@@ -18,7 +18,9 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter >
 		</activity >
-		<activity android:name=".Activities.EditListActivity"/>
+		<activity android:name=".Activities.GTSListActivity"/>
+		<activity android:name=".Activities.AddTemplateActivity"/>
+		<activity android:name=".Activities.AddTemplateNoteActivity"/>
 		<activity android:name=".Test.TestActivity" >
 			<!--<intent-filter >-->
 				<!--<action android:name="android.intent.action.MAIN" />-->

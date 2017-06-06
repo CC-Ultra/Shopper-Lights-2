@@ -52,22 +52,28 @@
 			android:layout_height="wrap_content"
 			android:text="Начать покупку"
 			android:id="@+id/btnOk"/>
+	<LinearLayout
+			android:layout_width="400dp"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="5dp"
+			android:orientation="horizontal">
+		<Button
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="Быстрая покупка"
+				android:id="@+id/btnQuickPurchase"/>
+		<Button
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="Транспорт"
+				android:id="@+id/btnTransport"/>
+	</LinearLayout >
 	<Button
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="50dp"
+			android:layout_marginTop="5dp"
 			android:text="Добавить магазин"
 			android:id="@+id/btnAdd"/>
-	<Button
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="5dp"
-			android:text="Быстрая покупка"
-			android:id="@+id/btnQuickPurchase"/>
-	<Button
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="5dp"
-			android:text="Транспорт"
-			android:id="@+id/btnTransport"/>
 </LinearLayout >

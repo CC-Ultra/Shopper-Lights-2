@@ -51,6 +51,29 @@ public class Fragment_Yellow_Shop extends Fragment
 			updateLists();
 			}
 		}
+	private class TransportListener implements View.OnClickListener
+		{
+		@Override
+		public void onClick(View v)
+			{
+			TransportDialog dialog= new TransportDialog();
+			FragmentTransaction transaction= getFragmentManager().beginTransaction();
+			dialog.show(transaction,"");
+			}
+		}
+	private class QuickPurchasesListener implements View.OnClickListener
+		{
+		@Override
+		public void onClick(View v)
+			{
+			Purchase purchase= new Purchase();
+			purchase.setShopId(0);
+			purchase.setCompleted(false);
+			purchase.setDate(new Date() );
+			App.session.getPurchaseDao().insert(purchase);
+			callback.changeYellowFragment(true);
+			}
+		}
 	private class StartPurchasesListener implements View.OnClickListener
 		{
 		@Override
@@ -203,11 +226,15 @@ public class Fragment_Yellow_Shop extends Fragment
 		inputCity= (Spinner)mainView.findViewById(R.id.inputCity);
 		inputAdr= (Spinner)mainView.findViewById(R.id.inputAdr);
 		startBtn= (Button)mainView.findViewById(R.id.btnOk);
-		Button addShopBtn= (Button)mainView.findViewById(R.id.btnAdd);
+		Button btnAddShop= (Button)mainView.findViewById(R.id.btnAdd);
+		Button btnQuickPurchase= (Button)mainView.findViewById(R.id.btnQuickPurchase);
+		Button btnTransport= (Button)mainView.findViewById(R.id.btnTransport);
 
 		startBtn.setEnabled(false);
 		startBtn.setOnClickListener(new StartPurchasesListener() );
-		addShopBtn.setOnClickListener(new AddShopListener() );
+		btnAddShop.setOnClickListener(new AddShopListener() );
+		btnQuickPurchase.setOnClickListener(new QuickPurchasesListener() );
+		btnTransport.setOnClickListener(new TransportListener() );
 		inputTitle.setOnItemSelectedListener(new TitleSelectListener() );
 		inputCity.setOnItemSelectedListener(new CitySelectListener() );
 		inputAdr.setOnItemSelectedListener(new AdrSelectListener() );

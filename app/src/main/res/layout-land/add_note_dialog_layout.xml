@@ -35,7 +35,8 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="10dp"
-				android:text="Группа"/>
+				android:text="Группа"
+				android:id="@+id/groupTxt"/>
 		<Spinner
 				android:layout_width="200dp"
 				android:layout_height="wrap_content"

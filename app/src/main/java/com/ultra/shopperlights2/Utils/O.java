@@ -16,7 +16,9 @@ public class O
 
 	 public static class actions
 		 {
-		 public static final String ACTION_EDIT_LIST_ACTIVITY= "com.ultra.shopperlights2.Activities.EditListActivity";
+		 public static final String ACTION_ADD_TEMPLATE_NOTE_ACTIVITY= "com.ultra.shopperlights2.Activities.AddTemplateNoteActivity";
+		 public static final String ACTION_ADD_TEMPLATE_ACTIVITY= "com.ultra.shopperlights2.Activities.AddTemplateActivity";
+		 public static final String ACTION_EDIT_LIST_ACTIVITY= "com.ultra.shopperlights2.Activities.GTSListActivity";
 		 public static final String ACTION_FRAGMENT_GREEN= "com.ultra.shopperlights2.Fragments.Fragment_Green";
 		 public static final String ACTION_FRAGMENT_YELLOW_SHOP= "com.ultra.shopperlights2.Fragments.Fragment_Yellow_Shop";
 		 public static final String ACTION_FRAGMENT_YELLOW_PURCHASE= "com.ultra.shopperlights2.Fragments.Fragment_Yellow_Purchase";
@@ -53,12 +55,14 @@ public class O
 			 public static final String SAVED_STATE_NOTE_ID="Note id";
 			 public static final String SAVED_STATE_TAG_ID="Tag id";
 			 public static final String SAVED_STATE_GROUP_ID="Group id";
+			 public static final String SAVED_STATE_TEMPLATE_ID="Template id";
 			 public static final String SAVED_STATE_ACTION="Action";
 			 public static final String SAVED_STATE_PRODUCT_ID="Product id";
 			 public static final String SAVED_STATE_PENDING_INTENT="Pending intent";
 			 }
 		 public static class extra
 			{
+			 public static final String TEMPLATE_ID="Template Id";
 			 public static final String PAGER_ORDER="Pager order";
 			 public static final String SCREEN_CODE="Screen code";
 			 public static final String START_COLOR="Start color";

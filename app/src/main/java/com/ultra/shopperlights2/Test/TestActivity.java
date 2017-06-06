@@ -34,8 +34,10 @@ public class TestActivity extends AppCompatActivity
 		@Override
 		public void onClick(View v)
 			{
-			Note note= App.session.getNoteDao().queryBuilder().where(NoteDao.Properties.Title.eq("1234") ).list().get(0);
-			App.session.getNoteDao().delete(note);
+			Note note= new Note();
+			note.setTitle("Note");
+			note.setEthereal(true);
+			App.session.getNoteDao().insert(note);
 			txt.setText("есть.");
 			}
 		}

@@ -1,6 +1,7 @@
 package com.ultra.shopperlights2.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.support.v4.app.FragmentManager;
@@ -122,6 +123,7 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 					 group.getNotes().remove(note);
 					 group.setHolderTitle(group.getTitle() +" ("+ group.getNotes().size() +")");
 					 session.getGroupDao().update(group);
+					 notifyItemChanged(position-1);
 					 }
 				 session.getNoteDao().delete(note);
 				 delElement(element,position);

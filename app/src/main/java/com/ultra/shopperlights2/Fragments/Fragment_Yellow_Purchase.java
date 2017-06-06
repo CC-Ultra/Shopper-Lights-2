@@ -271,12 +271,6 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 drawer.removeAllItems();
 		 for(Note note : src)
 			 {
-//			 if(usedMap == null)
-//				 Log.d(TAG,"initDrawerList: usedMap");
-//			 if(note==null)
-//				 Log.d(TAG,"initDrawerList: note");
-//			 if(usedMap.get(note.getTitle() )==null)
-//				 Log.d(TAG,"initDrawerList: get");
 			 if(usedMap.get(note.getTitle() ) )
 				 continue;
 			 PrimaryDrawerItem drawerItem= new PrimaryDrawerItem().withName(note.getTitle() );

@@ -21,6 +21,7 @@ import com.ultra.shopperlights2.Units.*;
 import com.ultra.shopperlights2.Utils.O;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p></p>
@@ -69,13 +70,19 @@ public class Fragment_Green extends Fragment
 					 ArrayList<Note> notes= new ArrayList<>(group.getNotes() );
 					 for(Note note : notes)
 						 {
-						 note.setTabbed(true);
-						 elements.add(i+1,note);
+						 if(!note.isEthereal())
+							 {
+							 note.setTabbed(true);
+							 elements.add(i+1,note);
+							 }
 						 }
 					 }
 				 }
 			 }
-		 elements.addAll(App.session.getNoteDao().queryBuilder().orderAsc(NoteDao.Properties.Title).where(NoteDao.Properties.GroupId.eq(0) ).list() );
+		 List<Note> freeNoteList=App.session.getNoteDao().queryBuilder().orderAsc(NoteDao.Properties.Title).where(NoteDao.Properties.GroupId.eq(0)).list();
+		 for(Note note : freeNoteList)
+			 if(!note.isEthereal() )
+				 elements.add(note);
 
 		 adapter= new GreenDropdownListAdapter(getContext(),elements,O.actions.ACTION_FRAGMENT_GREEN,getFragmentManager() );
 		 recyclerList.setAdapter(adapter);

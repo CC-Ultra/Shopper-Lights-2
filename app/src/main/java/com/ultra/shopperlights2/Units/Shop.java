@@ -21,6 +21,7 @@ public class Shop extends GreenRecyclerListElement
 	 @Id(autoincrement = true)
 	 private Long id;
 
+	 private boolean alive;
 	 private String title,city,adr;
 
 	 @ToMany(referencedJoinProperty = "shopId")
@@ -34,9 +35,10 @@ public class Shop extends GreenRecyclerListElement
 		@Generated(hash = 173397329)
 		private transient ShopDao myDao;
 
-		@Generated(hash = 738091609)
-		public Shop(Long id, String title, String city, String adr) {
+		@Generated(hash = 1178893264)
+		public Shop(Long id, boolean alive, String title, String city, String adr) {
 			this.id = id;
+			this.alive = alive;
 			this.title = title;
 			this.city = city;
 			this.adr = adr;
@@ -140,6 +142,18 @@ public class Shop extends GreenRecyclerListElement
 
 		public void setCity(String city) {
 			this.city = city;
+		}
+
+		public boolean isAlive() {
+			return this.alive;
+		}
+
+		public void setAlive(boolean alive) {
+			this.alive = alive;
+		}
+
+		public boolean getAlive() {
+			return this.alive;
 		}
 
 		/** called by internal mechanisms, do not call yourself. */

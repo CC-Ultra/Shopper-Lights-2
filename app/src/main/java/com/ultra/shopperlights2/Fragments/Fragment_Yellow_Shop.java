@@ -83,6 +83,7 @@ public class Fragment_Yellow_Shop extends Fragment
 			String cityStr= inputCity.getSelectedItem().toString();
 			String adrStr= inputAdr.getSelectedItem().toString();
 			Shop shop= App.session.getShopDao().queryBuilder().where(
+																	ShopDao.Properties.Alive.eq(true),
 																	ShopDao.Properties.Title.eq(titleStr),
 																	ShopDao.Properties.City.eq(cityStr),
 																	ShopDao.Properties.Adr.eq(adrStr)
@@ -132,7 +133,8 @@ public class Fragment_Yellow_Shop extends Fragment
 				ArrayList<String> titles= new ArrayList<>();
 				titles.add("");
 				inputTitle.setEnabled(true);
-				List<Shop> shops= App.session.getShopDao().queryBuilder().where(ShopDao.Properties.City.eq(selectedCity)).list();
+				List<Shop> shops= App.session.getShopDao().queryBuilder().where(ShopDao.Properties.Alive.eq(true),
+															ShopDao.Properties.City.eq(selectedCity) ).list();
 				TreeSet<String> titleSet= new TreeSet<>();
 				for(Shop shop : shops)
 					titleSet.add(shop.getTitle() );
@@ -154,7 +156,8 @@ public class Fragment_Yellow_Shop extends Fragment
 				{
 				String title= inputTitle.getSelectedItem().toString();
 				String city= inputCity.getSelectedItem().toString();
-				List<Shop> shops= App.session.getShopDao().queryBuilder().where(ShopDao.Properties.Title.eq(title),ShopDao.Properties.City.eq(city) ).list();
+				List<Shop> shops= App.session.getShopDao().queryBuilder().where(ShopDao.Properties.Title.eq(title),
+						ShopDao.Properties.Alive.eq(true),ShopDao.Properties.City.eq(city) ).list();
 				inputAdr.setEnabled(true);
 				ArrayList<String> adrs= new ArrayList<>();
 				adrs.add("");
@@ -205,7 +208,7 @@ public class Fragment_Yellow_Shop extends Fragment
 		cities.add("");
 		adrs.add("");
 		TreeSet<String> citySet= new TreeSet<>();
-		for(Shop shop : App.session.getShopDao().loadAll() )
+		for(Shop shop : App.session.getShopDao().queryBuilder().where(ShopDao.Properties.Alive.eq(true) ).list() )
 			citySet.add(shop.getCity() );
 		cities.addAll(citySet);
 		adapterCity= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,cities);

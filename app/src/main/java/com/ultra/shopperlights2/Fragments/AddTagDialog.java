@@ -49,13 +49,13 @@ public class AddTagDialog extends DialogFragment
 			 {
 			 switch(seekbarColor)
 				 {
-				 case O.COLOR_CODE_RED:
+				 case O.interaction.COLOR_CODE_RED:
 				 	 r=progress;
 					 break;
-				 case O.COLOR_CODE_GREEN:
+				 case O.interaction.COLOR_CODE_GREEN:
 				 	 g=progress;
 					 break;
-				 case O.COLOR_CODE_BLUE:
+				 case O.interaction.COLOR_CODE_BLUE:
 				 	 b=progress;
 				 }
 			 int resultColor= Color.rgb(r,g,b);
@@ -138,9 +138,9 @@ public class AddTagDialog extends DialogFragment
 		 seekBar_Red.getProgressDrawable().setColorFilter(Color.RED,PorterDuff.Mode.SRC_ATOP);
 		 seekBar_Green.getProgressDrawable().setColorFilter(Color.GREEN,PorterDuff.Mode.SRC_ATOP);
 		 seekBar_Blue.getProgressDrawable().setColorFilter(Color.BLUE,PorterDuff.Mode.SRC_ATOP);
-		 seekBar_Red.setOnSeekBarChangeListener(new SeekBarListener(O.COLOR_CODE_RED) );
-		 seekBar_Green.setOnSeekBarChangeListener(new SeekBarListener(O.COLOR_CODE_GREEN) );
-		 seekBar_Blue.setOnSeekBarChangeListener(new SeekBarListener(O.COLOR_CODE_BLUE) );
+		 seekBar_Red.setOnSeekBarChangeListener(new SeekBarListener(O.interaction.COLOR_CODE_RED) );
+		 seekBar_Green.setOnSeekBarChangeListener(new SeekBarListener(O.interaction.COLOR_CODE_GREEN) );
+		 seekBar_Blue.setOnSeekBarChangeListener(new SeekBarListener(O.interaction.COLOR_CODE_BLUE) );
 		 okBtn.setOnClickListener(new OkListener() );
 
 		 if(tagId==0)

@@ -10,30 +10,49 @@
 			android:src="@drawable/drawer_close_red"
 			android:layout_alignParentTop="true"
 			android:layout_alignParentRight="true"
+			android:layout_marginRight="5dp"
+			android:layout_marginEnd="5dp"
 			android:id="@+id/btn_close"/>
 	<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:text="Тип источника"
 			android:layout_alignParentTop="true"
 			android:layout_alignParentLeft="true"
 			android:layout_marginLeft="5dp"
 			android:layout_marginTop="5dp"
-			android:text="Группа"
-			android:id="@+id/txt" />
+			android:textSize="18sp"
+			android:id="@+id/srcTypeTxt"/>
 	<Spinner
 			android:layout_width="120dp"
 			android:layout_height="wrap_content"
-			android:layout_alignBottom="@+id/txt"
-			android:layout_toRightOf="@+id/txt"
-			android:layout_marginLeft="20dp"
-			android:id="@+id/groupInput"/>
+			android:layout_alignLeft="@+id/srcTypeTxt"
+			android:layout_below="@+id/srcTypeTxt"
+			android:layout_marginTop="5dp"
+			android:id="@+id/srcTypeInput"/>
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="src"
+			android:layout_alignLeft="@+id/srcTypeInput"
+			android:layout_below="@+id/srcTypeInput"
+			android:textSize="18sp"
+			android:layout_marginTop="15dp"
+			android:id="@+id/srcTxt"/>
+	<Spinner
+			android:layout_width="120dp"
+			android:layout_height="wrap_content"
+			android:layout_alignLeft="@+id/srcTxt"
+			android:layout_below="@+id/srcTxt"
+			android:layout_marginTop="5dp"
+			android:id="@+id/srcInput"/>
 	<Button
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textAllCaps="false"
 			android:text="Добавить запись"
-			android:layout_marginTop="40dp"
-			android:layout_below="@+id/btn_close"
-			android:layout_alignRight="@+id/groupInput"
+			android:layout_marginTop="30dp"
+			android:layout_below="@+id/srcInput"
+			android:layout_centerHorizontal="true"
 			android:id="@+id/btn_add"/>
 </RelativeLayout >

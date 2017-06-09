@@ -25,7 +25,7 @@ public class Note extends GreenRecyclerListElement
 	private boolean locked,ethereal;
 	private String title;
 	private int n;
-	private long groupId,templateId;
+	private long groupId,templateId,productId;
 
 	@ToMany
 	@JoinEntity
@@ -44,9 +44,9 @@ public class Note extends GreenRecyclerListElement
 	@Generated(hash = 363862535)
 	private transient NoteDao myDao;
 
-	@Generated(hash = 386609005)
+	@Generated(hash = 719689438)
 	public Note(Long id, boolean locked, boolean ethereal, String title, int n, long groupId,
-			long templateId) {
+			long templateId, long productId) {
 		this.id = id;
 		this.locked = locked;
 		this.ethereal = ethereal;
@@ -54,6 +54,7 @@ public class Note extends GreenRecyclerListElement
 		this.n = n;
 		this.groupId = groupId;
 		this.templateId = templateId;
+		this.productId = productId;
 	}
 
 	@Generated(hash = 1272611929)
@@ -186,6 +187,14 @@ public class Note extends GreenRecyclerListElement
 
 	public boolean getEthereal() {
 		return this.ethereal;
+	}
+
+	public long getProductId() {
+		return this.productId;
+	}
+
+	public void setProductId(long productId) {
+		this.productId = productId;
 	}
 
 	/** called by internal mechanisms, do not call yourself. */

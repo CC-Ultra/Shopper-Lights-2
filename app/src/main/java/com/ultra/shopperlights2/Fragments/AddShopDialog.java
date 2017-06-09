@@ -78,6 +78,7 @@ public class AddShopDialog extends DialogFragment
 					 }
 				 shop.setTitle(shopName);
 				 shop.setCity(shopCity);
+				 shop.setAlive(true);
 				 shop.setAdr(shopAdr);
 				 if(shopId==0)
 					 shopDao.insert(shop);

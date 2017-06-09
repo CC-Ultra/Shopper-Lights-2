@@ -166,7 +166,6 @@ public class AddNoteDialog extends DialogFragment
 		 action=_action;
 		 title=_title;
 		 templateId=_templateId;
-		 Log.d(O.TAG,"init: templateId="+ templateId);
 		 }
 	 public void init(String _action,String _title,long _id,long _templateId)
 		 {
@@ -174,7 +173,6 @@ public class AddNoteDialog extends DialogFragment
 		 noteId=_id;
 		 title=_title;
 		 templateId=_templateId;
-		 Log.d(O.TAG,"init: templateId="+ templateId);
 		 }
 	 private void initViews()
 		 {

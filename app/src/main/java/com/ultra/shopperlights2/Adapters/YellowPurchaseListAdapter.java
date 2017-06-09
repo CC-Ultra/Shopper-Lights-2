@@ -69,8 +69,8 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 		public void onClick(View v)
 			{
 			int position= elements.indexOf(product);
-			notifyItemChanged(position);
 			initCallback.initDialog(product.getId() );
+			notifyItemChanged(position);
 			}
 		}
 	private class DelListener implements View.OnClickListener
@@ -123,12 +123,34 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 	public void addElement(Note note)
 		{
 		Product product= new Product();
-		product.setTitle(note.getTitle() );
-		product.setN(note.getN() );
-		product.setComplete(false);
-		product.setPurchaseId(purchaseId);
+		if(note.getProductId()!=0)
+			{
+			Product p2= App.session.getProductDao().load(note.getProductId() );
+			product.setTitle(p2.getTitle() );
+			product.setManufacturerId(p2.getManufacturerId() );
+			product.setN(p2.getN() );
+			product.setWeight(p2.getWeight() );
+			product.setWeightUnit(p2.getWeightUnit() );
+			product.setEthereal(true);
+			product.setQuality(p2.getQuality() );
+			product.setComplete(false);
+			product.setPurchaseId(purchaseId);
+			}
+		else
+			{
+			product.setTitle(note.getTitle() );
+			product.setN(note.getN() );
+			product.setComplete(false);
+			product.setEthereal(note.isEthereal() );
+			product.setPurchaseId(purchaseId);
+			}
 		App.session.getProductDao().insert(product);
-		for(Tag tag : note.getTags())
+		List<Tag> tags;
+		if(note.getProductId()!=0)
+			tags= App.session.getProductDao().load(note.getProductId() ).getTags();
+		else
+			tags= note.getTags();
+		for(Tag tag : tags)
 			{
 			product.getTags().add(tag);
 			TagToProduct tagToProduct= new TagToProduct();

@@ -10,9 +10,7 @@ public class O
 	 {
 	 public static final String TAG="c123";
 
-	 public static final int COLOR_CODE_RED=0;
-	 public static final int COLOR_CODE_GREEN=1;
-	 public static final int COLOR_CODE_BLUE=2;
+	 public static final String TEMP_TEMPLATE_NAME="955653Template";
 
 	 public static class actions
 		 {
@@ -26,6 +24,12 @@ public class O
 
 	 public static class interaction
 		{
+		 public static final int COLOR_CODE_RED=0;
+		 public static final int COLOR_CODE_GREEN=1;
+		 public static final int COLOR_CODE_BLUE=2;
+		 public static final int SRC_TYPE_CODE_GROUPS=0;
+		 public static final int SRC_TYPE_CODE_TEMPLATES=1;
+		 public static final int SRC_TYPE_CODE_HISTORY=2;
 		 public static final int RESULT_CODE_ARROW=0;
 		 public static final int RESULT_CODE_LIGHTS=1;
 		 public static final int SCREEN_CODE_GREEN=0;

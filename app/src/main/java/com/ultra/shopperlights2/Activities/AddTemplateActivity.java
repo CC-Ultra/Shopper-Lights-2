@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import com.ultra.shopperlights2.Adapters.TemplatesAdapter;
@@ -18,9 +19,11 @@ import com.ultra.shopperlights2.Callbacks.EditTemplateCallback;
 import com.ultra.shopperlights2.Fragments.AddTemplateDialog;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.Template;
+import com.ultra.shopperlights2.Units.TemplateDao;
 import com.ultra.shopperlights2.Utils.O;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p></p>
@@ -65,8 +68,14 @@ public class AddTemplateActivity extends AppCompatActivity implements EditTempla
 	private void initAdapter()
 		{
 		ArrayList<Template> templates= new ArrayList<>(App.session.getTemplateDao().loadAll() );
+		List<Template> tempList= App.session.getTemplateDao().queryBuilder().where(TemplateDao.Properties.Title.eq(O.TEMP_TEMPLATE_NAME)).list();
+		if(tempList.size()!=0)
+			{
+			templates.remove(tempList.get(0) );
+			Log.d(O.TAG,"initAdapter: tempTemplate ignored");
+			}
 		TemplatesAdapter adapter= new TemplatesAdapter(this,templates,this);
-		list.setAdapter(adapter);
+		this.list.setAdapter(adapter);
 		}
 
 	@Override

@@ -160,10 +160,8 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 		}
 	private void deleteShop(Shop shop)
 		{
-		ArrayList<Purchase> purchases= new ArrayList<>(shop.getPurchases() );
-		for(Purchase purchase : purchases)
-			purchase.setShopId(0);
-		App.session.getShopDao().delete(shop);
+		shop.setAlive(false);
+		App.session.getShopDao().update(shop);
 		}
 	private void deleteTag(Tag tag)
 		{

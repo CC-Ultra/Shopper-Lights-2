@@ -14,6 +14,7 @@ public class O
 
 	 public static class actions
 		 {
+		 public static final String ACTION_EDIT_PURCHASE_ACTIVITY= "com.ultra.shopperlights2.Activities.EditPurchaseActivity";
 		 public static final String ACTION_ADD_TEMPLATE_NOTE_ACTIVITY= "com.ultra.shopperlights2.Activities.AddTemplateNoteActivity";
 		 public static final String ACTION_ADD_TEMPLATE_ACTIVITY= "com.ultra.shopperlights2.Activities.AddTemplateActivity";
 		 public static final String ACTION_EDIT_LIST_ACTIVITY= "com.ultra.shopperlights2.Activities.GTSListActivity";
@@ -24,6 +25,11 @@ public class O
 
 	 public static class interaction
 		{
+		 public static final int STAT_CODE_EDIT_HISTORY=0;
+		 public static final int STAT_CODE_TAG_STAT=1;
+		 public static final int STAT_CODE_MOST_REQUIRED=2;
+		 public static final int STAT_CODE_CHEAPEST_PRODUCT=3;
+		 public static final int STAT_CODE_COST_DINAMICS=4;
 		 public static final int COLOR_CODE_RED=0;
 		 public static final int COLOR_CODE_GREEN=1;
 		 public static final int COLOR_CODE_BLUE=2;
@@ -66,6 +72,9 @@ public class O
 			 }
 		 public static class extra
 			{
+			 public static final String PURCHASE_ID="Purchase id";
+			 public static final String DATE_FROM="Date from";
+			 public static final String DATE_TO="Date to";
 			 public static final String TEMPLATE_ID="Template Id";
 			 public static final String PAGER_ORDER="Pager order";
 			 public static final String SCREEN_CODE="Screen code";

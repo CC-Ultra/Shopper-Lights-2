@@ -8,9 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.Purchase;
+import com.ultra.shopperlights2.Utils.Calc;
 
 import java.util.Date;
 
@@ -48,6 +50,7 @@ public class TransportDialog extends DialogFragment
 			purchase.setDate(new Date() );
 			purchase.setShopId(0);
 			App.session.getPurchaseDao().insert(purchase);
+			Toast.makeText(getContext(),"Оплачено: "+ Calc.round(priceF),Toast.LENGTH_SHORT).show();
 			dismiss();
 			}
 		}

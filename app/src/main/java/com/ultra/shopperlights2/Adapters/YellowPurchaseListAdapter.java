@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.DialogDecision;
 import com.ultra.shopperlights2.Callbacks.YellowScreenDelElement;
-import com.ultra.shopperlights2.Callbacks.YellowScreenInitDialogFragment;
+import com.ultra.shopperlights2.Callbacks.InitDialogFragment;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
 import com.ultra.shopperlights2.Utils.ConfirmDialog;
@@ -33,7 +33,7 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 	private Context context;
 	private long purchaseId;
 	private YellowScreenDelElement delCallback;
-	private YellowScreenInitDialogFragment initCallback;
+	private InitDialogFragment initCallback;
 	private ArrayList<Product> elements;
 
 	private class DelDecision implements DialogDecision
@@ -111,7 +111,7 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 		}
 
 	public YellowPurchaseListAdapter(Context _context,ArrayList<Product> _elements,long _purchaseId,String _action,
-									 YellowScreenDelElement _delCallback,YellowScreenInitDialogFragment _initCallback)
+									 YellowScreenDelElement _delCallback,InitDialogFragment _initCallback)
 		{
 		action=_action;
 		context=_context;

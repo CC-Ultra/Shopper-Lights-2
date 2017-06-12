@@ -29,7 +29,6 @@ import com.ultra.shopperlights2.Utils.ConfirmDialog;
 import com.ultra.shopperlights2.Utils.DateUtil;
 import com.ultra.shopperlights2.Utils.O;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,7 +38,7 @@ import java.util.List;
  *
  * @author CC-Ultra
  */
-public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDelElement,YellowScreenInitDialogFragment,DialogDecision
+public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDelElement,InitDialogFragment,DialogDecision
 	 {
 	 private ChangeYellowFragmentCallback callback;
 	 private YellowPurchaseListAdapter adapter;
@@ -311,6 +310,7 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 {
 		 initAdapter();
 		 initStatusTxt();
+		 selectSrcSpinner();
 		 List<Product> productsCompleted= App.session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId),
 				 ProductDao.Properties.Complete.eq(true) ).list();
 		 float totalPrice=0;

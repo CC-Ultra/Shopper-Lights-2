@@ -1,12 +1,21 @@
 package com.ultra.shopperlights2.Fragments;
 
+import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.*;
+import com.ultra.shopperlights2.Activities.EditHistoryActivity;
 import com.ultra.shopperlights2.R;
+import com.ultra.shopperlights2.Utils.DateUtil;
+import com.ultra.shopperlights2.Utils.O;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * <p></p>
@@ -16,10 +25,121 @@ import com.ultra.shopperlights2.R;
  */
 public class Fragment_Red extends Fragment
 	{
-	 @Nullable
-	 @Override
-	 public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState)
+	private Date dateFrom,dateTo;
+	private Spinner inputOptions;
+	private TextView txtDateFrom,txtDateTo;
+
+	private class StartListener implements View.OnClickListener
 		{
-		 return inflater.inflate(R.layout.red_screen,container,false);
-		 }
-	 }
+		@Override
+		public void onClick(View v)
+			{
+			if(dateFrom==null || dateTo==null)
+				{
+				Toast.makeText(getContext(),"Выбери диапазон дат",Toast.LENGTH_SHORT).show();
+				return;
+				}
+			if(!dateFrom.before(dateTo) )
+				{
+				Toast.makeText(getContext(),"Введи корректные даты",Toast.LENGTH_SHORT).show();
+				return;
+				}
+			Intent jumper= new Intent();
+			switch(inputOptions.getSelectedItemPosition() )
+				{
+				case O.interaction.STAT_CODE_EDIT_HISTORY:
+					jumper= new Intent(getContext(),EditHistoryActivity.class);
+					break;
+				case O.interaction.STAT_CODE_TAG_STAT:
+					Toast.makeText(getContext(),"Статистика по тегам",Toast.LENGTH_SHORT).show();;
+					break;
+				case O.interaction.STAT_CODE_MOST_REQUIRED:
+					Toast.makeText(getContext(),"Самый востребованный продукт",Toast.LENGTH_SHORT).show();;
+					break;
+				case O.interaction.STAT_CODE_CHEAPEST_PRODUCT:
+					Toast.makeText(getContext(),"Самый дешевый продукт",Toast.LENGTH_SHORT).show();;
+					break;
+				case O.interaction.STAT_CODE_COST_DINAMICS:
+					Toast.makeText(getContext(),"Динамика цен",Toast.LENGTH_SHORT).show();;
+					break;
+				}
+			jumper.putExtra(O.mapKeys.extra.DATE_FROM,dateFrom.getTime() );
+			jumper.putExtra(O.mapKeys.extra.DATE_TO,dateTo.getTime() );
+			if(inputOptions.getSelectedItemPosition()==O.interaction.STAT_CODE_EDIT_HISTORY)
+				getContext().startActivity(jumper);
+			}
+		}
+	private class DateDialogListener implements DatePickerDialog.OnDateSetListener
+		{
+		boolean from;
+
+		DateDialogListener(boolean _from)
+			{
+			from=_from;
+			}
+
+		@Override
+		public void onDateSet(DatePicker view,int year,int month,int dayOfMonth)
+			{
+			if(from)
+				{
+				dateFrom= DateUtil.getDateFromDMY(dayOfMonth,month,year);
+				txtDateFrom.setText(DateUtil.getDateStr(dateFrom) );
+				}
+			else
+				{
+				dateTo= DateUtil.getDateFromDMY(dayOfMonth,month,year);
+				txtDateTo.setText(DateUtil.getDateStr(dateTo) );
+				}
+			}
+		}
+	private class ClockButtonListener implements View.OnClickListener
+		{
+		@Override
+		public void onClick(View v)
+			{
+			DatePickerDialog dialog=null;
+			DateUtil.DateDMY dateDMY= DateUtil.getDMYfromDate(new Date() );
+			if(v.getId()==R.id.btnDateFrom)
+				dialog= new DatePickerDialog(getContext(),new DateDialogListener(true),dateDMY.year,dateDMY.month,dateDMY.day);
+			else if(v.getId()==R.id.btnDateTo)
+				dialog= new DatePickerDialog(getContext(),new DateDialogListener(false),dateDMY.year,dateDMY.month,dateDMY.day);
+			dialog.show();
+			}
+		}
+
+	private void initOptions()
+		{
+		ArrayList<String> optionsList= new ArrayList<>();
+		optionsList.add("Редактировать историю");
+		optionsList.add("Статистика по тегам");
+		optionsList.add("Самые востребованные продукты");
+		optionsList.add("Самый дешевый производитель");
+		optionsList.add("Поиск по ключевому слову");
+		optionsList.add("Динамика цен");
+		ArrayAdapter<String> adapter= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,optionsList);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		inputOptions.setAdapter(adapter);
+		}
+
+	@Nullable
+	@Override
+	public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState)
+		{
+		View mainView= inflater.inflate(R.layout.red_screen,container,false);
+
+		ImageButton buttonDateFrom= (ImageButton)mainView.findViewById(R.id.btnDateFrom);
+		ImageButton buttonDateTo= (ImageButton)mainView.findViewById(R.id.btnDateTo);
+		txtDateFrom= (TextView)mainView.findViewById(R.id.txtDateFrom);
+		txtDateTo= (TextView)mainView.findViewById(R.id.txtDateTo);
+		inputOptions= (Spinner)mainView.findViewById(R.id.inputOptions);
+		Button btnStart= (Button)mainView.findViewById(R.id.btnStart);
+
+		btnStart.setOnClickListener(new StartListener() );
+		buttonDateFrom.setOnClickListener(new ClockButtonListener() );
+		buttonDateTo.setOnClickListener(new ClockButtonListener() );
+		initOptions();
+
+		return mainView;
+		}
+	}

@@ -7,7 +7,7 @@ package com.ultra.shopperlights2.Callbacks;
  * @author CC-Ultra
  */
 
-public interface YellowScreenInitDialogFragment
+public interface InitDialogFragment
 	{
 	void initDialog(long id);
 	}

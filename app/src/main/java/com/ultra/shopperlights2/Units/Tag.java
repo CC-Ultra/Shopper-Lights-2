@@ -23,6 +23,7 @@ public class Tag extends GreenRecyclerListElement
 
 	private String title;
 	private int color;
+	private float totalPrice;
 
 	@ToMany
 	@JoinEntity
@@ -41,11 +42,12 @@ public class Tag extends GreenRecyclerListElement
 	@Generated(hash = 2076396065)
 	private transient TagDao myDao;
 
-	@Generated(hash = 1483909068)
-	public Tag(Long id, String title, int color) {
+	@Generated(hash = 2003018303)
+	public Tag(Long id, String title, int color, float totalPrice) {
 		this.id = id;
 		this.title = title;
 		this.color = color;
+		this.totalPrice = totalPrice;
 	}
 
 	@Generated(hash = 1605720318)
@@ -138,6 +140,14 @@ public class Tag extends GreenRecyclerListElement
 			throw new DaoException("Entity is detached from DAO context");
 		}
 		myDao.update(this);
+	}
+
+	public float getTotalPrice() {
+		return this.totalPrice;
+	}
+
+	public void setTotalPrice(float totalPrice) {
+		this.totalPrice = totalPrice;
 	}
 
 	/** called by internal mechanisms, do not call yourself. */

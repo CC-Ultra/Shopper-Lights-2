@@ -11,6 +11,7 @@ public class O
 	 public static final String TAG="c123";
 
 	 public static final String TEMP_TEMPLATE_NAME="955653Template";
+	 public static final String TRANSPORT_TAG_NAME="955653Transport";
 
 	 public static class actions
 		 {
@@ -72,6 +73,7 @@ public class O
 			 }
 		 public static class extra
 			{
+			 public static final String TAG_ID="Tag id";
 			 public static final String PURCHASE_ID="Purchase id";
 			 public static final String DATE_FROM="Date from";
 			 public static final String DATE_TO="Date to";
@@ -80,11 +82,6 @@ public class O
 			 public static final String SCREEN_CODE="Screen code";
 			 public static final String START_COLOR="Start color";
 			 public static final String LIST_ELEMENT_TYPE="List element type";
-			 }
-
-		 public static class prefs
-			{
-			 ;
 			 }
 		 }
 	 }

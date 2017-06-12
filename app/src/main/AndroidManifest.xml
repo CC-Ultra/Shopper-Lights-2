@@ -24,6 +24,7 @@
 		<activity android:name=".Activities.EditHistoryActivity"/>
 		<activity android:name=".Activities.EditPurchaseActivity"/>
 		<activity android:name=".Activities.TagStatActivity"/>
+		<activity android:name=".Activities.TagDetailsActivity"/>
 		<activity android:name=".Test.TestActivity" >
 			<!--<intent-filter >-->
 				<!--<action android:name="android.intent.action.MAIN" />-->

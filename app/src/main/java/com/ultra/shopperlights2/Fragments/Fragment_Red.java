@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.ultra.shopperlights2.Activities.EditHistoryActivity;
+import com.ultra.shopperlights2.Activities.TagStatActivity;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Utils.DateUtil;
 import com.ultra.shopperlights2.Utils.O;
@@ -51,7 +52,7 @@ public class Fragment_Red extends Fragment
 					jumper= new Intent(getContext(),EditHistoryActivity.class);
 					break;
 				case O.interaction.STAT_CODE_TAG_STAT:
-					Toast.makeText(getContext(),"Статистика по тегам",Toast.LENGTH_SHORT).show();;
+					jumper= new Intent(getContext(),TagStatActivity.class);
 					break;
 				case O.interaction.STAT_CODE_MOST_REQUIRED:
 					Toast.makeText(getContext(),"Самый востребованный продукт",Toast.LENGTH_SHORT).show();;
@@ -65,8 +66,15 @@ public class Fragment_Red extends Fragment
 				}
 			jumper.putExtra(O.mapKeys.extra.DATE_FROM,dateFrom.getTime() );
 			jumper.putExtra(O.mapKeys.extra.DATE_TO,dateTo.getTime() );
-			if(inputOptions.getSelectedItemPosition()==O.interaction.STAT_CODE_EDIT_HISTORY)
-				getContext().startActivity(jumper);
+			switch(inputOptions.getSelectedItemPosition() )
+				{
+				case O.interaction.STAT_CODE_EDIT_HISTORY:
+					getContext().startActivity(jumper);
+					break;
+				case O.interaction.STAT_CODE_TAG_STAT:
+					getContext().startActivity(jumper);
+					break;
+				}
 			}
 		}
 	private class DateDialogListener implements DatePickerDialog.OnDateSetListener
@@ -115,7 +123,6 @@ public class Fragment_Red extends Fragment
 		optionsList.add("Статистика по тегам");
 		optionsList.add("Самые востребованные продукты");
 		optionsList.add("Самый дешевый производитель");
-		optionsList.add("Поиск по ключевому слову");
 		optionsList.add("Динамика цен");
 		ArrayAdapter<String> adapter= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,optionsList);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

@@ -1,25 +1,29 @@
 package com.ultra.shopperlights2.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.LinearLayout;
+import android.util.Log;
 import android.widget.TextView;
 import com.ultra.shopperlights2.Adapters.EditHistoryAdapter;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.Purchase;
 import com.ultra.shopperlights2.Units.PurchaseDao;
+import com.ultra.shopperlights2.Utils.BackgroundTask;
 import com.ultra.shopperlights2.Utils.Calc;
 import com.ultra.shopperlights2.Utils.DateUtil;
 import com.ultra.shopperlights2.Utils.O;
+import rx.Subscriber;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * <p></p>
@@ -36,20 +40,52 @@ public class EditHistoryActivity extends AppCompatActivity
 	private ArrayList<Purchase> purchases;
 	private Date dateTo,dateFrom;
 
-	private void initTotalPrice()
+	private class XCallable implements Callable<List<Purchase> >
 		{
-		List<Purchase> p= App.session.getPurchaseDao().queryBuilder().where(PurchaseDao.Properties.Date.gt(dateFrom),
-																	PurchaseDao.Properties.Date.le(dateTo) ).list();
+		@Override
+		public List<Purchase> call() throws Exception
+			{
+			List<Purchase> p= App.session.getPurchaseDao().queryBuilder().where(PurchaseDao.Properties.Date.gt(dateFrom),
+					PurchaseDao.Properties.Date.le(dateTo) ).orderDesc(PurchaseDao.Properties.Date).list();
+			cleanEmptyPurchases(p);
+			return p;
+			}
+		}
+	private class XSubscriber extends Subscriber<List<Purchase> >
+		{
+		ProgressDialog dialog;
+
+		XSubscriber(ProgressDialog _dialog)
+			{
+			dialog=_dialog;
+			}
+
+		@Override
+		public void onCompleted() {}
+		@Override
+		public void onError(Throwable e)
+			{
+			Log.e(O.TAG,"XSubscriber.onError: ",e);
+			}
+		@Override
+		public void onNext(List<Purchase> x)
+			{
+			Log.d(O.TAG,"onNext: ");
+			initTotalPrice(x);
+			initList(x);
+			dialog.dismiss();
+			}
+		}
+	private void initTotalPrice(List<Purchase> p)
+		{
 		purchases= new ArrayList<>(p);
 		totalPrice=0;
 		for(Purchase purchase : purchases)
 			totalPrice+= purchase.getPrice();
 		txtTotalPrice.setText(""+ Calc.round(totalPrice) );
 		}
-	private void initList()
+	private void initList(List<Purchase> p)
 		{
-		List<Purchase> p= App.session.getPurchaseDao().queryBuilder().where(PurchaseDao.Properties.Date.gt(dateFrom),
-									PurchaseDao.Properties.Date.le(dateTo) ).orderDesc(PurchaseDao.Properties.Date).list();
 		purchases.clear();
 		for(Purchase purchase : p)
 			{
@@ -61,13 +97,11 @@ public class EditHistoryActivity extends AppCompatActivity
 		list.setAdapter(adapter);
 		list.setLayoutManager(new LinearLayoutManager(this) );
 		}
-	private void cleanEmptyPurchases()
+	private void cleanEmptyPurchases(List<Purchase> p)
 		{
-		List<Purchase> p= App.session.getPurchaseDao().queryBuilder().where(PurchaseDao.Properties.Date.gt(dateFrom),
-																	PurchaseDao.Properties.Date.le(dateTo) ).list();
 		for(Purchase purchase : p)
 			{
-			if(purchase.getPrice()==0)
+			if(purchase.getPrice()==0 && purchase.isCompleted() )
 				App.session.getPurchaseDao().delete(purchase);
 			}
 		}
@@ -94,8 +128,8 @@ public class EditHistoryActivity extends AppCompatActivity
 	protected void onResume()
 		{
 		super.onResume();
-		cleanEmptyPurchases();
-		initTotalPrice();
-		initList();
+		BackgroundTask backgroundTask= new BackgroundTask(this,new XCallable() );
+		backgroundTask.setSubscriber(new XSubscriber(backgroundTask.getDialog() ) );
+		backgroundTask.start();
 		}
 	}

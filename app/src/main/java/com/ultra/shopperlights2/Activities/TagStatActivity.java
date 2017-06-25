@@ -1,5 +1,6 @@
 package com.ultra.shopperlights2.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -7,14 +8,19 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import com.ultra.shopperlights2.Adapters.TagStatAdapter;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
+import com.ultra.shopperlights2.Utils.BackgroundTask;
 import com.ultra.shopperlights2.Utils.O;
+import rx.Subscriber;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * <p></p>
@@ -28,6 +34,42 @@ public class TagStatActivity extends AppCompatActivity
 	private Date dateTo,dateFrom;
 	private RecyclerView list;
 	private Tag transportTag;
+
+	private class XCallable implements Callable<Boolean>
+		{
+		@Override
+		public Boolean call() throws Exception
+			{
+			initTransportTag();
+			dropTagsPrice();
+			calculateTagPrice();
+			return true;
+			}
+		}
+	private class XSubscriber extends Subscriber<Boolean>
+		{
+		ProgressDialog dialog;
+
+		XSubscriber(ProgressDialog _dialog)
+			{
+			dialog=_dialog;
+			}
+
+		@Override
+		public void onCompleted() {}
+		@Override
+		public void onError(Throwable e)
+			{
+			Log.e(O.TAG,"XSubscriber.onError: ",e);
+			}
+		@Override
+		public void onNext(Boolean x)
+			{
+			Log.d(O.TAG,"onNext: ");
+			initAdapter();
+			dialog.dismiss();
+			}
+		}
 
 	private void initTransportTag()
 		{
@@ -53,7 +95,7 @@ public class TagStatActivity extends AppCompatActivity
 		}
 	private void calculateTagPrice()
 		{
-		List<Purchase> purchases=App.session.getPurchaseDao().queryBuilder().where(PurchaseDao.Properties.Date.gt(dateFrom),
+		List<Purchase> purchases= App.session.getPurchaseDao().queryBuilder().where(PurchaseDao.Properties.Date.gt(dateFrom),
 																		PurchaseDao.Properties.Date.le(dateTo)).list();
 		for(Purchase purchase : purchases)
 			{
@@ -98,9 +140,8 @@ public class TagStatActivity extends AppCompatActivity
 
 		list= (RecyclerView)findViewById(R.id.list);
 
-		initTransportTag();
-		dropTagsPrice();
-		calculateTagPrice();
-		initAdapter();
+		BackgroundTask<Boolean> backgroundTask= new BackgroundTask<>(this,new XCallable() );
+		backgroundTask.setSubscriber(new XSubscriber(backgroundTask.getDialog() ) );
+		backgroundTask.start();
 		}
 	}

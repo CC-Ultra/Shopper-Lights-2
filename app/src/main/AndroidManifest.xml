@@ -25,6 +25,11 @@
 		<activity android:name=".Activities.EditPurchaseActivity"/>
 		<activity android:name=".Activities.TagStatActivity"/>
 		<activity android:name=".Activities.TagDetailsActivity"/>
+		<activity android:name=".Activities.MostRequiredActivity"/>
+		<activity android:name=".Activities.PriceDynamicsListActivity"/>
+		<activity android:name=".Activities.PriceDynamicsDetailsActivity"/>
+		<activity android:name=".Activities.SearchActivity"/>
+		<activity android:name=".Activities.PartialMatchListActivity"/>
 		<activity android:name=".Test.TestActivity" >
 			<!--<intent-filter >-->
 				<!--<action android:name="android.intent.action.MAIN" />-->

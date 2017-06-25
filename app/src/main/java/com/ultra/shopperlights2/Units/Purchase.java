@@ -147,12 +147,16 @@ public class Purchase
 			myDao.update(this);
 		}
 
-		public boolean getCompleted() {
+		public boolean isCompleted() {
 			return this.completed;
 		}
 
 		public void setCompleted(boolean completed) {
 			this.completed = completed;
+		}
+
+		public boolean getCompleted() {
+			return this.completed;
 		}
 
 		/** called by internal mechanisms, do not call yourself. */

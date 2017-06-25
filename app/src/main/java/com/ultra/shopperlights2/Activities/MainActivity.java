@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 }
 	 private void refreshFragments()
 		 {
+		 checkPurchaseState();
 		 fragments[O.interaction.SCREEN_CODE_GREEN]= new Fragment_Green();
 		 if(purchaseState)
 			 {
@@ -158,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 {
 		 super.onCreate(savedInstanceState);
 		 setContentView(R.layout.main_layout);
-		 Log.d(O.TAG,"onCreate: ");
 
 		 selectedScreen= getIntent().getIntExtra(O.mapKeys.extra.START_COLOR, O.interaction.SCREEN_CODE_GREEN);
 		 if(savedInstanceState!=null)
@@ -190,7 +190,6 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 	 protected void onResume()
 		 {
 		 super.onResume();
-		 checkPurchaseState();
 		 refreshFragments();
 		 }
 	 @Override

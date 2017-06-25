@@ -99,7 +99,7 @@ public class EditProductDialog extends DialogFragment
 			if(priceStr.equals("") || priceStr.equals(".") )
 				priceStr="0.";
 			if(weightStr.equals("") || weightStr.equals(".") )
-				priceStr="1";
+				weightStr="1";
 			float priceF= Float.parseFloat(priceStr);
 			float weightF= Float.parseFloat(weightStr);
 			if(weightF==0)

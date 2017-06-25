@@ -9,8 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import com.ultra.shopperlights2.Activities.EditHistoryActivity;
-import com.ultra.shopperlights2.Activities.TagStatActivity;
+import com.ultra.shopperlights2.Activities.*;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Utils.DateUtil;
 import com.ultra.shopperlights2.Utils.O;
@@ -26,7 +25,7 @@ import java.util.Date;
  */
 public class Fragment_Red extends Fragment
 	{
-	private Date dateFrom,dateTo;
+	private static Date dateFrom,dateTo;
 	private Spinner inputOptions;
 	private TextView txtDateFrom,txtDateTo;
 
@@ -55,26 +54,18 @@ public class Fragment_Red extends Fragment
 					jumper= new Intent(getContext(),TagStatActivity.class);
 					break;
 				case O.interaction.STAT_CODE_MOST_REQUIRED:
-					Toast.makeText(getContext(),"Самый востребованный продукт",Toast.LENGTH_SHORT).show();;
+					jumper= new Intent(getContext(),MostRequiredActivity.class);
 					break;
-				case O.interaction.STAT_CODE_CHEAPEST_PRODUCT:
-					Toast.makeText(getContext(),"Самый дешевый продукт",Toast.LENGTH_SHORT).show();;
+				case O.interaction.STAT_CODE_SEARCH:
+					jumper= new Intent(getContext(),SearchActivity.class);
 					break;
 				case O.interaction.STAT_CODE_COST_DINAMICS:
-					Toast.makeText(getContext(),"Динамика цен",Toast.LENGTH_SHORT).show();;
+					jumper= new Intent(getContext(),PriceDynamicsListActivity.class);
 					break;
 				}
 			jumper.putExtra(O.mapKeys.extra.DATE_FROM,dateFrom.getTime() );
 			jumper.putExtra(O.mapKeys.extra.DATE_TO,dateTo.getTime() );
-			switch(inputOptions.getSelectedItemPosition() )
-				{
-				case O.interaction.STAT_CODE_EDIT_HISTORY:
-					getContext().startActivity(jumper);
-					break;
-				case O.interaction.STAT_CODE_TAG_STAT:
-					getContext().startActivity(jumper);
-					break;
-				}
+			getContext().startActivity(jumper);
 			}
 		}
 	private class DateDialogListener implements DatePickerDialog.OnDateSetListener
@@ -122,7 +113,7 @@ public class Fragment_Red extends Fragment
 		optionsList.add("Редактировать историю");
 		optionsList.add("Статистика по тегам");
 		optionsList.add("Самые востребованные продукты");
-		optionsList.add("Самый дешевый производитель");
+		optionsList.add("Поиск по ключевому слову");
 		optionsList.add("Динамика цен");
 		ArrayAdapter<String> adapter= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,optionsList);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -148,5 +139,14 @@ public class Fragment_Red extends Fragment
 		initOptions();
 
 		return mainView;
+		}
+	@Override
+	public void onResume()
+		{
+		super.onResume();
+		if(dateFrom!=null)
+			txtDateFrom.setText(DateUtil.getDateStr(dateFrom) );
+		if(dateTo!=null)
+			txtDateTo.setText(DateUtil.getDateStr(dateTo) );
 		}
 	}

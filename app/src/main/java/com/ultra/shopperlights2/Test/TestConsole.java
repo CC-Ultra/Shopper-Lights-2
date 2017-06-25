@@ -1,6 +1,7 @@
 package com.ultra.shopperlights2.Test;
 
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 /**
  * <p></p>
@@ -13,8 +14,10 @@ public class TestConsole
 	{
 	public static void main(String[] args)
 		{
-		ArrayList<String> list= new ArrayList<>();
-		list.add(null);
-		System.out.println("123");
+		TreeMap<String,Integer> map= new TreeMap<>();
+		map.put("ghi",999);
+		map.put("abc",555);
+		map.put("def",111);
+		System.out.println(map);
 		}
 	}

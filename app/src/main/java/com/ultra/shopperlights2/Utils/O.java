@@ -29,7 +29,7 @@ public class O
 		 public static final int STAT_CODE_EDIT_HISTORY=0;
 		 public static final int STAT_CODE_TAG_STAT=1;
 		 public static final int STAT_CODE_MOST_REQUIRED=2;
-		 public static final int STAT_CODE_CHEAPEST_PRODUCT=3;
+		 public static final int STAT_CODE_SEARCH=3;
 		 public static final int STAT_CODE_COST_DINAMICS=4;
 		 public static final int COLOR_CODE_RED=0;
 		 public static final int COLOR_CODE_GREEN=1;
@@ -73,6 +73,8 @@ public class O
 			 }
 		 public static class extra
 			{
+			 public static final String PRODUCT_DATES="Product dates";
+			 public static final String PRODUCT_IDS="Product ids";
 			 public static final String TAG_ID="Tag id";
 			 public static final String PURCHASE_ID="Purchase id";
 			 public static final String DATE_FROM="Date from";

@@ -156,6 +156,7 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 @Override
 		 public void onItemSelected(AdapterView<?> parent,View view,int position,long id)
 			 {
+			 Log.d(O.TAG,"SrcSelectListener.onItemSelected: ");
 			 lastTimeChoise=position;
 			 selectSrcSpinner();
 			 }
@@ -269,9 +270,9 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 switch(lastTimeSrcType)
 			 {
 			 case O.interaction.SRC_TYPE_CODE_GROUPS:
-				 result.add("");
 				 for(Group group : App.session.getGroupDao().queryBuilder().orderAsc(GroupDao.Properties.Priority).list())
 					 result.add(group.getTitle() );
+				 result.add("");
 				 break;
 			 case O.interaction.SRC_TYPE_CODE_TEMPLATES:
 				 for(Template template : App.session.getTemplateDao().loadAll() )
@@ -354,8 +355,11 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 {
 		 if(inputSrc!=null)
 			 {
-			 inputSrcType.setSelection(lastTimeSrcType);
-			 inputSrc.setSelection(lastTimeChoise);
+			 Log.d(O.TAG,"selectSrcSpinner: lastTimeChoise="+ lastTimeChoise +"\tlastTimeSrcType="+ lastTimeSrcType);
+//			 if(lastTimeSrcType!=0)
+				 inputSrcType.setSelection(lastTimeSrcType);
+//			 if(lastTimeChoise!=0)
+				 inputSrc.setSelection(lastTimeChoise);
 			 ArrayList<Note> notes= new ArrayList<>();
 			 String selectedItem=inputSrc.getSelectedItem().toString();
 			 switch(lastTimeSrcType)
@@ -504,6 +508,7 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 	 public void onResume()
 		 {
 		 super.onResume();
+		 Log.d(O.TAG,"onResume: ");
 		 updateLists();
 		 }
 	 @Override

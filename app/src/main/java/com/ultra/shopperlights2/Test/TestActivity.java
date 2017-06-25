@@ -18,6 +18,7 @@ import com.ultra.shopperlights2.Utils.O;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p></p>
@@ -34,10 +35,9 @@ public class TestActivity extends AppCompatActivity
 		@Override
 		public void onClick(View v)
 			{
-			Note note= new Note();
-			note.setTitle("Note");
-			note.setEthereal(true);
-			App.session.getNoteDao().insert(note);
+			List<Product> list= App.session.getProductDao().queryBuilder().where(ProductDao.Properties.Title.like("%масло%")).list();
+			for(Product product : list)
+				Log.d(O.TAG,"onClick: product: "+ product.getTitle() );
 			txt.setText("есть.");
 			}
 		}

@@ -3,11 +3,13 @@ package com.ultra.shopperlights2.Fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.R;
@@ -32,27 +34,41 @@ public class TransportDialog extends DialogFragment
 		@Override
 		public void onClick(View v)
 			{
-			String priceStr= inputPrice.getText().toString();
-			if(priceStr.length()==0)
-				{
-				inputPrice.setError("Введи стоимость проезда");
-				return;
-				}
-			if(priceStr.equals(".") || Float.parseFloat(priceStr)==0)
-				{
-				inputPrice.setError("Некорректный ввод");
-				return;
-				}
-			float priceF= Float.parseFloat(priceStr);
-			Purchase purchase= new Purchase();
-			purchase.setCompleted(true);
-			purchase.setPrice(priceF);
-			purchase.setDate(new Date() );
-			purchase.setShopId(0);
-			App.session.getPurchaseDao().insert(purchase);
-			Toast.makeText(getContext(),"Оплачено: "+ Calc.round(priceF),Toast.LENGTH_SHORT).show();
-			dismiss();
+			submitAction();
 			}
+		}
+	private class SubmitEditTextListener implements TextView.OnEditorActionListener
+		{
+		@Override
+		public boolean onEditorAction(TextView v,int actionId,KeyEvent event)
+			{
+			submitAction();
+			return true;
+			}
+		}
+
+	private void submitAction()
+		{
+		String priceStr= inputPrice.getText().toString();
+		if(priceStr.length()==0)
+			{
+			inputPrice.setError("Введи стоимость проезда");
+			return;
+			}
+		if(priceStr.equals(".") || Float.parseFloat(priceStr)==0)
+			{
+			inputPrice.setError("Некорректный ввод");
+			return;
+			}
+		float priceF= Float.parseFloat(priceStr);
+		Purchase purchase= new Purchase();
+		purchase.setCompleted(true);
+		purchase.setPrice(priceF);
+		purchase.setDate(new Date() );
+		purchase.setShopId(0);
+		App.session.getPurchaseDao().insert(purchase);
+		Toast.makeText(getContext(),"Оплачено: "+ Calc.round(priceF),Toast.LENGTH_SHORT).show();
+		dismiss();
 		}
 
 	@Nullable

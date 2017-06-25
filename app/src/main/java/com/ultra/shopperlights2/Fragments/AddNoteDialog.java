@@ -180,7 +180,8 @@ public class AddNoteDialog extends DialogFragment
 		 listRemaining= new ArrayList<>();
 		 listSelected= new ArrayList<>();
 		 for(Tag tag : session.getTagDao().loadAll() )
-		 	listRemaining.add(tag.getTitle() );
+		 	if(!tag.getTitle().equals(O.TRANSPORT_TAG_NAME) )
+				listRemaining.add(tag.getTitle() );
 		 ArrayList<Group> groupList= new ArrayList<>(session.getGroupDao().queryBuilder().orderAsc(GroupDao.Properties.Priority).list() );
 		 ArrayList<String> groupListStr= new ArrayList<>();
 		 groupListStr.add("");

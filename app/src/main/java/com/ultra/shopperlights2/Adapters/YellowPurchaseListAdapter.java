@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.DialogDecision;
@@ -93,7 +94,7 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 		{
 		View mainView;
 		TextView titleTxt;
-		ImageButton btnDel;
+		ImageView btnDel;
 		DelListener delListener;
 		SelectListener selectListener;
 
@@ -102,7 +103,7 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 			super(itemView);
 			mainView=itemView;
 			titleTxt= (TextView)itemView.findViewById(R.id.txt);
-			btnDel= (ImageButton)itemView.findViewById(R.id.btnDel);
+			btnDel= (ImageView)itemView.findViewById(R.id.btnDel);
 			delListener= new DelListener();
 			selectListener= new SelectListener();
 			itemView.setOnClickListener(selectListener);
@@ -179,6 +180,7 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 		View mainView= LayoutInflater.from(parent.getContext() ).inflate(R.layout.yellow_purchase_list_element,parent,false);
 		return new Holder(mainView);
 		}
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onBindViewHolder(Holder holder,int position)
 		{
@@ -187,9 +189,12 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 		holder.selectListener.setProduct(product);
 		holder.delListener.setProduct(product);
 		if(product.isComplete() )
-			holder.mainView.setBackgroundColor(Color.parseColor("#00dd00") );
+			{
+			holder.mainView.setBackgroundColor(context.getResources().getColor(R.color.lightYellowActive) );
+			holder.titleTxt.setTextColor(context.getResources().getColor(R.color.pure_black));
+			}
 		else
-			holder.mainView.setBackgroundColor(Color.parseColor("#222222") );
+			holder.mainView.setBackgroundColor(context.getResources().getColor(R.color.list_element_solid) );
 		}
 	@Override
 	public int getItemCount()

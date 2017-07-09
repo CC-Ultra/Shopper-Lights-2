@@ -69,7 +69,7 @@ public class AddTemplateNoteActivity extends AppCompatActivity implements EditNo
 	protected void onCreate(@Nullable Bundle savedInstanceState)
 		{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.edit_list_layout);
+		setContentView(R.layout.gts_layout);
 
 		templateId= getIntent().getLongExtra(O.mapKeys.extra.TEMPLATE_ID,0);
 

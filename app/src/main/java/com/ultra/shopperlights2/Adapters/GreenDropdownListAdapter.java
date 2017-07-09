@@ -1,7 +1,6 @@
 package com.ultra.shopperlights2.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.support.v4.app.FragmentManager;
@@ -167,8 +166,8 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 		 }
 	 class Holder extends RecyclerView.ViewHolder
 		 {
-		 ImageButton btnDel;
-		 ImageView img;
+//		 ImageButton btnDel;
+		 ImageView img,btnDel;
 		 TextView title,n;
 		 TextView tag[]= new TextView[3];
 		 DelListener delListener;
@@ -181,7 +180,7 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 			 super(_mainView);
 			 mainView=_mainView;
 			 img= (ImageView)mainView.findViewById(R.id.dropdownImg);
-			 btnDel= (ImageButton)mainView.findViewById(R.id.deleteBtn);
+			 btnDel= (ImageView) mainView.findViewById(R.id.deleteBtn);
 			 title= (TextView)mainView.findViewById(R.id.title);
 			 n= (TextView)mainView.findViewById(R.id.n);
 			 tag[0]= (TextView)mainView.findViewById(R.id.tag1);
@@ -235,6 +234,7 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 		 View view= LayoutInflater.from(parent.getContext() ).inflate(R.layout.list_element_green_screen,parent,false);
 		 return new Holder(view);
 		 }
+	 @SuppressWarnings("deprecation")
 	 @Override
 	 public void onBindViewHolder(Holder holder,int position)
 		 {
@@ -246,7 +246,7 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 			 holder.dropdownListener.init(recyclerListElement,holder.img);
 			 group.setHolderTitle(group.getTitle() +" ("+ group.getNotes().size() +")");
 			 holder.title.setText(group.getHolderTitle() );
-			 holder.title.setTextColor(Color.GREEN);
+			 holder.title.setTextColor(context.getResources().getColor(R.color.lightGreenActive) );
 			 for(int i=0; i<3; i++)
 				 holder.tag[i].setVisibility(View.GONE);
 			 holder.n.setVisibility(View.GONE);
@@ -266,7 +266,7 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 				 holder.btnDel.setEnabled(true);
 				 }
 			 holder.title.setText(note.getTitle() );
-			 holder.title.setTextColor(Color.YELLOW);
+			 holder.title.setTextColor(context.getResources().getColor(R.color.lightYellowActive) );
 			 if(note.isTabbed() )
 				 {
 				 float k=1;
@@ -287,7 +287,7 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 				 }
 			 holder.n.setVisibility(View.VISIBLE);
 			 holder.n.setText(note.getN() +"");
-			 holder.n.setTextColor(Color.YELLOW);
+			 holder.n.setTextColor(context.getResources().getColor(R.color.lightYellowActive) );
 			 ArrayList<Tag> tags= new ArrayList<>(note.getTags() );
 			 int i=0;
 			 for(Tag tag : tags)

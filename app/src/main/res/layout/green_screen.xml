@@ -19,6 +19,8 @@
 				android:layout_height="wrap_content"
 				android:layout_gravity="center"
 				android:text="Добавить продукт"
+				android:textColor="@color/pure_black"
+				android:background="@drawable/button_selector_green"
 				android:id="@+id/btn_addNote" />
 	</FrameLayout >
 	<android.support.v7.widget.RecyclerView

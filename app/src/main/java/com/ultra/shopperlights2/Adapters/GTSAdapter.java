@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.DialogDecision;
@@ -133,7 +134,7 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 	class Holder extends RecyclerView.ViewHolder
 		{
 		TextView title,city,adr;
-		ImageButton btnDel;
+		ImageView btnDel;
 		DelListener delListener;
 		EditListener editListener;
 
@@ -145,7 +146,7 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 			title= (TextView)mainView.findViewById(R.id.title);
 			city= (TextView)mainView.findViewById(R.id.city);
 			adr= (TextView)mainView.findViewById(R.id.adr);
-			btnDel= (ImageButton)mainView.findViewById(R.id.deleteBtn);
+			btnDel= (ImageView)mainView.findViewById(R.id.deleteBtn);
 			btnDel.setOnClickListener(delListener);
 			mainView.setOnClickListener(editListener);
 			}

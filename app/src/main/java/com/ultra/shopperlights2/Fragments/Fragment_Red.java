@@ -98,11 +98,16 @@ public class Fragment_Red extends Fragment
 		public void onClick(View v)
 			{
 			DatePickerDialog dialog=null;
-			DateUtil.DateDMY dateDMY= DateUtil.getDMYfromDate(new Date() );
 			if(v.getId()==R.id.btnDateFrom)
+				{
+				DateUtil.DateDMY dateDMY= DateUtil.getDMYfromDate(dateFrom);
 				dialog= new DatePickerDialog(getContext(),new DateDialogListener(true),dateDMY.year,dateDMY.month,dateDMY.day);
+				}
 			else if(v.getId()==R.id.btnDateTo)
+				{
+				DateUtil.DateDMY dateDMY= DateUtil.getDMYfromDate(dateTo);
 				dialog= new DatePickerDialog(getContext(),new DateDialogListener(false),dateDMY.year,dateDMY.month,dateDMY.day);
+				}
 			dialog.show();
 			}
 		}

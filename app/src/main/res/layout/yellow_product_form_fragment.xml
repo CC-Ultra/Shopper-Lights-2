@@ -121,6 +121,8 @@
 				android:layout_marginTop="10dp"
 				android:layout_gravity="center_horizontal"
 				android:text="Сохранить"
+				android:textColor="@color/pure_black"
+				android:background="@drawable/button_selector_yellow"
 				android:id="@+id/btnSave"/>
 	</LinearLayout >
 </ScrollView >

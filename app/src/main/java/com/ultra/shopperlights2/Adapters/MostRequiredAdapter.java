@@ -56,7 +56,7 @@ public class MostRequiredAdapter extends RecyclerView.Adapter<MostRequiredAdapte
 		else
 			word=" раз";
 		holder.n.setText(n + word);
-		holder.mainView.setBackgroundResource(R.drawable.list_element_border);
+		holder.mainView.setBackgroundResource(R.drawable.list_element_border_red);
 		}
 	@Override
 	public int getItemCount()

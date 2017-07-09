@@ -35,10 +35,11 @@ public class TestActivity extends AppCompatActivity
 		@Override
 		public void onClick(View v)
 			{
-			List<Product> list= App.session.getProductDao().queryBuilder().where(ProductDao.Properties.Title.like("%масло%")).list();
-			for(Product product : list)
-				Log.d(O.TAG,"onClick: product: "+ product.getTitle() );
-			txt.setText("есть.");
+			finish();
+			Log.d(O.TAG,"onClick: 123");
+			Log.d(O.TAG,"onClick: 456");
+			Log.d(O.TAG,"onClick: 789");
+//			txt.setText("есть.");
 			}
 		}
 

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Utils.O;
 
@@ -23,7 +24,7 @@ import static com.ultra.shopperlights2.Utils.O.TAG;
 
 public class ViewPagerFragment_Lights extends ViewPagerFragment_Basic
 	{
-	private ImageButton light_Red,light_Yellow,light_Green;
+	private ImageView light_Red,light_Yellow,light_Green;
 	public static int lightMemory;
 
 	private class CloseListener implements View.OnClickListener
@@ -48,11 +49,10 @@ public class ViewPagerFragment_Lights extends ViewPagerFragment_Basic
 		@Override
 		public void onClick(View v)
 			{
-			light_Red.setImageResource(R.drawable.yellow_light);
-			light_Yellow.setImageResource(R.drawable.yellow_light);
-			light_Green.setImageResource(R.drawable.yellow_light);
-			ImageButton vbtn= (ImageButton)v;
-			vbtn.setImageResource(R.drawable.red_light);
+			light_Red.setImageResource(R.drawable.red_passive);
+			light_Yellow.setImageResource(R.drawable.yellow_passive);
+			light_Green.setImageResource(R.drawable.green_passive);
+			ImageView vbtn= (ImageView) v;
 			try
 				{
 				Intent intent= new Intent();
@@ -60,11 +60,14 @@ public class ViewPagerFragment_Lights extends ViewPagerFragment_Basic
 					{
 					case R.id.btnScreen_red:
 						intent.putExtra(O.mapKeys.extra.SCREEN_CODE,O.interaction.SCREEN_CODE_RED);
+						vbtn.setImageResource(R.drawable.red_active);
 						break;
 					case R.id.btnScreen_yellow:
 						intent.putExtra(O.mapKeys.extra.SCREEN_CODE,O.interaction.SCREEN_CODE_YELLOW);
+						vbtn.setImageResource(R.drawable.yellow_active);
 						break;
 					case R.id.btnScreen_green:
+						vbtn.setImageResource(R.drawable.green_active);
 						intent.putExtra(O.mapKeys.extra.SCREEN_CODE,O.interaction.SCREEN_CODE_GREEN);
 						break;
 					}
@@ -82,13 +85,13 @@ public class ViewPagerFragment_Lights extends ViewPagerFragment_Basic
 		switch(lightMemory)
 			{
 			case O.interaction.SCREEN_CODE_RED:
-				light_Red.setImageResource(R.drawable.red_light);
+				light_Red.setImageResource(R.drawable.red_active);
 				break;
 			case O.interaction.SCREEN_CODE_YELLOW:
-				light_Yellow.setImageResource(R.drawable.red_light);
+				light_Yellow.setImageResource(R.drawable.yellow_active);
 				break;
 			case O.interaction.SCREEN_CODE_GREEN:
-				light_Green.setImageResource(R.drawable.red_light);
+				light_Green.setImageResource(R.drawable.green_active);
 				break;
 			}
 		}
@@ -101,9 +104,9 @@ public class ViewPagerFragment_Lights extends ViewPagerFragment_Basic
 		if(savedInstanceState!=null)
 			pendingIntent= savedInstanceState.getParcelable(O.mapKeys.savedState.SAVED_STATE_PENDING_INTENT);
 
-		light_Red= (ImageButton)mainView.findViewById(R.id.btnScreen_red);
-		light_Yellow= (ImageButton)mainView.findViewById(R.id.btnScreen_yellow);
-		light_Green= (ImageButton)mainView.findViewById(R.id.btnScreen_green);
+		light_Red= (ImageView)mainView.findViewById(R.id.btnScreen_red);
+		light_Yellow= (ImageView)mainView.findViewById(R.id.btnScreen_yellow);
+		light_Green= (ImageView)mainView.findViewById(R.id.btnScreen_green);
 		ImageButton btnClose= (ImageButton)mainView.findViewById(R.id.btn_close);
 
 		btnClose.setOnClickListener(new CloseListener() );

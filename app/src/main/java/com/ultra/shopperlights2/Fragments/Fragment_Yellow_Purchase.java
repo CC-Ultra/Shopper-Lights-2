@@ -473,7 +473,7 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 ImageButton buttonOpen= (ImageButton)mainView.findViewById(R.id.btn_openDrawer);
 		 recyclerList= (RecyclerView)mainView.findViewById(R.id.list);
 		 Button btnComplete= (Button)mainView.findViewById(R.id.completePurchase);
-		 ImageButton btnCancel= (ImageButton)mainView.findViewById(R.id.cancelPurchase);
+		 ImageView btnCancel= (ImageView)mainView.findViewById(R.id.cancelPurchase);
 		 statusTxt= (TextView)mainView.findViewById(R.id.completeStatus);
 		 totalPriceTxt= (TextView)mainView.findViewById(R.id.totalPrice);
 
@@ -481,7 +481,7 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 			 {
 			 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 			 View header= drawer.getHeader();
-			 ImageButton drawerClose= (ImageButton)header.findViewById(R.id.btn_close);
+			 ImageView drawerClose= (ImageView)header.findViewById(R.id.btn_close);
 			 btnAddNote= (Button)header.findViewById(R.id.btn_add);
 			 inputSrcType= (Spinner)header.findViewById(R.id.srcTypeInput);
 			 inputSrc= (Spinner)header.findViewById(R.id.srcInput);

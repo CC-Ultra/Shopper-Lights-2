@@ -19,6 +19,8 @@
 	<Button
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="ok"
+			android:text="Сохранить"
+			android:textColor="@color/pure_black"
+			android:background="@drawable/button_selector_yellow"
 			android:id="@+id/btnOk"/>
 </LinearLayout >

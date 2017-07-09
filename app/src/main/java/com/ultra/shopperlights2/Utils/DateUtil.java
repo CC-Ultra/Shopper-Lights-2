@@ -22,7 +22,10 @@ public class DateUtil
 		{
 		DateDMY result= new DateDMY();
 		Calendar calendar= Calendar.getInstance();
-		calendar.setTime(date);
+		if(date==null)
+			calendar.setTime(new Date() );
+		else
+			calendar.setTime(date);
 		result.day= calendar.get(Calendar.DAY_OF_MONTH);
 		result.month= calendar.get(Calendar.MONTH);
 		result.year= calendar.get(Calendar.YEAR);

@@ -24,14 +24,16 @@ public class TagDetailsAdapter extends RecyclerView.Adapter<TagDetailsAdapter.Ho
 
 	class Holder extends RecyclerView.ViewHolder
 		{
+		View mainView;
 		TextView title,price;
 
 		public Holder(View itemView)
 			{
 			super(itemView);
+			mainView=itemView;
 			title= (TextView)itemView.findViewById(android.R.id.text1);
 			price= (TextView)itemView.findViewById(android.R.id.text2);
-			itemView.setBackgroundResource(R.drawable.list_element_border);
+			itemView.setBackgroundResource(R.drawable.list_element_border_green);
 			}
 		}
 
@@ -52,6 +54,7 @@ public class TagDetailsAdapter extends RecyclerView.Adapter<TagDetailsAdapter.Ho
 		Product element= elements.get(position);
 		holder.price.setText(""+Calc.round( element.getPrice()* (element.getN()==0 ? 1 : element.getN() ) ) );
 		holder.title.setText(element.getTitle() );
+		holder.mainView.setBackgroundResource(R.drawable.list_element_border_red);
 		}
 	@Override
 	public int getItemCount()

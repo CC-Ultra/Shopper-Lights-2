@@ -8,6 +8,7 @@
 			android:layout_width="25dp"
 			android:src="@drawable/arrow_right_red"
 			android:layout_height="match_parent"
+			android:background="@drawable/button_selector_black"
 			android:id="@+id/btn_openDrawer"/>
 	<LinearLayout
 			android:layout_width="match_parent"
@@ -24,10 +25,10 @@
 					android:textSize="25dp"
 					android:text="status"
 					android:id="@+id/completeStatus"/>
-			<ImageButton
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:src="@drawable/drawer_close_red"
+			<ImageView
+					android:layout_width="50dp"
+					android:layout_height="50dp"
+					android:src="@drawable/close_purchase"
 					android:layout_gravity="right"
 					android:id="@+id/cancelPurchase"/>
 		</FrameLayout >
@@ -44,6 +45,8 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:text="Завершить покупку"
+					android:textColor="@color/pure_black"
+					android:background="@drawable/button_selector_yellow"
 					android:id="@+id/completePurchase"/>
 			<TextView
 					android:layout_width="wrap_content"

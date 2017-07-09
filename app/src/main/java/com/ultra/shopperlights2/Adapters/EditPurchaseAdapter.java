@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.DialogDecision;
@@ -106,7 +107,7 @@ public class EditPurchaseAdapter extends RecyclerView.Adapter<EditPurchaseAdapte
 			tag[0]= (TextView)mainView.findViewById(R.id.tag1);
 			tag[1]= (TextView)mainView.findViewById(R.id.tag2);
 			tag[2]= (TextView)mainView.findViewById(R.id.tag3);
-			ImageButton delBtn= (ImageButton)mainView.findViewById(R.id.deleteBtn);
+			ImageView delBtn= (ImageView) mainView.findViewById(R.id.deleteBtn);
 			editListener= new EditProductListener();
 			delListener= new DelElementListener();
 			delBtn.setOnClickListener(delListener);
@@ -137,6 +138,7 @@ public class EditPurchaseAdapter extends RecyclerView.Adapter<EditPurchaseAdapte
 	public void onBindViewHolder(Holder holder,int position)
 		{
 		Product element= elements.get(position);
+		holder.mainView.setBackgroundResource(R.drawable.list_element_border_red);
 		holder.title.setText(element.getTitle() );
 		holder.n.setText(""+ element.getN() );
 		if(element.getN()!=0)

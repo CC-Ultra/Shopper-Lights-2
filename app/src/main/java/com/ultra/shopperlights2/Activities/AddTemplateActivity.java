@@ -82,7 +82,7 @@ public class AddTemplateActivity extends AppCompatActivity implements EditTempla
 	protected void onCreate(@Nullable Bundle savedInstanceState)
 		{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.edit_list_layout);
+		setContentView(R.layout.gts_layout);
 
 		Button btnAdd= (Button)findViewById(R.id.btn_add);
 		list= (RecyclerView)findViewById(R.id.list);

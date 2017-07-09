@@ -51,6 +51,8 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="Начать покупку"
+			android:textColor="@color/pure_black"
+			android:background="@drawable/button_selector_yellow"
 			android:id="@+id/btnOk"/>
 	<LinearLayout
 			android:layout_width="400dp"
@@ -62,12 +64,16 @@
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
 				android:text="Быстрая покупка"
+				android:textColor="@color/pure_black"
+				android:background="@drawable/button_selector_yellow"
 				android:id="@+id/btnQuickPurchase"/>
 		<Button
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
 				android:text="Транспорт"
+				android:textColor="@color/pure_black"
+				android:background="@drawable/button_selector_yellow"
 				android:id="@+id/btnTransport"/>
 	</LinearLayout >
 	<Button
@@ -75,5 +81,7 @@
 			android:layout_height="wrap_content"
 			android:layout_marginTop="5dp"
 			android:text="Добавить магазин"
+			android:textColor="@color/pure_black"
+			android:background="@drawable/button_selector_yellow"
 			android:id="@+id/btnAdd"/>
 </LinearLayout >

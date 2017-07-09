@@ -21,6 +21,7 @@ import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.GroupDao;
 import com.ultra.shopperlights2.Units.GreenRecyclerListElement;
 import com.ultra.shopperlights2.Units.ShopDao;
+import com.ultra.shopperlights2.Units.Tag;
 import com.ultra.shopperlights2.Utils.O;
 
 import java.util.ArrayList;
@@ -96,7 +97,13 @@ public class GTSListActivity extends AppCompatActivity
 				result.addAll(App.session.getGroupDao().queryBuilder().orderAsc(GroupDao.Properties.Priority).list() );
 				break;
 			case O.interaction.ELEMENT_TYPE_TAG:
-				result.addAll(App.session.getTagDao().loadAll() );
+				ArrayList<Tag> tags= new ArrayList<>();
+				for(Tag tag : App.session.getTagDao().loadAll())
+					{
+					if(!tag.getTitle().equals(O.TRANSPORT_TAG_NAME) )
+						tags.add(tag);
+					}
+				result.addAll(tags);
 				break;
 			case O.interaction.ELEMENT_TYPE_SHOP:
 				result.addAll(App.session.getShopDao().queryBuilder().where(ShopDao.Properties.Alive.eq(true) ).list() );
@@ -109,7 +116,7 @@ public class GTSListActivity extends AppCompatActivity
 	protected void onCreate(@Nullable Bundle savedInstanceState)
 		{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.edit_list_layout);
+		setContentView(R.layout.gts_layout);
 
 		type= getIntent().getIntExtra(O.mapKeys.extra.LIST_ELEMENT_TYPE, O.interaction.ELEMENT_TYPE_GROUP);
 

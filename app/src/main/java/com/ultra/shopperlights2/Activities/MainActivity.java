@@ -238,9 +238,6 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 Intent jumper;
 		 switch(item.getItemId() )
 			 {
-			 case R.id.theme:
-				 Toast.makeText(this,"Theme",Toast.LENGTH_SHORT).show();
-				 break;
 			 case R.id.groups:
 				 jumper= new Intent(this,GTSListActivity.class);
 				 jumper.putExtra(O.mapKeys.extra.LIST_ELEMENT_TYPE, O.interaction.ELEMENT_TYPE_GROUP);

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.ultra.shopperlights2.Activities.AddTemplateNoteActivity;
 import com.ultra.shopperlights2.App;
@@ -41,7 +42,7 @@ public class TemplatesAdapter extends RecyclerView.Adapter<TemplatesAdapter.Hold
 		{
 		View mainView;
 		TextView title;
-		ImageButton btnDel;
+		ImageView btnDel;
 		DelListener delListener;
 		EditListener editListener;
 		SelectListener selectListener;
@@ -54,7 +55,7 @@ public class TemplatesAdapter extends RecyclerView.Adapter<TemplatesAdapter.Hold
 			editListener= new EditListener();
 			selectListener= new SelectListener();
 			title= (TextView)mainView.findViewById(R.id.title);
-			btnDel= (ImageButton)mainView.findViewById(R.id.deleteBtn);
+			btnDel= (ImageView)mainView.findViewById(R.id.deleteBtn);
 			mainView.setOnClickListener(selectListener);
 			mainView.setOnLongClickListener(editListener);
 			btnDel.setOnClickListener(delListener);

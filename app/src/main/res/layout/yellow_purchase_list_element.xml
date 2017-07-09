@@ -12,10 +12,10 @@
 			android:ellipsize="end"
 			android:text="txt"
 			android:id="@+id/txt"/>
-	<ImageButton
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+	<ImageView
+			android:layout_width="30dp"
+			android:layout_height="30dp"
 			android:layout_gravity="right"
-			android:src="@drawable/drawer_close_red"
+			android:src="@drawable/red_close_button"
 			android:id="@+id/btnDel"/>
 </FrameLayout >

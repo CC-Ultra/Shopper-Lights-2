@@ -3,4 +3,19 @@
 	<color name="colorPrimary" >#3F51B5</color >
 	<color name="colorPrimaryDark" >#303F9F</color >
 	<color name="colorAccent" >#37b24a</color >
+
+	<color name="lightGreenActive">#8FDD0B</color >
+	<color name="lightYellowActive">#DBAD1C</color >
+	<color name="lightRedActive">#CE1F21</color >
+
+	<color name="lightGreenPassive">#B3CA8B</color >
+	<color name="lightYellowPassive">#D5B674</color >
+	<color name="lightRedPassive">#7B4142</color >
+
+	<color name="pure_black">#000000</color>
+	<color name="bright_red">#FF0000</color >
+	<color name="bright_green">#00FF00</color >
+	<color name="bright_yellow">#ffff00</color>
+	<color name="list_element_solid">#222222</color >
+	<color name="black_panel_border">#d0d0d0</color>
 </resources >

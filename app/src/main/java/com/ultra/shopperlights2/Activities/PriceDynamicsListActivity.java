@@ -98,7 +98,7 @@ public class PriceDynamicsListActivity extends AppCompatActivity
 
 	private void initList()
 		{
-		adapter= new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,new ArrayList<>(productMap.keySet() ) );
+		adapter= new ArrayAdapter<>(this,R.layout.simple_list_item_1,new ArrayList<>(productMap.keySet() ) );
 		list.setAdapter(adapter);
 		}
 	private void initMap()

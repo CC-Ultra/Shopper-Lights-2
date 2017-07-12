@@ -246,7 +246,7 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 			 holder.dropdownListener.init(recyclerListElement,holder.img);
 			 group.setHolderTitle(group.getTitle() +" ("+ group.getNotes().size() +")");
 			 holder.title.setText(group.getHolderTitle() );
-			 holder.title.setTextColor(context.getResources().getColor(R.color.lightGreenActive) );
+			 holder.title.setTextColor(context.getResources().getColor(R.color.bright_green) );
 			 for(int i=0; i<3; i++)
 				 holder.tag[i].setVisibility(View.GONE);
 			 holder.n.setVisibility(View.GONE);
@@ -259,14 +259,16 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 			 Note note= (Note) recyclerListElement;
 			 if(note.isLocked() )
 				 {
+				 holder.btnDel.setImageResource(R.drawable.red_close_button_disabled);
 				 holder.btnDel.setEnabled(false);
 				 }
 			 else
 				 {
+				 holder.btnDel.setImageResource(R.drawable.red_close_button);
 				 holder.btnDel.setEnabled(true);
 				 }
 			 holder.title.setText(note.getTitle() );
-			 holder.title.setTextColor(context.getResources().getColor(R.color.lightYellowActive) );
+			 holder.title.setTextColor(context.getResources().getColor(R.color.bright_yellow) );
 			 if(note.isTabbed() )
 				 {
 				 float k=1;
@@ -286,8 +288,8 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 				 holder.n.setLayoutParams(nParams);
 				 }
 			 holder.n.setVisibility(View.VISIBLE);
-			 holder.n.setText(note.getN() +"");
-			 holder.n.setTextColor(context.getResources().getColor(R.color.lightYellowActive) );
+			 holder.n.setText(note.getN()==0 ? "" : ""+note.getN() );
+			 holder.n.setTextColor(context.getResources().getColor(R.color.bright_yellow) );
 			 ArrayList<Tag> tags= new ArrayList<>(note.getTags() );
 			 int i=0;
 			 for(Tag tag : tags)

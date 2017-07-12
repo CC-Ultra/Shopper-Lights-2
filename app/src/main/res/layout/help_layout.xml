@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:gravity="center_horizontal|bottom"
+		android:orientation="vertical">
+	<ScrollView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_weight="1" >
+		<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center_horizontal"
+				android:orientation="vertical">
+			<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="header"
+					android:textSize="22sp"
+					android:id="@+id/header"/>
+			<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="20dp"
+					android:textSize="18sp"
+					android:layout_marginLeft="5dp"
+					android:layout_marginRight="5dp"
+					android:text="body"
+					android:id="@+id/body"/>
+		</LinearLayout >
+	</ScrollView>
+	<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+		<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="Назад"
+				android:textColor="@color/pure_black"
+				android:background="@drawable/button_selector_green"
+				android:id="@+id/btnPrev"/>
+		<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="Вперед"
+				android:textColor="@color/pure_black"
+				android:background="@drawable/button_selector_green"
+				android:id="@+id/btnNext"/>
+	</LinearLayout >
+</LinearLayout >

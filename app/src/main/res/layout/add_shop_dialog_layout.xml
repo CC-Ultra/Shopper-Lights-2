@@ -13,6 +13,7 @@
 			android:gravity="center"
 			android:hint="Название"
 			android:inputType="textCapSentences"
+			android:layout_marginTop="3dp"
 			android:id="@+id/autoTitle"/>
 	<AutoCompleteTextView
 			android:layout_width="match_parent"

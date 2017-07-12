@@ -81,13 +81,14 @@ public class AddGroupDialog extends DialogFragment
 	 @Override
 	 public View onCreateView(LayoutInflater inflater,@Nullable ViewGroup container,Bundle savedInstanceState)
 		 {
-		 getDialog().setTitle(title);
 		 View mainView= inflater.inflate(R.layout.add_group_dialog_layout,container,false);
 		 if(savedInstanceState!=null)
 			 {
 			 groupId= savedInstanceState.getLong(O.mapKeys.savedState.SAVED_STATE_GROUP_ID,0);
 			 action= savedInstanceState.getString(O.mapKeys.savedState.SAVED_STATE_ACTION);
+			 title= savedInstanceState.getString(O.mapKeys.savedState.SAVED_STATE_TITLE);
 			 }
+		 getDialog().setTitle(title);
 
 		 Button okBtn= (Button)mainView.findViewById(R.id.btnOk);
 		 inputGroupName= (EditText)mainView.findViewById(R.id.titleInput);
@@ -108,6 +109,7 @@ public class AddGroupDialog extends DialogFragment
 		 if(groupId!=0)
 			 outState.putLong(O.mapKeys.savedState.SAVED_STATE_GROUP_ID,groupId);
 		 outState.putString(O.mapKeys.savedState.SAVED_STATE_ACTION,action);
+		 outState.putString(O.mapKeys.savedState.SAVED_STATE_TITLE,title);
 		 super.onSaveInstanceState(outState);
 		 }
 	 }

@@ -224,13 +224,14 @@ public class AddNoteDialog extends DialogFragment
 	 @Override
 	 public View onCreateView(LayoutInflater inflater,@Nullable ViewGroup container,Bundle savedInstanceState)
 		 {
-		 getDialog().setTitle(title);
 		 View mainView= inflater.inflate(R.layout.add_note_dialog_layout,container,false);
 		 if(savedInstanceState!=null)
 			 {
 			 noteId= savedInstanceState.getLong(O.mapKeys.savedState.SAVED_STATE_NOTE_ID,0);
 			 action= savedInstanceState.getString(O.mapKeys.savedState.SAVED_STATE_ACTION);
+			 title= savedInstanceState.getString(O.mapKeys.savedState.SAVED_STATE_TITLE);
 			 }
+		 getDialog().setTitle(title);
 
 		 Button okBtn= (Button)mainView.findViewById(R.id.btnOk);
 		 TextView groupTxt= (TextView)mainView.findViewById(R.id.groupTxt);
@@ -258,6 +259,7 @@ public class AddNoteDialog extends DialogFragment
 		 if(noteId!=0)
 			 outState.putLong(O.mapKeys.savedState.SAVED_STATE_NOTE_ID,noteId);
 		 outState.putString(O.mapKeys.savedState.SAVED_STATE_ACTION,action);
+		 outState.putString(O.mapKeys.savedState.SAVED_STATE_TITLE,title);
 		 super.onSaveInstanceState(outState);
 		 }
 	 }

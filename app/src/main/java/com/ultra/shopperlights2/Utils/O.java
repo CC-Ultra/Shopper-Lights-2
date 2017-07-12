@@ -10,6 +10,8 @@ public class O
 	 {
 	 public static final String TAG="c123";
 
+	 public static final String PREFS_FILENAME="Ultra_prefs";
+	 public static final String PREFS_FIRST_START="FirstStart";
 	 public static final String TEMP_TEMPLATE_NAME="955653Template";
 	 public static final String TRANSPORT_TAG_NAME="955653Transport";
 
@@ -68,6 +70,7 @@ public class O
 			 public static final String SAVED_STATE_GROUP_ID="Group id";
 			 public static final String SAVED_STATE_TEMPLATE_ID="Template id";
 			 public static final String SAVED_STATE_ACTION="Action";
+			 public static final String SAVED_STATE_TITLE="Title";
 			 public static final String SAVED_STATE_PRODUCT_ID="Product id";
 			 public static final String SAVED_STATE_PENDING_INTENT="Pending intent";
 			 }

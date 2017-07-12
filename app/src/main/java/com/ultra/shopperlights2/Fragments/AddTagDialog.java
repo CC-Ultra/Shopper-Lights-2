@@ -117,13 +117,14 @@ public class AddTagDialog extends DialogFragment
 	 @Override
 	 public View onCreateView(LayoutInflater inflater,@Nullable ViewGroup container,Bundle savedInstanceState)
 		 {
-		 getDialog().setTitle(title);
 		 View mainView= inflater.inflate(R.layout.add_tag_dialog_layout,container,false);
 		 if(savedInstanceState!=null)
 			 {
 			 tagId= savedInstanceState.getLong(O.mapKeys.savedState.SAVED_STATE_TAG_ID,0);
 			 action= savedInstanceState.getString(O.mapKeys.savedState.SAVED_STATE_ACTION);
+			 title= savedInstanceState.getString(O.mapKeys.savedState.SAVED_STATE_TITLE);
 			 }
+		 getDialog().setTitle(title);
 
 		 SeekBar seekBar_Red= (SeekBar)mainView.findViewById(R.id.seekBarRed);
 		 SeekBar seekBar_Green= (SeekBar)mainView.findViewById(R.id.seekBarGreen);
@@ -162,6 +163,7 @@ public class AddTagDialog extends DialogFragment
 		 if(tagId!=0)
 			 outState.putLong(O.mapKeys.savedState.SAVED_STATE_TAG_ID,tagId);
 		 outState.putString(O.mapKeys.savedState.SAVED_STATE_ACTION,action);
+		 outState.putString(O.mapKeys.savedState.SAVED_STATE_TITLE,title);
 		 super.onSaveInstanceState(outState);
 		 }
 	 }

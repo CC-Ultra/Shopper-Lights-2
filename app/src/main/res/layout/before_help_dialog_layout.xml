@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:gravity="center"
+		android:orientation="vertical">
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="5dp"
+			android:layout_marginRight="5dp"
+			android:text="@string/help_proposition"/>
+	<Button
+			android:layout_width="200dp"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="20dp"
+			android:text="Открыть help"
+			android:textColor="@color/pure_black"
+			android:background="@drawable/button_selector_green"
+			android:id="@+id/btnHelp"/>
+	<Button
+			android:layout_width="200dp"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp"
+			android:text="Я сам разберусь, давай уже приложение"
+			android:textColor="@color/pure_black"
+			android:background="@drawable/button_selector_red"
+			android:id="@+id/btnHelpless"/>
+</LinearLayout >

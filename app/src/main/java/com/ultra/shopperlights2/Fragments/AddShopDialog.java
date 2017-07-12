@@ -126,13 +126,14 @@ public class AddShopDialog extends DialogFragment
 	 @Override
 	 public View onCreateView(LayoutInflater inflater,@Nullable ViewGroup container,Bundle savedInstanceState)
 		 {
-		 getDialog().setTitle(title);
 		 View mainView= inflater.inflate(R.layout.add_shop_dialog_layout,container,false);
 		 if(savedInstanceState!=null)
 			 {
 			 shopId= savedInstanceState.getLong(O.mapKeys.savedState.SAVED_STATE_SHOP_ID,0);
 			 action= savedInstanceState.getString(O.mapKeys.savedState.SAVED_STATE_ACTION);
+			 title= savedInstanceState.getString(O.mapKeys.savedState.SAVED_STATE_TITLE);
 			 }
+		 getDialog().setTitle(title);
 
 		 Button okBtn= (Button)mainView.findViewById(R.id.btnOk);
 		 inputShopName= (AutoCompleteTextView) mainView.findViewById(R.id.autoTitle);
@@ -160,6 +161,7 @@ public class AddShopDialog extends DialogFragment
 		 if(shopId!=0)
 			 outState.putLong(O.mapKeys.savedState.SAVED_STATE_SHOP_ID,shopId);
 		 outState.putString(O.mapKeys.savedState.SAVED_STATE_ACTION,action);
+		 outState.putString(O.mapKeys.savedState.SAVED_STATE_TITLE,title);
 		 super.onSaveInstanceState(outState);
 		 }
 	 }

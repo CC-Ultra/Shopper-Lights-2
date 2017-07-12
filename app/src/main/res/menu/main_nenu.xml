@@ -27,8 +27,4 @@
 			android:title="Помощь"
 			app:showAsAction="never"
 			android:id="@+id/help"/>
-	<item
-			android:title="О программе"
-			app:showAsAction="never"
-			android:id="@+id/about"/>
 </menu>

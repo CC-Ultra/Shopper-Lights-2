@@ -101,7 +101,7 @@ public class EditHistoryActivity extends AppCompatActivity
 		{
 		for(Purchase purchase : p)
 			{
-			if(purchase.getPrice()==0 && purchase.isCompleted() )
+			if(purchase.getPrice()==0 && purchase.isCompleted() && purchase.getProducts().size()==0)
 				App.session.getPurchaseDao().delete(purchase);
 			}
 		}

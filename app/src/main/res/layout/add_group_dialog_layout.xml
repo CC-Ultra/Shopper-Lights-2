@@ -13,6 +13,7 @@
 			android:layout_marginRight="40dp"
 			android:layout_marginLeft="40dp"
 			android:inputType="textCapSentences"
+			android:layout_marginTop="3dp"
 			android:id="@+id/titleInput"/>
 	<EditText
 			android:layout_width="match_parent"

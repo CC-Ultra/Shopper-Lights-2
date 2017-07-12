@@ -15,7 +15,12 @@
 	<ImageView
 			android:layout_width="30dp"
 			android:layout_height="30dp"
+			android:layout_marginRight="20dp"
 			android:layout_gravity="right"
 			android:src="@drawable/red_close_button"
 			android:id="@+id/btnDel"/>
+	<View
+			android:layout_width="1dp"
+			android:layout_height="50dp"
+			android:visibility="invisible"/>
 </FrameLayout >

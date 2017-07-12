@@ -2,6 +2,7 @@ package com.ultra.shopperlights2.Activities;
 
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -167,9 +168,6 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 DrawerBuilder builder= new DrawerBuilder();
 		 builder.withActivity(this).withHeader(R.layout.drawer_header);
 		 drawer= builder.build();
-//		 if(selectedScreen == O.interaction.SCREEN_CODE_YELLOW)
-//			 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-//		 else
 		 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
 		 Toolbar toolbar= (Toolbar)findViewById(R.id.toolbar);
@@ -185,6 +183,14 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 ViewGroup.LayoutParams layoutParams= pager.getLayoutParams();
 		 layoutParams.width= Calc.dpToPx(this,O.dimens.ARROW_PAGER_WIDTH);
 		 pager.setLayoutParams(layoutParams);
+
+		 SharedPreferences prefs= getSharedPreferences(O.PREFS_FILENAME,MODE_PRIVATE);
+		 if(prefs.getBoolean(O.PREFS_FIRST_START,true) )
+			 {
+			 HelpPropositionDialog dialog= new HelpPropositionDialog();
+			 FragmentTransaction transaction= getSupportFragmentManager().beginTransaction();
+			 dialog.show(transaction,"");
+			 }
 		 }
 	 @Override
 	 protected void onResume()
@@ -258,10 +264,8 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 				 startActivity(jumper);
 				 break;
 			 case R.id.help:
-				 Toast.makeText(this,"help",Toast.LENGTH_SHORT).show();
-				 break;
-			 case R.id.about:
-				 Toast.makeText(this,"about",Toast.LENGTH_SHORT).show();
+				 jumper= new Intent(this,HelpActivity.class);
+				 startActivity(jumper);
 				 break;
 			 }
 		 return true;

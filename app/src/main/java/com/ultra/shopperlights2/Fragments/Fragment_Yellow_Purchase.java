@@ -181,7 +181,7 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 			 DaoSession session= App.session;
 			 Purchase purchase= session.getPurchaseDao().load(purchaseId);
 			 purchase.setCompleted(true);
-			 List<Product> products= session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId)).list();
+			 List<Product> products= purchase.getProducts();
 			 if(products.size()==0)
 				 {
 				 session.getPurchaseDao().delete(purchase);
@@ -189,18 +189,14 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 				 return;
 				 }
 			 float totalPrice=0;
-			 purchase.getProducts().clear();
 			 for(Product product : products)
-				 {
 				 totalPrice+= product.getPrice() * (product.getN()==0 ? 1 : product.getN() );
-				 purchase.getProducts().add(product);
-				 }
 			 Toast.makeText(getContext(),""+ Calc.round(totalPrice),Toast.LENGTH_SHORT).show();
 			 purchase.setPrice(totalPrice);
 			 session.getPurchaseDao().update(purchase);
 			 for(Note note : session.getNoteDao().queryBuilder().where(NoteDao.Properties.Locked.eq(true) ).list() )
 				 {
-				 if(mapEthereal.containsKey(note.getTitle() ) )
+				 if(!mapUsed.containsKey(note.getTitle() ) && mapEthereal.containsKey(note.getTitle() ) )
 					 continue;
 				 List<TagToNote> tagToNotes= session.getTagToNoteDao().queryBuilder().where(TagToNoteDao.Properties.NoteId.eq(note.getId() ) ).list();
 				 for(TagToNote tagToNote : tagToNotes)
@@ -248,7 +244,8 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 	 @Override
 	 public void delElement(String title)
 		 {
-		 Note note= App.session.getNoteDao().queryBuilder().where(NoteDao.Properties.Title.eq(title),NoteDao.Properties.Locked.eq(true) ).list().get(0);
+		 Note note= App.session.getNoteDao().queryBuilder().where(NoteDao.Properties.Title.eq(title),
+				 										NoteDao.Properties.Locked.eq(true) ).list().get(0);
 		 note.setLocked(false);
 		 App.session.getNoteDao().update(note);
 		 if(!note.isEthereal() )
@@ -377,7 +374,7 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 					 break;
 				 case O.interaction.SRC_TYPE_CODE_TEMPLATES:
 					 notes.addAll(App.session.getTemplateDao().queryBuilder().where(TemplateDao.Properties.Title.eq(selectedItem) )
-							 		.list().get(0).getNotes() );
+									.list().get(0).getNotes() );
 					 break;
 				 case O.interaction.SRC_TYPE_CODE_HISTORY:
 					 long selectedPurchaseId= Long.parseLong(selectedItem.split(" ")[0] );

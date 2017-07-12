@@ -120,7 +120,7 @@ public class TagStatActivity extends AppCompatActivity
 	private void initAdapter()
 		{
 		float totalPrice=0;
-		List<Tag> tags= App.session.getTagDao().queryBuilder().orderDesc(TagDao.Properties.TotalPrice).list();
+		List<Tag> tags= App.session.getTagDao().queryBuilder().where(TagDao.Properties.TotalPrice.notEq(0) ).orderDesc(TagDao.Properties.TotalPrice).list();
 		for(Tag tag : tags)
 			totalPrice+= tag.getTotalPrice();
 		TagStatAdapter adapter= new TagStatAdapter(this,new ArrayList<>(tags),totalPrice,dateFrom,dateTo);

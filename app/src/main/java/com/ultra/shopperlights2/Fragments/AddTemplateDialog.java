@@ -80,13 +80,14 @@ public class AddTemplateDialog extends DialogFragment
 	 @Override
 	 public View onCreateView(LayoutInflater inflater,@Nullable ViewGroup container,Bundle savedInstanceState)
 		 {
-		 getDialog().setTitle(title);
 		 View mainView= inflater.inflate(R.layout.add_template_dialog_layout,container,false);
 		 if(savedInstanceState!=null)
 			 {
 			 templateId= savedInstanceState.getLong(O.mapKeys.savedState.SAVED_STATE_TEMPLATE_ID,0);
 			 action= savedInstanceState.getString(O.mapKeys.savedState.SAVED_STATE_ACTION);
+			 title= savedInstanceState.getString(O.mapKeys.savedState.SAVED_STATE_TITLE);
 			 }
+		 getDialog().setTitle(title);
 
 		 Button okBtn= (Button)mainView.findViewById(R.id.btnOk);
 		 inputTemplateName= (EditText)mainView.findViewById(R.id.titleInput);
@@ -105,6 +106,7 @@ public class AddTemplateDialog extends DialogFragment
 		 if(templateId !=0)
 			 outState.putLong(O.mapKeys.savedState.SAVED_STATE_TEMPLATE_ID,templateId);
 		 outState.putString(O.mapKeys.savedState.SAVED_STATE_ACTION,action);
+		 outState.putString(O.mapKeys.savedState.SAVED_STATE_TITLE,title);
 		 super.onSaveInstanceState(outState);
 		 }
 	 }

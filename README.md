@@ -7,11 +7,11 @@ ShopperLights - это приложение, призванное помогат
 
 <table>
   <tr>
-    <td><img src="./img/snap20170712_064221.png" alt="Виджет"></td>
-    <td><img src="./img/snap20170712_064236.png" alt="Список покупок"></td>
-    <td><img src="./img/snap20170712_064458.png" alt="Динамика цен"></td>
-    <td><img src="./img/snap20170712_064538.png" alt="Drawer с продуктами"></td>
-    <td><img src="./img/snap20170712_064619.png" alt="Желтый экран"></td>
+    <td><img src="./img/snap20170712_064221.png" title="Виджет" alt="Виджет"></td>
+    <td><img src="./img/snap20170712_064236.png" title="Список покупок" alt="Список покупок"></td>
+    <td><img src="./img/snap20170712_064458.png" title="Динамика цен" alt="Динамика цен"></td>
+    <td><img src="./img/snap20170712_064538.png" title="Drawer с продуктами" alt="Drawer с продуктами"></td>
+    <td><img src="./img/snap20170712_064619.png" title="Желтый экран" alt="Желтый экран"></td>
   </tr>
 </table>
 

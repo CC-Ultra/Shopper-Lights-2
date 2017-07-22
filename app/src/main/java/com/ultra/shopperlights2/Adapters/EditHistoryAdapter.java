@@ -20,9 +20,8 @@ import com.ultra.shopperlights2.Utils.O;
 import java.util.ArrayList;
 
 /**
- * <p></p>
+ * <p>Адаптер списка истории покупок</p>
  * <p><sub>(11.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
@@ -69,11 +68,13 @@ public class EditHistoryAdapter extends RecyclerView.Adapter<EditHistoryAdapter.
 			}
 		}
 
-	public EditHistoryAdapter(Context _context,ArrayList _elements,float _totalPrice)
+	public EditHistoryAdapter(Context _context,ArrayList<Purchase> _elements,float _totalPrice)
 		{
 		context=_context;
 		elements=_elements;
 		totalPrice=_totalPrice;
+		if(totalPrice==0)
+			totalPrice=1;
 		}
 
 	@Override
@@ -100,9 +101,8 @@ public class EditHistoryAdapter extends RecyclerView.Adapter<EditHistoryAdapter.
 			holder.txtShopAdr.setText(loadedShop.getCity() +", "+ loadedShop.getAdr() );
 			}
 		holder.txtDate.setText(DateUtil.getDateStr(element.getDate() ) );
-		int percentLineLength= (int)(100*(element.getPrice()/totalPrice) );
-		holder.txtPercent.setText(percentLineLength +"%");
-		Log.d(O.TAG,"onBindViewHolder: length="+ percentLineLength);
+		float percent= Calc.round(100*(element.getPrice()/totalPrice) );
+		holder.txtPercent.setText(percent +"%");
 		}
 	@Override
 	public int getItemCount()

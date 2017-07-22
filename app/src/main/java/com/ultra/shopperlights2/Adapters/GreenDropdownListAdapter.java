@@ -2,36 +2,29 @@ package com.ultra.shopperlights2.Adapters;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Color;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.DialogDecision;
-import com.ultra.shopperlights2.Fragments.AddGroupDialog;
-import com.ultra.shopperlights2.Fragments.AddNoteDialog;
+import com.ultra.shopperlights2.Dialogs.AddGroupDialog;
+import com.ultra.shopperlights2.Dialogs.AddNoteDialog;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
 import com.ultra.shopperlights2.Utils.Calc;
 import com.ultra.shopperlights2.Utils.ConfirmDialog;
 import com.ultra.shopperlights2.Utils.O;
-
 import java.util.ArrayList;
 
-import static android.content.ContentValues.TAG;
-
 /**
- * <p></p>
+ * <p>Адаптер для зеленого выпадающего списка</p>
  * <p><sub>(03.05.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
@@ -39,10 +32,12 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 	 {
 	 private ArrayList<GreenRecyclerListElement> elements;
 	 private Context context;
-	 private FragmentManager fragmentManager;
 	 private String action;
 
-	 class ConfirmDialogDecision implements DialogDecision
+	 /**
+	  * Удаление группы только с подтверждения
+	  */
+	 private class ConfirmDialogDecision implements DialogDecision
 		 {
 		 GreenRecyclerListElement element;
 		 int position;
@@ -69,21 +64,23 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 			 element=_element;
 			 }
 
+		 /**
+		  * В зависимости от оипа элемента вызывается один из диалогов
+		  */
 		 @Override
 		 public void onClick(View v)
 			 {
-			 FragmentTransaction transaction= fragmentManager.beginTransaction();
 			 if(element.isGroup() )
 				 {
 				 AddGroupDialog dialog= new AddGroupDialog();
-				 dialog.init(action,"Изменить группу",( (Group)element).getId() );
-				 dialog.show(transaction,"");
+				 dialog.init(context,(ViewGroup)v.getParent(),action,"Изменить группу",( (Group)element).getId() );
+				 dialog.createAndShow();
 				 }
 			 else
 				 {
 				 AddNoteDialog dialog= new AddNoteDialog();
-				 dialog.init(action,"Изменить продукт",( (Note)element).getId() );
-				 dialog.show(transaction,"");
+				 dialog.init(context,(ViewGroup)v.getParent(),action,"Изменить продукт",( (Note)element).getId() );
+				 dialog.createAndShow();
 				 }
 			 }
 		 }
@@ -114,15 +111,16 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 				 ArrayList<TagToNote> tagToNotes= new ArrayList<>();
 				 TagToNoteDao tagToNoteDao= session.getTagToNoteDao();
 				 tagToNotes.addAll(tagToNoteDao.queryBuilder().where(TagToNoteDao.Properties.NoteId.eq(note.getId() ) ).list() );
+				 //удаление с учетом тегов
 				 for(TagToNote tagToNote : tagToNotes)
 					 tagToNoteDao.delete(tagToNote);
 				 if(note.getGroupId()!=0)
-					 {
+					 { //группы
 					 group= session.getGroupDao().load(note.getGroupId() );
 					 group.getNotes().remove(note);
-					 group.setHolderTitle(group.getTitle() +" ("+ group.getNotes().size() +")");
+					 group.setHolderTitle(group.getTitle() +" ("+ group.getNotes().size() +")"); //и ее подробностей
 					 session.getGroupDao().update(group);
-					 notifyItemChanged(position-1);
+					 notifyItemChanged(elements.indexOf(group) );
 					 }
 				 session.getNoteDao().delete(note);
 				 delElement(element,position);
@@ -147,7 +145,7 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 			 Group group= (Group)element;
 			 boolean isOpen= group.isOpen();
 			 ArrayList<Note> notes= new ArrayList<>(group.getNotes() );
-			 if(!isOpen)
+			 if(!isOpen) //добавить или удалить все записи на позиции +1 от текущей
 				 for(Note note : notes)
 					 {
 					 note.setTabbed(true);
@@ -166,7 +164,6 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 		 }
 	 class Holder extends RecyclerView.ViewHolder
 		 {
-//		 ImageButton btnDel;
 		 ImageView img,btnDel;
 		 TextView title,n;
 		 TextView tag[]= new TextView[3];
@@ -193,9 +190,8 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 			 }
 		 }
 
-	 public GreenDropdownListAdapter(Context _context,ArrayList<GreenRecyclerListElement> _elements,String _action,FragmentManager _fragmentManager)
+	 public GreenDropdownListAdapter(Context _context,ArrayList<GreenRecyclerListElement> _elements,String _action)
 		 {
-		 fragmentManager=_fragmentManager;
 		 action=_action;
 		 context=_context;
 		 elements=_elements;
@@ -204,15 +200,14 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 		 {
 		 DaoSession session= App.session;
 		 Group group= (Group)element;
-		 ArrayList<Note> notes= new ArrayList<>(group.getNotes() );
-		 for(Note note : notes)
+		 for(Note note : group.getNotes() )
 			 {
 			 note.setGroupId(0);
 			 note.setTabbed(false);
 			 if(group.isOpen() )
-				 delElement(note,position+1);
+				 delElement(note,position+1); //удалить запись на ее позиции
 			 session.getNoteDao().update(note);
-			 addElement(note,elements.size() );
+			 addElement(note,elements.size() ); //добавить в конец, но без отступа
 			 }
 		 session.getGroupDao().delete(group);
 		 delElement(element,position);
@@ -245,7 +240,7 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 			 holder.img.setVisibility(View.VISIBLE);
 			 holder.dropdownListener.init(recyclerListElement,holder.img);
 			 group.setHolderTitle(group.getTitle() +" ("+ group.getNotes().size() +")");
-			 holder.title.setText(group.getHolderTitle() );
+			 holder.title.setText(group.getHolderTitle() ); //заголовок с учетом количества записей
 			 holder.title.setTextColor(context.getResources().getColor(R.color.bright_green) );
 			 for(int i=0; i<3; i++)
 				 holder.tag[i].setVisibility(View.GONE);
@@ -271,15 +266,15 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 			 holder.title.setTextColor(context.getResources().getColor(R.color.bright_yellow) );
 			 if(note.isTabbed() )
 				 {
-				 float k=1;
+				 float k=1; //коэффициент, на который умножается пространство для title и отступ у n
 				 int orientation= context.getResources().getConfiguration().orientation;
 				 if(orientation==Configuration.ORIENTATION_LANDSCAPE)
 				 	k=1.9F;
-				 Log.d(TAG,"onBindViewHolder: "+ note.getTitle() +" tabbed");
 				 RelativeLayout.LayoutParams layoutParams= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
 				 layoutParams.setMargins(Calc.dpToPx(context,O.dimens.GREEN_DROPDOWN_TAB),Calc.dpToPx(context,2),Calc.dpToPx(context,2),Calc.dpToPx(context,2) );
 				 layoutParams.height= Calc.dpToPx(context,O.dimens.GREEN_DROPDOWN_ELEMENT_HEIGHT);
 				 holder.mainView.setLayoutParams(layoutParams);
+				 //пространство для title и отступ у n пересчитывается отдельно
 				 ViewGroup.LayoutParams titleParams= holder.title.getLayoutParams();
 				 titleParams.width= Calc.dpToPx(context,(int)(O.dimens.GREEN_DROPDOWN_TABBED_TITLE_WIDTH * k) );
 				 holder.title.setLayoutParams(titleParams);
@@ -304,6 +299,18 @@ public class GreenDropdownListAdapter extends RecyclerView.Adapter<GreenDropdown
 			 }
 		 holder.editListener.setElement(recyclerListElement);
 		 holder.delListener.setElement(recyclerListElement);
+
+		 //это предотвращает отступ при баге отступа
+		 ViewGroup.MarginLayoutParams marginParams= (ViewGroup.MarginLayoutParams)holder.mainView.getLayoutParams();
+		 boolean a,b,c;
+		 a= marginParams.leftMargin==O.dimens.GREEN_DROPDOWN_TAB;
+		 b= recyclerListElement.isGroup();
+		 c= !recyclerListElement.isTabbed();
+		 if(a && (b || c) )
+			 {
+			 marginParams.leftMargin= O.dimens.GREEN_DROPDOWN_NO_TAB;
+			 holder.mainView.setLayoutParams(marginParams);
+			 }
 		 }
 
 	 @Override

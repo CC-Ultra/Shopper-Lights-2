@@ -2,33 +2,27 @@ package com.ultra.shopperlights2.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.ultra.shopperlights2.Activities.AddTemplateNoteActivity;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.DialogDecision;
 import com.ultra.shopperlights2.Callbacks.EditTemplateCallback;
-import com.ultra.shopperlights2.Callbacks.TemplatesDelElement;
-import com.ultra.shopperlights2.Callbacks.TemplatesSelectCallback;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.DaoSession;
 import com.ultra.shopperlights2.Units.Note;
 import com.ultra.shopperlights2.Units.Template;
 import com.ultra.shopperlights2.Utils.ConfirmDialog;
 import com.ultra.shopperlights2.Utils.O;
-
 import java.util.ArrayList;
 
 /**
- * <p></p>
+ * <p>Адаптер для списка шаблонов</p>
  * <p><sub>(05.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
@@ -90,7 +84,7 @@ public class TemplatesAdapter extends RecyclerView.Adapter<TemplatesAdapter.Hold
 		@Override
 		public boolean onLongClick(View v)
 			{
-			editCallback.editTemplate(element.getId() );
+			editCallback.editTemplate( (ViewGroup)v.getParent(),element.getId() );
 			return true;
 			}
 		}

@@ -5,13 +5,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.DialogDecision;
 import com.ultra.shopperlights2.Callbacks.EditPurchasePriceUpdate;
-import com.ultra.shopperlights2.Callbacks.InitDialogFragment;
+import com.ultra.shopperlights2.Callbacks.EditProductCallback;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
 import com.ultra.shopperlights2.Utils.ConfirmDialog;
@@ -20,9 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p></p>
+ * <p>Адаптер списка продуктов покупки в истории</p>
  * <p><sub>(11.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
@@ -31,7 +29,7 @@ public class EditPurchaseAdapter extends RecyclerView.Adapter<EditPurchaseAdapte
 	private ArrayList<Product> elements;
 	private Context context;
 	private EditPurchasePriceUpdate priceUpdateCallback;
-	private InitDialogFragment initDialogCallback;
+	private EditProductCallback editProductCallback;
 
 	private class DelDecision implements DialogDecision
 		{
@@ -43,6 +41,11 @@ public class EditPurchaseAdapter extends RecyclerView.Adapter<EditPurchaseAdapte
 			}
 		@Override
 		public void sayNo(int noId){}
+
+		/**
+		 * Удаление продукта вместе со связями в {@code Purchase} и {@code TagToProduct}. После удаления, через callback
+		 * обновляется цена покупки
+		 */
 		@Override
 		public void sayYes(int yesId)
 			{
@@ -87,7 +90,7 @@ public class EditPurchaseAdapter extends RecyclerView.Adapter<EditPurchaseAdapte
 		@Override
 		public void onClick(View v)
 			{
-			initDialogCallback.initDialog(element.getId() );
+			editProductCallback.initDialog( (ViewGroup)v.getParent(),element.getId() );
 			}
 		}
 	class Holder extends RecyclerView.ViewHolder
@@ -116,9 +119,9 @@ public class EditPurchaseAdapter extends RecyclerView.Adapter<EditPurchaseAdapte
 		}
 
 	public EditPurchaseAdapter(Context _context,ArrayList<Product> _elements,EditPurchasePriceUpdate _priceUpdateCallback,
-							   												InitDialogFragment _initDialogCallback)
+							   												EditProductCallback _editProductCallback)
 		{
-		initDialogCallback=_initDialogCallback;
+		editProductCallback=_editProductCallback;
 		priceUpdateCallback=_priceUpdateCallback;
 		elements=_elements;
 		context=_context;

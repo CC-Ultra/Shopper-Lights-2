@@ -1,9 +1,11 @@
-package com.ultra.shopperlights2.Fragments;
+package com.ultra.shopperlights2.Dialogs;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -13,24 +15,26 @@ import android.view.ViewGroup;
 import android.widget.*;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.R;
-import com.ultra.shopperlights2.Units.*;
+import com.ultra.shopperlights2.Units.Manufacturer;
+import com.ultra.shopperlights2.Units.ManufacturerDao;
+import com.ultra.shopperlights2.Units.Product;
 import com.ultra.shopperlights2.Utils.Calc;
 import com.ultra.shopperlights2.Utils.O;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.ultra.shopperlights2.Utils.O.TAG;
 
 /**
- * <p></p>
+ * <p>Класс-обертка над диалогом редактирования продукта</p>
  * <p><sub>(12.05.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
-public class EditProductDialog extends DialogFragment
+public class EditProductDialog
 	{
+	private Context context;
+	private AlertDialog dialog;
+	private ViewGroup parent;
 	private boolean editTitleFlag= false;
 	private Product product;
 	private EditText inputN,inputQuality,inputPrice,inputWeight,inputWeightPrice;
@@ -38,11 +42,13 @@ public class EditProductDialog extends DialogFragment
 	private Spinner inputWeightUnit;
 	private long productId=0;
 	private String action;
-	private View mainView;
 	private WeightListener weightListener= new WeightListener();
 	private PriceListener priceListener= new PriceListener();
 	private EditText inputTitle;
 
+	/**
+	 * Заполнение полей по принципу: {@code if(xlength!=0) storeX()}
+	 */
 	private class SaveListener implements View.OnClickListener
 		{
 		@Override
@@ -66,8 +72,10 @@ public class EditProductDialog extends DialogFragment
 				product.setWeight(Float.parseFloat(inputWeight.getText().toString() ) );
 			if(inputManufacturer.length()!=0)
 				{
+				//привязка производителя из базы или свежесозданного
 				String manufacturerStr= inputManufacturer.getText().toString();
-				List<Manufacturer> manufacturers= App.session.getManufacturerDao().queryBuilder().where(ManufacturerDao.Properties.Title.eq(manufacturerStr) ).list();
+				List<Manufacturer> manufacturers= App.session.getManufacturerDao().queryBuilder().
+													where(ManufacturerDao.Properties.Title.eq(manufacturerStr) ).list();
 				Manufacturer manufacturer;
 				if(manufacturers.size()==0)
 					{
@@ -81,10 +89,14 @@ public class EditProductDialog extends DialogFragment
 				}
 			product.setWeightUnit(inputWeightUnit.getSelectedItem().toString() );
 			App.session.getProductDao().update(product);
-			getContext().sendBroadcast(new Intent(action) );
-			dismiss();
+			context.sendBroadcast(new Intent(action) ); //обновить список вызывающей активности/фрагмента
+			dialog.dismiss();
 			}
 		}
+
+	/**
+	 * Многочисленные проверки ввода после которых в поле {@code weightPrice} записывается {@code price/weight}
+ 	 */
 	private class PriceListener implements TextWatcher
 		{
 		@Override
@@ -108,6 +120,10 @@ public class EditProductDialog extends DialogFragment
 			inputWeightPrice.setText(""+ result);
 			}
 		}
+
+	/**
+	 * Многочисленные проверки ввода после которых в поле цены записывается {@code weight*weightPrice}
+	 */
 	private class WeightListener implements TextWatcher
 		{
 		@Override
@@ -131,6 +147,11 @@ public class EditProductDialog extends DialogFragment
 			inputPrice.addTextChangedListener(priceListener);
 			}
 		}
+
+	/**
+	 * Если выбраны единицы измерения {@code кг} - добавить слушателей на поля ввода цены и веса, и сделать видимым ввод
+	 * {@code weightPrice}
+	 */
 	private class WeightUnitsListener implements AdapterView.OnItemSelectedListener
 		{
 		@Override
@@ -154,40 +175,48 @@ public class EditProductDialog extends DialogFragment
 		public void onNothingSelected(AdapterView<?> parent) {}
 		}
 
-	public void init(String _action,long _id,boolean _editTitleFlag)
+	/**
+	 * изменить продукт вместе с заголовком
+	 */
+	public void init(Context _context,ViewGroup _parent,String _action,long _id,boolean _editTitleFlag)
 		{
+		context=_context;
+		parent=_parent;
 		editTitleFlag=_editTitleFlag;
 		action=_action;
 		productId=_id;
 		}
-	public void init(String _action,long _id)
+
+	/**
+	 * изменить продукт
+	 */
+	public void init(Context _context,ViewGroup _parent,String _action,long _id)
 		{
+		context=_context;
+		parent=_parent;
 		action=_action;
 		productId=_id;
 		}
 
-	@Nullable
-	@Override
-	public View onCreateView(LayoutInflater inflater,@Nullable ViewGroup container,Bundle savedInstanceState)
+	/**
+	 * Инициализация mainView и передача ее диалогу
+	 */
+	public void createAndShow()
 		{
-		getDialog().setTitle("Изменить продукт");
-		mainView= inflater.inflate(R.layout.yellow_product_form_fragment,container,false);
-		if(savedInstanceState!=null)
-			{
-			productId= savedInstanceState.getLong(O.mapKeys.savedState.SAVED_STATE_PRODUCT_ID);
-			action= savedInstanceState.getString(O.mapKeys.savedState.SAVED_STATE_ACTION);
-			}
+		View mainView=LayoutInflater.from(context).inflate(R.layout.yellow_product_form_fragment,parent,false);
+		AlertDialog.Builder builder= new AlertDialog.Builder(context);
+		builder.setTitle("Изменить продукт");
 
-		Button btnSave= (Button)mainView.findViewById(R.id.btnSave);
-		inputTitle= (EditText)mainView.findViewById(R.id.inputTitle);
-		inputN= (EditText)mainView.findViewById(R.id.inputN);
-		inputQuality= (EditText)mainView.findViewById(R.id.inputQuality);
-		inputPrice= (EditText)mainView.findViewById(R.id.inputPrice);
-		inputWeight= (EditText)mainView.findViewById(R.id.inputWeight);
-		inputWeightPrice= (EditText)mainView.findViewById(R.id.inputWeightPrice);
+		Button btnSave= (Button) mainView.findViewById(R.id.btnSave);
+		inputTitle= (EditText) mainView.findViewById(R.id.inputTitle);
+		inputN= (EditText) mainView.findViewById(R.id.inputN);
+		inputQuality= (EditText) mainView.findViewById(R.id.inputQuality);
+		inputPrice= (EditText) mainView.findViewById(R.id.inputPrice);
+		inputWeight= (EditText) mainView.findViewById(R.id.inputWeight);
+		inputWeightPrice= (EditText) mainView.findViewById(R.id.inputWeightPrice);
 		inputManufacturer= (AutoCompleteTextView) mainView.findViewById(R.id.inputManufacturer);
-		inputWeightUnit= (Spinner)mainView.findViewById(R.id.inputWeightUnit);
-		TextView titleTxt= (TextView)mainView.findViewById(R.id.titleTxt);
+		inputWeightUnit= (Spinner) mainView.findViewById(R.id.inputWeightUnit);
+		TextView titleTxt= (TextView) mainView.findViewById(R.id.titleTxt);
 
 		product= App.session.getProductDao().load(productId);
 		Log.d(TAG,"onCreateView: titleTxt:"+ titleTxt);
@@ -213,7 +242,7 @@ public class EditProductDialog extends DialogFragment
 		spinnerSrc.add("кг");
 		spinnerSrc.add("л");
 		spinnerSrc.add("шт");
-		ArrayAdapter<String> spinnerAdapter= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,spinnerSrc);
+		ArrayAdapter<String> spinnerAdapter= new ArrayAdapter<>(context,android.R.layout.simple_spinner_item,spinnerSrc);
 		spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		inputWeightUnit.setAdapter(spinnerAdapter);
 		inputWeightUnit.setOnItemSelectedListener(new WeightUnitsListener() );
@@ -223,17 +252,12 @@ public class EditProductDialog extends DialogFragment
 		ArrayList<String> manufacturers= new ArrayList<>();
 		for(Manufacturer manufacturer : manufacturersSrc)
 			manufacturers.add(manufacturer.getTitle() );
-		ArrayAdapter<String> autocompleteAdapter= new ArrayAdapter<>(getContext(),android.R.layout.simple_dropdown_item_1line,manufacturers);
+		ArrayAdapter<String> autocompleteAdapter= new ArrayAdapter<>(context,android.R.layout.simple_dropdown_item_1line,manufacturers);
 		inputManufacturer.setAdapter(autocompleteAdapter);
 		btnSave.setOnClickListener(new SaveListener() );
 
-		return mainView;
-		}
-	@Override
-	public void onSaveInstanceState(Bundle outState)
-		{
-		outState.putLong(O.mapKeys.savedState.SAVED_STATE_PRODUCT_ID,productId);
-		outState.putString(O.mapKeys.savedState.SAVED_STATE_ACTION,action);
-		super.onSaveInstanceState(outState);
+		builder.setView(mainView);
+		dialog= builder.create();
+		dialog.show();
 		}
 	}

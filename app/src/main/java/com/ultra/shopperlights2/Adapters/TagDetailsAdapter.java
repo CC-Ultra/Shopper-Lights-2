@@ -12,9 +12,8 @@ import com.ultra.shopperlights2.Utils.Calc;
 import java.util.ArrayList;
 
 /**
- * <p></p>
+ * <p>Адаптер для списка продуктов по одному тегу</p>
  * <p><sub>(12.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 

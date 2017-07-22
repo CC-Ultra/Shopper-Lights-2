@@ -13,9 +13,10 @@ import rx.schedulers.Schedulers;
 import java.util.concurrent.Callable;
 
 /**
- * <p></p>
+ * <p>Класс замена AsyncTask-у с {@link ProgressDialog} на борту</p>
+ * Выполняемый код приходит извне в {@link Callable} и инициализируется диалог. Потом диалог выдается наружу в {@link Subscriber}
+ * который выполняется в главном потоке, чтобы он мог его отменить.
  * <p><sub>(25.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
@@ -26,6 +27,9 @@ public class BackgroundTask<T>
 	private Callable<T> task;
 	private Subscription subscription;
 
+	/**
+	 * Если что-то завершило диалог - отписка
+	 */
 	private class TaskInterruptor implements DialogInterface.OnDismissListener
 		{
 		@Override
@@ -45,6 +49,10 @@ public class BackgroundTask<T>
 		dialog.setIndeterminate(true);
 		dialog.setOnDismissListener(new TaskInterruptor() );
 		}
+
+	/**
+	 * Выдача диалога наружу в {@link Subscriber}, чтобы он мог его потушить
+	 */
 	public ProgressDialog getDialog()
 		{
 		return dialog;

@@ -5,9 +5,8 @@ import android.content.Context;
 import com.ultra.shopperlights2.R;
 
 /**
- * <p></p>
+ * <p>Вертикальный виджет</p>
  * <p><sub>(10.07.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 

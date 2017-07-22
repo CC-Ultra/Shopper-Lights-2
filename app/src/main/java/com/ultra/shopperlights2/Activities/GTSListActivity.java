@@ -6,30 +6,28 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import com.ultra.shopperlights2.Adapters.GTSAdapter;
 import com.ultra.shopperlights2.App;
-import com.ultra.shopperlights2.Fragments.AddGroupDialog;
-import com.ultra.shopperlights2.Fragments.AddShopDialog;
-import com.ultra.shopperlights2.Fragments.AddTagDialog;
+import com.ultra.shopperlights2.Dialogs.AddGroupDialog;
+import com.ultra.shopperlights2.Dialogs.AddShopDialog;
+import com.ultra.shopperlights2.Dialogs.AddTagDialog;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.GroupDao;
 import com.ultra.shopperlights2.Units.GreenRecyclerListElement;
 import com.ultra.shopperlights2.Units.ShopDao;
 import com.ultra.shopperlights2.Units.Tag;
 import com.ultra.shopperlights2.Utils.O;
-
 import java.util.ArrayList;
 
 /**
- * <p></p>
+ * <p>Активность списка одного из GTS-типов</p>
  * <p><sub>(06.05.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
@@ -47,6 +45,10 @@ public class GTSListActivity extends AppCompatActivity
 			updateLists();
 			}
 		}
+
+	/**
+	 * Здесь в зависимости от GTS-типа вызывается соответствующий диалог
+	 */
 	private class AddListener implements View.OnClickListener
 		{
 		@Override
@@ -57,25 +59,22 @@ public class GTSListActivity extends AppCompatActivity
 				case O.interaction.ELEMENT_TYPE_GROUP:
 					{
 					AddGroupDialog dialog= new AddGroupDialog();
-					dialog.init(O.actions.ACTION_EDIT_LIST_ACTIVITY,"Создать группу");
-					FragmentTransaction transaction= getSupportFragmentManager().beginTransaction();
-					dialog.show(transaction,"");
+					dialog.init(GTSListActivity.this,(ViewGroup)v.getParent(),O.actions.ACTION_EDIT_LIST_ACTIVITY,"Создать группу");
+					dialog.createAndShow();
 					break;
 					}
 				case O.interaction.ELEMENT_TYPE_TAG:
 					{
 					AddTagDialog dialog= new AddTagDialog();
-					dialog.init(O.actions.ACTION_EDIT_LIST_ACTIVITY,"Создать тег");
-					FragmentTransaction transaction= getSupportFragmentManager().beginTransaction();
-					dialog.show(transaction,"");
+					dialog.init(GTSListActivity.this,(ViewGroup)v.getParent(),O.actions.ACTION_EDIT_LIST_ACTIVITY,"Создать тег");
+					dialog.createAndShow();
 					break;
 					}
 				case O.interaction.ELEMENT_TYPE_SHOP:
 					{
 					AddShopDialog dialog= new AddShopDialog();
-					dialog.init(O.actions.ACTION_EDIT_LIST_ACTIVITY,"Создать магазин");
-					FragmentTransaction transaction= getSupportFragmentManager().beginTransaction();
-					dialog.show(transaction,"");
+					dialog.init(GTSListActivity.this,(ViewGroup)v.getParent(),O.actions.ACTION_EDIT_LIST_ACTIVITY,"Создать магазин");
+					dialog.createAndShow();
 					break;
 					}
 				}
@@ -84,10 +83,14 @@ public class GTSListActivity extends AppCompatActivity
 
 	public void updateLists()
 		{
-		GTSAdapter adapter= new GTSAdapter(this,getList(),O.actions.ACTION_EDIT_LIST_ACTIVITY,getSupportFragmentManager() );
+		GTSAdapter adapter= new GTSAdapter(this,getList(),O.actions.ACTION_EDIT_LIST_ACTIVITY);
 		recyclerList.setAdapter(adapter);
 		recyclerList.setLayoutManager(new LinearLayoutManager(this) );
 		}
+
+	/**
+	 * @return список элементов в зависимости от GTS-типа. Транспортный тег игнорируется
+	 */
 	private ArrayList<GreenRecyclerListElement> getList()
 		{
 		ArrayList<GreenRecyclerListElement> result= new ArrayList<>();
@@ -97,13 +100,9 @@ public class GTSListActivity extends AppCompatActivity
 				result.addAll(App.session.getGroupDao().queryBuilder().orderAsc(GroupDao.Properties.Priority).list() );
 				break;
 			case O.interaction.ELEMENT_TYPE_TAG:
-				ArrayList<Tag> tags= new ArrayList<>();
 				for(Tag tag : App.session.getTagDao().loadAll())
-					{
 					if(!tag.getTitle().equals(O.TRANSPORT_TAG_NAME) )
-						tags.add(tag);
-					}
-				result.addAll(tags);
+						result.add(tag);
 				break;
 			case O.interaction.ELEMENT_TYPE_SHOP:
 				result.addAll(App.session.getShopDao().queryBuilder().where(ShopDao.Properties.Alive.eq(true) ).list() );
@@ -112,6 +111,9 @@ public class GTSListActivity extends AppCompatActivity
 		return result;
 		}
 
+	/**
+	 * Из Intent-а извлекается GTS-тип, инициализируется главный список, регистрируется Receiver
+	 */
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState)
 		{

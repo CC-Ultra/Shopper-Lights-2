@@ -8,13 +8,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.ChangeYellowFragmentCallback;
+import com.ultra.shopperlights2.Dialogs.AddShopDialog;
+import com.ultra.shopperlights2.Dialogs.TransportDialog;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.Purchase;
 import com.ultra.shopperlights2.Units.Shop;
@@ -27,9 +28,8 @@ import java.util.TreeSet;
 import java.util.List;
 
 /**
- * <p></p>
+ * <p>Фрагмент желтого экрана в режиме выбора магазина</p>
  * <p><sub>(09.05.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
@@ -38,8 +38,6 @@ public class Fragment_Yellow_Shop extends Fragment
 	private ChangeYellowFragmentCallback callback;
 	private Spinner inputTitle,inputCity,inputAdr;
 	private ArrayAdapter<String> adapterTitle,adapterCity,adapterAdr;
-	private View mainView;
-	private FragmentManager fragmentManager;
 	private Button startBtn;
 	private BroadcastReceiver receiver;
 
@@ -51,16 +49,24 @@ public class Fragment_Yellow_Shop extends Fragment
 			updateLists();
 			}
 		}
+
+	/**
+	 * здесь запуск транспортного диалога
+	 */
 	private class TransportListener implements View.OnClickListener
 		{
 		@Override
 		public void onClick(View v)
 			{
 			TransportDialog dialog= new TransportDialog();
-			FragmentTransaction transaction= getFragmentManager().beginTransaction();
-			dialog.show(transaction,"");
+			dialog.init(getContext(),(ViewGroup)v.getParent() );
+			dialog.createAndShow();
 			}
 		}
+
+	/**
+	 * старт режима покупки с неизвестным магазином
+	 */
 	private class QuickPurchasesListener implements View.OnClickListener
 		{
 		@Override
@@ -74,6 +80,10 @@ public class Fragment_Yellow_Shop extends Fragment
 			callback.changeYellowFragment(true);
 			}
 		}
+
+	/**
+	 * нормальный вход в режим покупки
+	 */
 	private class StartPurchasesListener implements View.OnClickListener
 		{
 		@Override
@@ -96,15 +106,18 @@ public class Fragment_Yellow_Shop extends Fragment
 			callback.changeYellowFragment(true);
 			}
 		}
+
+	/**
+	 * Запуск диалога добавления магазина
+	 */
 	private class AddShopListener implements View.OnClickListener
 		{
 		@Override
 		public void onClick(View v)
 			{
 			AddShopDialog dialog= new AddShopDialog();
-			dialog.init(O.actions.ACTION_FRAGMENT_YELLOW_SHOP,"Создать магазин");
-			FragmentTransaction transaction= fragmentManager.beginTransaction();
-			dialog.show(transaction,"");
+			dialog.init(getContext(),(ViewGroup)v.getParent(),O.actions.ACTION_FRAGMENT_YELLOW_SHOP,"Создать магазин");
+			dialog.createAndShow();
 			}
 		}
 	private class CitySelectListener implements AdapterView.OnItemSelectedListener
@@ -112,6 +125,7 @@ public class Fragment_Yellow_Shop extends Fragment
 		@Override
 		public void onItemSelected(AdapterView<?> parent,View view,int position,long id)
 			{
+			//чищу адаптер адресов и делаю disabled их спиннер
 			ArrayList<String> adrs= new ArrayList<>();
 			adrs.add("");
 			inputAdr.setEnabled(false);
@@ -121,7 +135,7 @@ public class Fragment_Yellow_Shop extends Fragment
 			inputTitle.setSelection(0);
 			String selectedCity= inputCity.getSelectedItem().toString();
 			if(selectedCity.length() == 0)
-				{
+				{ //если выбрана пустота, адаптер названий тоже чищу
 				ArrayList<String> titles= new ArrayList<>();
 				titles.add("");
 				adapterTitle.clear();
@@ -129,7 +143,7 @@ public class Fragment_Yellow_Shop extends Fragment
 				inputTitle.setEnabled(false);
 				}
 			else
-				{
+				{ //или инициализация адаптера названий
 				ArrayList<String> titles= new ArrayList<>();
 				titles.add("");
 				inputTitle.setEnabled(true);
@@ -153,7 +167,7 @@ public class Fragment_Yellow_Shop extends Fragment
 			{
 			inputAdr.setSelection(0);
 			if(inputTitle.getSelectedItem().toString().length() != 0)
-				{
+				{ //инициализация адаптера адресов
 				String title= inputTitle.getSelectedItem().toString();
 				String city= inputCity.getSelectedItem().toString();
 				List<Shop> shops= App.session.getShopDao().queryBuilder().where(ShopDao.Properties.Title.eq(title),
@@ -169,7 +183,7 @@ public class Fragment_Yellow_Shop extends Fragment
 				adapterAdr.addAll(adrs);
 				}
 			else
-				{
+				{ //чищу адаптер адресов, если выбрано пустое название
 				ArrayList<String> adrs= new ArrayList<>();
 				inputAdr.setEnabled(false);
 				adrs.add("");
@@ -185,7 +199,7 @@ public class Fragment_Yellow_Shop extends Fragment
 		@Override
 		public void onItemSelected(AdapterView<?> parent,View view,int position,long id)
 			{
-			if(inputAdr.getSelectedItem().toString().length() != 0)
+			if(inputAdr.getSelectedItem().toString().length() != 0) //здесь только блокировка/разблокировка "старт"-кнопки
 				startBtn.setEnabled(true);
 			else
 				startBtn.setEnabled(false);
@@ -194,11 +208,15 @@ public class Fragment_Yellow_Shop extends Fragment
 		public void onNothingSelected(AdapterView<?> parent) {}
 		}
 
-	public void initFragment(ChangeYellowFragmentCallback _callback,FragmentManager _fragmentManager)
+	public void initFragment(ChangeYellowFragmentCallback _callback)
 		{
-		fragmentManager=_fragmentManager;
 		callback=_callback;
 		}
+
+	/**
+	 * инициализация трех адаптеров, из которых адаптер города инициализируется городами, а остальные два будут проинициализированы
+	 * позже
+	 */
 	public void updateLists()
 		{
 		ArrayList<String> shops= new ArrayList<>();
@@ -217,21 +235,24 @@ public class Fragment_Yellow_Shop extends Fragment
 		inputTitle.setAdapter(adapterTitle);
 		inputCity.setAdapter(adapterCity);
 		inputAdr.setAdapter(adapterAdr);
+		adapterTitle.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		adapterCity.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		adapterAdr.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		}
 
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater,@Nullable ViewGroup container,@Nullable Bundle savedInstanceState)
 		{
-		mainView= inflater.inflate(R.layout.choose_shop_layout,container,false);
+		View mainView= inflater.inflate(R.layout.choose_shop_layout,container,false);
 
-		inputTitle= (Spinner)mainView.findViewById(R.id.inputTitle);
-		inputCity= (Spinner)mainView.findViewById(R.id.inputCity);
-		inputAdr= (Spinner)mainView.findViewById(R.id.inputAdr);
-		startBtn= (Button)mainView.findViewById(R.id.btnOk);
-		Button btnAddShop= (Button)mainView.findViewById(R.id.btnAdd);
-		Button btnQuickPurchase= (Button)mainView.findViewById(R.id.btnQuickPurchase);
-		Button btnTransport= (Button)mainView.findViewById(R.id.btnTransport);
+		inputTitle= (Spinner) mainView.findViewById(R.id.inputTitle);
+		inputCity= (Spinner) mainView.findViewById(R.id.inputCity);
+		inputAdr= (Spinner) mainView.findViewById(R.id.inputAdr);
+		startBtn= (Button) mainView.findViewById(R.id.btnOk);
+		Button btnAddShop= (Button) mainView.findViewById(R.id.btnAdd);
+		Button btnQuickPurchase= (Button) mainView.findViewById(R.id.btnQuickPurchase);
+		Button btnTransport= (Button) mainView.findViewById(R.id.btnTransport);
 
 		startBtn.setEnabled(false);
 		startBtn.setOnClickListener(new StartPurchasesListener() );
@@ -241,17 +262,15 @@ public class Fragment_Yellow_Shop extends Fragment
 		inputTitle.setOnItemSelectedListener(new TitleSelectListener() );
 		inputCity.setOnItemSelectedListener(new CitySelectListener() );
 		inputAdr.setOnItemSelectedListener(new AdrSelectListener() );
+
 		updateLists();
-		adapterTitle.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		adapterCity.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		adapterAdr.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
 		receiver= new Receiver();
 		IntentFilter filter= new IntentFilter(O.actions.ACTION_FRAGMENT_YELLOW_SHOP);
 		getContext().registerReceiver(receiver,filter);
 
 		return mainView;
 		}
-
 	@Override
 	public void onDestroy()
 		{

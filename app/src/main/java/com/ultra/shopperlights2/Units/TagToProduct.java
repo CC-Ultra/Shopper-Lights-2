@@ -5,9 +5,7 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
 
 /**
- * <p></p>
  * <p><sub>(10.05.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
@@ -17,7 +15,7 @@ public class TagToProduct
 	@Id(autoincrement = true)
 	Long id;
 
-	long tagId,productId;
+	private long tagId,productId;
 
 	@Generated(hash = 426009849)
 	public TagToProduct(Long id, long tagId, long productId) {

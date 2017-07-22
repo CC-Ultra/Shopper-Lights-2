@@ -1,9 +1,7 @@
 package com.ultra.shopperlights2.Units;
 
 /**
- * <p></p>
  * <p><sub>(18.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 

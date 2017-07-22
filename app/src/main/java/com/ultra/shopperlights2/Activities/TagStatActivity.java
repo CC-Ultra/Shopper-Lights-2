@@ -16,16 +16,14 @@ import com.ultra.shopperlights2.Units.*;
 import com.ultra.shopperlights2.Utils.BackgroundTask;
 import com.ultra.shopperlights2.Utils.O;
 import rx.Subscriber;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
- * <p></p>
+ * <p>Активность статистики по тегам</p>
  * <p><sub>(12.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
@@ -35,6 +33,9 @@ public class TagStatActivity extends AppCompatActivity
 	private RecyclerView list;
 	private Tag transportTag;
 
+	/**
+	 * В фоновом процессе инициализация транспортного тега и рассчет счета каждого тега
+	 */
 	private class XCallable implements Callable<Boolean>
 		{
 		@Override
@@ -46,6 +47,10 @@ public class TagStatActivity extends AppCompatActivity
 			return true;
 			}
 		}
+
+	/**
+	 * В основном потоке только инициализация адаптера и отмена диалога
+	 */
 	private class XSubscriber extends Subscriber<Boolean>
 		{
 		ProgressDialog dialog;
@@ -71,6 +76,9 @@ public class TagStatActivity extends AppCompatActivity
 			}
 		}
 
+	/**
+	 * Если транспортный тег не создан, он создается, или загружается
+	 */
 	private void initTransportTag()
 		{
 		TagDao tagDao= App.session.getTagDao();
@@ -93,13 +101,17 @@ public class TagStatActivity extends AppCompatActivity
 			App.session.getTagDao().update(tag);
 			}
 		}
+
+	/**
+	 * рассчет счетов потом пригодится в {@link TagDetailsActivity}
+	 */
 	private void calculateTagPrice()
 		{
 		List<Purchase> purchases= App.session.getPurchaseDao().queryBuilder().where(PurchaseDao.Properties.Date.gt(dateFrom),
 																		PurchaseDao.Properties.Date.le(dateTo)).list();
 		for(Purchase purchase : purchases)
 			{
-			if(purchase.getProducts().size() == 0)
+			if(purchase.getProducts().size() == 0) //так бывает только в транспортных записях
 				{
 				transportTag.setTotalPrice(transportTag.getTotalPrice() + purchase.getPrice() );
 				App.session.getTagDao().update(transportTag);

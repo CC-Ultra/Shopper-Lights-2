@@ -17,9 +17,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * <p></p>
+ * <p>Адаптер для списка статистики по тегам</p>
  * <p><sub>(12.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
@@ -84,6 +83,10 @@ public class TagStatAdapter extends RecyclerView.Adapter<TagStatAdapter.Holder>
 		View mainView= LayoutInflater.from(parent.getContext() ).inflate(R.layout.edit_history_list_element,parent,false);
 		return new Holder(mainView);
 		}
+
+	/**
+	 * транспортный тег обрабатывается отдельно
+	 */
 	@Override
 	public void onBindViewHolder(Holder holder,int position)
 		{

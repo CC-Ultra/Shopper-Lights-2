@@ -5,9 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * <p></p>
+ * <p>Класс для работы с датами</p>
  * <p><sub>(07.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 

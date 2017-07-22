@@ -17,7 +17,7 @@ import static com.ultra.shopperlights2.Utils.O.TAG;
 
 
 /**
- * <p></p>
+ * <p>Фрагмент, на котором только стрелка</p>
  * <p><sub>(06.05.2017)</sub></p>
  *
  * @author CC-Ultra
@@ -25,6 +25,9 @@ import static com.ultra.shopperlights2.Utils.O.TAG;
 
 public class ViewPagerFragment_Arrow extends ViewPagerFragment_Basic
 	{
+	/**
+	 * Listener, который через pendingIntent шлет сигнал о переключении на другую страницу
+	 */
 	private class OpenListener implements View.OnClickListener
 		{
 		@Override

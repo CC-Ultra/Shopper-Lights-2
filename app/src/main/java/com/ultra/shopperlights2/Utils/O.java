@@ -1,9 +1,8 @@
 package com.ultra.shopperlights2.Utils;
 
 /**
- * <p></p>
+ * <p>Класс хранилище констант</p>
  * <p><sub>(07.08.2016)</sub></p>
- *
  * @author CC-Ultra
  */
 public class O
@@ -33,17 +32,22 @@ public class O
 		 public static final int STAT_CODE_MOST_REQUIRED=2;
 		 public static final int STAT_CODE_SEARCH=3;
 		 public static final int STAT_CODE_COST_DINAMICS=4;
+
 		 public static final int COLOR_CODE_RED=0;
 		 public static final int COLOR_CODE_GREEN=1;
 		 public static final int COLOR_CODE_BLUE=2;
+
 		 public static final int SRC_TYPE_CODE_GROUPS=0;
 		 public static final int SRC_TYPE_CODE_TEMPLATES=1;
 		 public static final int SRC_TYPE_CODE_HISTORY=2;
+
 		 public static final int RESULT_CODE_ARROW=0;
 		 public static final int RESULT_CODE_LIGHTS=1;
+
 		 public static final int SCREEN_CODE_GREEN=0;
 		 public static final int SCREEN_CODE_YELLOW=1;
 		 public static final int SCREEN_CODE_RED=2;
+
 		 public static final int ELEMENT_TYPE_GROUP=0;
 		 public static final int ELEMENT_TYPE_TAG=1;
 		 public static final int ELEMENT_TYPE_SHOP=2;
@@ -55,6 +59,7 @@ public class O
 		 public static final int GREEN_DROPDOWN_TABBED_TITLE_WIDTH=170;
 		 public static final int GREEN_DROPDOWN_ELEMENT_HEIGHT=80;
 		 public static final int GREEN_DROPDOWN_TAB=50;
+		 public static final int GREEN_DROPDOWN_NO_TAB=2;
 		 public static final int LIGHTS_PAGER_WIDTH_PORT=120;
 		 public static final int LIGHTS_PAGER_WIDTH_LAND=235;
 		 public static final int ARROW_PAGER_WIDTH=25;

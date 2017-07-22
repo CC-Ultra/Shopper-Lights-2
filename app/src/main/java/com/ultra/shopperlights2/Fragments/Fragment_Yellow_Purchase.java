@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +21,8 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.ultra.shopperlights2.Adapters.YellowPurchaseListAdapter;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.*;
+import com.ultra.shopperlights2.Dialogs.AddNoteDialog;
+import com.ultra.shopperlights2.Dialogs.EditProductDialog;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
 import com.ultra.shopperlights2.Utils.Calc;
@@ -33,12 +34,11 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * <p></p>
+ * <p>Фрагмент желтого экрана в режиме покупки</p>
  * <p><sub>(07.08.2016)</sub></p>
- *
  * @author CC-Ultra
  */
-public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDelElement,InitDialogFragment,DialogDecision
+public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDelElement,EditProductCallback,DialogDecision
 	 {
 	 private ChangeYellowFragmentCallback callback;
 	 private YellowPurchaseListAdapter adapter;
@@ -50,7 +50,7 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 	 private long purchaseId;
 	 private HashMap<String,Boolean> mapUsed, mapEthereal;
 	 private BroadcastReceiver receiver;
-	 private static int lastTimeChoise,lastTimeSrcType= O.interaction.SRC_TYPE_CODE_GROUPS;
+	 private static int lastTimeSrcType= O.interaction.SRC_TYPE_CODE_GROUPS;
 	 private String srcTypes[]= {"группы","шаблоны","история"};
 	 private Template tempTemplate;
 
@@ -66,11 +66,12 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 {
 		 @Override
 		 public void onClick(View v)
-			 {
+			 { //получаю список незаполненных продуктов
 			 List<Product> products= App.session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId),
-					 ProductDao.Properties.Complete.eq(false)).list();
+																				ProductDao.Properties.Complete.eq(false)).list();
 			 if(v.getId()==R.id.completePurchase && products.size() != 0)
 				 Toast.makeText(getContext(),"Есть незаполненные продукты: "+ products.size() +" шт",Toast.LENGTH_SHORT).show();
+			 //разница в кнопках открывается в реализации DialogDecision. В параметрах передаю id нажатой кнопки
 			 ConfirmDialog.ask(getContext(),Fragment_Yellow_Purchase.this,v.getId(),0);
 			 }
 		 }
@@ -89,13 +90,12 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 			 else if(v.getId()==R.id.btn_add)
 				 {
 				 AddNoteDialog dialog= new AddNoteDialog();
-				 dialog.init(O.actions.ACTION_FRAGMENT_YELLOW_PURCHASE,"Добавить продукт");
-				 FragmentTransaction transaction= getFragmentManager().beginTransaction();
-				 dialog.show(transaction,"");
+				 dialog.init(getContext(),(ViewGroup)v.getParent(),O.actions.ACTION_FRAGMENT_YELLOW_PURCHASE,"Добавить продукт");
+				 dialog.createAndShow();
 				 }
 			 }
 		 }
-	 class DrawerButtonClickListener implements View.OnClickListener
+	 private class DrawerButtonClickListener implements View.OnClickListener
 		{
 		 @Override
 		 public void onClick(View v)
@@ -103,13 +103,14 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 			 drawer.openDrawer();
 			 }
 		 }
-	 class DrawerItemClickListener implements Drawer.OnDrawerItemClickListener
+	 private class DrawerItemClickListener implements Drawer.OnDrawerItemClickListener
 		{
 		 @Override
 		 public boolean onItemClick(View view,int position,IDrawerItem drawerItem)
 			{
-			 long drawerItemId= drawerItem.getIdentifier();
-			 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
+			 long drawerItemId= drawerItem.getIdentifier(); //по этому его удалять из списка drawer-а
+			 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN); //чтобы не автозакрывался
+			//в теге хранится id
 			 Note note= App.session.getNoteDao().load(Long.parseLong(drawerItem.getTag().toString() ) );
 			 note.setLocked(true);
 			 App.session.getNoteDao().update(note);
@@ -130,7 +131,9 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 public void onItemSelected(AdapterView<?> parent,View view,int position,long id)
 			 {
 			 lastTimeSrcType=position;
-			 lastTimeChoise=0;
+			 int srcN= getSources().size();
+			 if(inputSrc.getSelectedItemPosition()>srcN) //чтобы inputSrc всегда указывал на существующую позицию
+				 inputSrc.setSelection(srcN);
 			 switch(lastTimeSrcType)
 				 {
 				 case O.interaction.SRC_TYPE_CODE_GROUPS:
@@ -156,8 +159,6 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 @Override
 		 public void onItemSelected(AdapterView<?> parent,View view,int position,long id)
 			 {
-			 Log.d(O.TAG,"SrcSelectListener.onItemSelected: ");
-			 lastTimeChoise=position;
 			 selectSrcSpinner();
 			 }
 		 @Override
@@ -191,9 +192,10 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 			 float totalPrice=0;
 			 for(Product product : products)
 				 totalPrice+= product.getPrice() * (product.getN()==0 ? 1 : product.getN() );
-			 Toast.makeText(getContext(),""+ Calc.round(totalPrice),Toast.LENGTH_SHORT).show();
+			 Toast.makeText(getContext(),"Оплачено: "+ Calc.round(totalPrice),Toast.LENGTH_SHORT).show();
 			 purchase.setPrice(totalPrice);
 			 session.getPurchaseDao().update(purchase);
+			 //удаление связей записи. Прохожусь по замкнутым записям, удаляю все TagToNote связи и упоминания в группах
 			 for(Note note : session.getNoteDao().queryBuilder().where(NoteDao.Properties.Locked.eq(true) ).list() )
 				 {
 				 if(!mapUsed.containsKey(note.getTitle() ) && mapEthereal.containsKey(note.getTitle() ) )
@@ -212,6 +214,7 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 			 }
 		 finally
 			 {
+			 //некоторые обязательные действия
 			 clearTempTemplate();
 			 callback.changeYellowFragment(false);
 			 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -221,16 +224,20 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 {
 		 DaoSession session= App.session;
 		 List<Product> products= session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId) ).list();
+		 //удаляю все связанные с покупкой продукты
 		 for(Product product : products)
 			 session.getProductDao().delete(product);
+		 //удаляю покупку
 		 Purchase purchase= session.getPurchaseDao().load(purchaseId);
 		 session.getPurchaseDao().delete(purchase);
+		 //разблокирую все записи
 		 List<Note> notes= session.getNoteDao().queryBuilder().where(NoteDao.Properties.Locked.eq(true) ).list();
 		 for(Note note : notes)
 			 {
 			 note.setLocked(false);
 			 session.getNoteDao().update(note);
 			 }
+		 //обязательные действия
 		 clearTempTemplate();
 		 callback.changeYellowFragment(false);
 		 drawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -241,6 +248,11 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 			 App.session.getNoteDao().delete(note);
 		 tempTemplate.getNotes().clear();
 		 }
+
+	 /**
+	  * определение интерфейса {@link YellowScreenDelElement}
+	  * @param title наименование удаляемого продукта-записи
+	  */
 	 @Override
 	 public void delElement(String title)
 		 {
@@ -253,51 +265,62 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 else
 			 mapEthereal.put(title,false);
 		 }
+
+	 /**
+	  * определение интерфейса {@link EditProductCallback}
+	  * @param parent нужен для диалога
+	  * @param id изменяемый продукт
+	  */
 	 @Override
-	 public void initDialog(long id)
+	 public void initDialog(ViewGroup parent,long id)
 		 {
 		 EditProductDialog dialog= new EditProductDialog();
-		 dialog.init(O.actions.ACTION_FRAGMENT_YELLOW_PURCHASE,id);
-		 FragmentTransaction transaction= getFragmentManager().beginTransaction();
-		 dialog.show(transaction,"");
+		 dialog.init(getContext(),parent,O.actions.ACTION_FRAGMENT_YELLOW_PURCHASE,id);
+		 dialog.createAndShow();
 		 }
+
+	 /**
+	  * @return Список источников по известной переменной lastTimeSrcType
+	  */
 	 private ArrayList<String> getSources()
 		 {
 		 ArrayList<String> result= new ArrayList<>();
 		 switch(lastTimeSrcType)
 			 {
 			 case O.interaction.SRC_TYPE_CODE_GROUPS:
+			 	//все группы, а потом ""
 				 for(Group group : App.session.getGroupDao().queryBuilder().orderAsc(GroupDao.Properties.Priority).list())
 					 result.add(group.getTitle() );
 				 result.add("");
 				 break;
 			 case O.interaction.SRC_TYPE_CODE_TEMPLATES:
 				 for(Template template : App.session.getTemplateDao().loadAll() )
-					 {
+					 { //все шаблоны кроме временного
 					 if(template.getTitle().equals(O.TEMP_TEMPLATE_NAME) )
 						 continue;
 					 result.add(template.getTitle() );
 					 }
 				 break;
 			 case O.interaction.SRC_TYPE_CODE_HISTORY:
-				 List<Purchase> purchases= App.session.getPurchaseDao().queryBuilder().orderDesc(PurchaseDao.Properties.Date).limit(50).offset(1).list();
+			 	//гружу до 50 покупок из истории по убыванию даты
+				 List<Purchase> purchases= App.session.getPurchaseDao().queryBuilder().
+						 										orderDesc(PurchaseDao.Properties.Date).limit(50).list();
 				 int i=0;
 				 for(Purchase purchase : purchases)
 					 {
-					 Log.d(O.TAG,"getSources: purchase.id="+ purchase.getId() );
-					 if(purchase.getProducts().size() == 0)
+					 if(purchase.getProducts().size() == 0) //если это транспорт
 						 continue;
 					 long id=purchase.getId();
 					 String shop;
 					 long shopId=purchase.getShopId();
 					 if(shopId!=0)
-						 shop=App.session.getShopDao().load(shopId).getTitle();
+						 shop= App.session.getShopDao().load(shopId).getTitle();
 					 else
-						 shop="Unknown";
-					 String date=DateUtil.getDateStr(purchase.getDate() );
+						 shop="неизвестный";
+					 String date= DateUtil.getDateStr(purchase.getDate() );
 					 result.add(id +" "+ shop +" ("+ date +")");
 					 i++;
-					 if(i==10)
+					 if(i==10) //не больше 10 покупок на спиннер
 						 break;
 					 }
 				 break;
@@ -310,7 +333,7 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 initStatusTxt();
 		 selectSrcSpinner();
 		 List<Product> productsCompleted= App.session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId),
-				 ProductDao.Properties.Complete.eq(true) ).list();
+																		 ProductDao.Properties.Complete.eq(true) ).list();
 		 float totalPrice=0;
 		 for(Product product : productsCompleted)
 			 totalPrice+= product.getPrice() * (product.getN()==0 ? 1 : product.getN() );
@@ -344,51 +367,52 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 			 ArrayList<String> sources= getSources();
 			 ArrayAdapter<String> adapterSources= new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,sources);
 			 adapterSources.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			 inputSrc.setSelection(0);
 			 inputSrc.setAdapter(adapterSources);
 			 }
 		 }
+
+	 /**
+	  * получить список записей и инициализировать им список drawer-а
+	  */
 	 private void selectSrcSpinner()
 		 {
 		 if(inputSrc!=null)
 			 {
-			 Log.d(O.TAG,"selectSrcSpinner: lastTimeChoise="+ lastTimeChoise +"\tlastTimeSrcType="+ lastTimeSrcType);
-//			 if(lastTimeSrcType!=0)
-				 inputSrcType.setSelection(lastTimeSrcType);
-//			 if(lastTimeChoise!=0)
-				 inputSrc.setSelection(lastTimeChoise);
-			 ArrayList<Note> notes= new ArrayList<>();
+			 inputSrcType.setSelection(lastTimeSrcType);
+ 			 ArrayList<Note> notes= new ArrayList<>();
+			 if(inputSrc.getSelectedItem()==null)
+				 return;
 			 String selectedItem=inputSrc.getSelectedItem().toString();
 			 switch(lastTimeSrcType)
 				 {
 				 case O.interaction.SRC_TYPE_CODE_GROUPS:
-					 if(selectedItem.length() == 0)
+					 if(selectedItem.length() == 0) //выбор вне группы
 						 notes.addAll(App.session.getNoteDao().queryBuilder().where(NoteDao.Properties.GroupId.eq(0),
-								 		NoteDao.Properties.Ethereal.eq(false) ).list() );
+																 		NoteDao.Properties.Ethereal.eq(false) ).list() );
 					 else
 						 {
 						 Group group= App.session.getGroupDao().queryBuilder().where(GroupDao.Properties.Title.eq(selectedItem) )
-								 	.list().get(0);
+								 																		.list().get(0);
 						 notes.addAll(group.getNotes() );
 						 }
 					 break;
 				 case O.interaction.SRC_TYPE_CODE_TEMPLATES:
 					 notes.addAll(App.session.getTemplateDao().queryBuilder().where(TemplateDao.Properties.Title.eq(selectedItem) )
-									.list().get(0).getNotes() );
+																								.list().get(0).getNotes() );
 					 break;
 				 case O.interaction.SRC_TYPE_CODE_HISTORY:
+				 	//извлекаю из строки спиннера id покупки
 					 long selectedPurchaseId= Long.parseLong(selectedItem.split(" ")[0] );
 					 for(Product product : App.session.getPurchaseDao().load(selectedPurchaseId).getProducts() )
 						 {
 						 Note note= new Note();
 						 note.setTitle(product.getTitle() );
 						 note.setN(product.getN() );
-						 note.setEthereal(true);
-						 tempTemplate.getNotes().add(note);
+						 note.setEthereal(true); //эфирность
+						 tempTemplate.getNotes().add(note); //добавляю в список временного шаблона
 						 note.setTemplateId(tempTemplate.getId() );
-						 note.setProductId(product.getId() );
+						 note.setProductId(product.getId() ); //запоминаю id продукта, чтобы потом подгрузить информацию по нему
 						 App.session.getNoteDao().insert(note);
-						 Log.d(O.TAG,"selectSrcSpinner: notes="+ notes);
 						 notes.add(note);
 						 }
 					 break;
@@ -396,6 +420,10 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 			 initDrawerList(notes);
 			 }
 		 }
+
+	 /**
+	  * Отобразить все пришедшие записи, которых нет в mapUsed и mapEthereal. id записи хранится в теге
+	  */
 	 private void initDrawerList(ArrayList<Note> src)
 		{
 		 drawer.removeAllItems();
@@ -411,16 +439,11 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 			 }
 		 drawer.deselect();
 		 }
-	 private void getPurchaseId()
-		 {
-		 purchaseId= App.session.getPurchaseDao().queryBuilder().where(PurchaseDao.Properties.Completed.eq(false) ).list().get(0).getId();
-		 }
 	 private void initMaps()
 		 {
 		 mapUsed= new HashMap<>();
 		 mapEthereal= new HashMap<>();
-		 ArrayList<Note> notes=new ArrayList<>(App.session.getNoteDao().loadAll());
-		 for(Note note : notes)
+		 for(Note note : App.session.getNoteDao().loadAll() )
 			 if(!note.isEthereal() )
 				 mapUsed.put(note.getTitle(),false);
 			 else
@@ -441,6 +464,7 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 		 }
 	 private void initAdapter()
 		 {
+		 //прохожусь по всем продуктам покупки и пложительно отмечаю их на картах
 		 List<Product> products= App.session.getProductDao().queryBuilder().where(ProductDao.Properties.PurchaseId.eq(purchaseId)).list();
 		 for(Product product : products)
 			 if(!product.isEthereal() )
@@ -461,12 +485,13 @@ public class Fragment_Yellow_Purchase extends Fragment implements YellowScreenDe
 	 @Nullable
 	 @Override
 	 public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState)
-		{
+		 {
 		 View mainView= inflater.inflate(R.layout.yellow_screen,container,false);
 
-		 getPurchaseId();
+		 purchaseId= App.session.getPurchaseDao().queryBuilder().where(PurchaseDao.Properties.Completed.eq(false) ).list().get(0).getId();
 		 initMaps();
 		 initTempTemplate();
+
 		 ImageButton buttonOpen= (ImageButton)mainView.findViewById(R.id.btn_openDrawer);
 		 recyclerList= (RecyclerView)mainView.findViewById(R.id.list);
 		 Button btnComplete= (Button)mainView.findViewById(R.id.completePurchase);

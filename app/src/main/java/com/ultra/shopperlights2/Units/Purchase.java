@@ -10,9 +10,7 @@ import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.DaoException;
 
 /**
- * <p></p>
  * <p><sub>(27.04.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 

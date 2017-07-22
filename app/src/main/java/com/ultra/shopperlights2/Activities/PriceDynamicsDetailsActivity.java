@@ -12,14 +12,11 @@ import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.PriceDynamicsUnit;
 import com.ultra.shopperlights2.Utils.O;
-
 import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * <p></p>
  * <p><sub>(18.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 

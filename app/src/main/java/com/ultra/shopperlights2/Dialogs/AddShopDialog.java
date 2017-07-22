@@ -1,9 +1,11 @@
-package com.ultra.shopperlights2.Fragments;
+package com.ultra.shopperlights2.Dialogs;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,14 +21,16 @@ import java.util.List;
 import java.util.TreeSet;
 
 /**
- * <p></p>
+ * <p>Класс-обертка над диалогом добавления/редактирования магазина</p>
  * <p><sub>(28.04.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
-public class AddShopDialog extends DialogFragment
+public class AddShopDialog
 	 {
+	 private Context context;
+	 private AlertDialog dialog;
+	 private ViewGroup parent;
 	 private String title;
 	 private AutoCompleteTextView inputShopName, inputShopCity;
 	 private EditText inputAdr;
@@ -42,15 +46,16 @@ public class AddShopDialog extends DialogFragment
 			 String shopCity= inputShopCity.getText().toString();
 			 String shopAdr= inputAdr.getText().toString();
 			 if(shopName.length() == 0 || shopAdr.length() == 0 || shopCity.length() == 0)
-				 Toast.makeText(getContext(),"Не все поля заполнены",Toast.LENGTH_SHORT).show();
+				 Toast.makeText(context,"Не все поля заполнены",Toast.LENGTH_SHORT).show();
 			 else
-				 {
+				 { //все поля заполнены
 				 Shop shop;
 				 ShopDao shopDao= App.session.getShopDao();
 				 if(shopId ==0)
 					 shop= new Shop();
 				 else
 					 shop= shopDao.load(shopId);
+				 //size - количество магазинов, совпадающих с введенными данными
 				 int size= shopDao.queryBuilder().where(
 														ShopDao.Properties.Title.eq(shopName),
 														ShopDao.Properties.City.eq(shopCity),
@@ -58,19 +63,19 @@ public class AddShopDialog extends DialogFragment
 														).list().size();
 				 if(shopId==0)
 					 {
-					 if(size>0)
+					 if(size>0) //добавление магазина и такой уже есть
 						 {
 						 inputShopName.setError("Это имя уже занято");
 						 return;
 						 }
 					 }
-				 else
+				 else //изменение магазина
 					 {
 					 boolean a,b,c;
 					 a= shop.getTitle().equals(shopName);
 					 b= shop.getCity().equals(shopCity);
 					 c= shop.getAdr().equals(shopAdr);
-					 if(size>0 && (!a || !b || !c) )
+					 if(size>0 && (!a || !b || !c) ) //такой магазин есть в базе и он отличается от загруженного через id
 						 {
 						 inputShopName.setError("Это имя уже занято");
 						 return;
@@ -84,26 +89,41 @@ public class AddShopDialog extends DialogFragment
 					 shopDao.insert(shop);
 				 else
 					 shopDao.update(shop);
-				 dismiss();
-				 getContext().sendBroadcast(new Intent(action) );
+				 dialog.dismiss();
+				 context.sendBroadcast(new Intent(action) ); //чтобы обновить список в вызывающей активности/фрагменте
 				 }
 			 }
 		 }
 
-	 public void init(String _action,String _title)
+	 /**
+	  * создать магазин
+	  */
+	 public void init(Context _context,ViewGroup _parent,String _action,String _title)
 		 {
+		 context=_context;
+		 parent=_parent;
 		 action=_action;
 		 title=_title;
 		 }
-	 public void init(String _action,String _title,long _id)
+
+	 /**
+	  * редактировать магазин
+	  */
+	 public void init(Context _context,ViewGroup _parent,String _action,String _title,long _id)
 		 {
+		 context=_context;
+		 parent=_parent;
 		 action=_action;
 		 shopId=_id;
 		 title=_title;
 		 }
+
+	 /**
+	  * Получение списка магазинов
+	  */
 	 private ArrayList<String> getShopStrs()
 		 {
-		 ArrayList result= new ArrayList();
+		 ArrayList<String> result= new ArrayList<>();
 		 List<Shop> shopList= App.session.getShopDao().loadAll();
 		 TreeSet<String> strings= new TreeSet<>();
 		 for(Shop shop : shopList)
@@ -111,9 +131,13 @@ public class AddShopDialog extends DialogFragment
 		 result.addAll(strings);
 		 return result;
 		 }
+
+	 /**
+	  * Получение списка городов
+	  */
 	 private ArrayList<String> getCityStrs()
 		 {
-		 ArrayList result= new ArrayList();
+		 ArrayList<String> result= new ArrayList<>();
 		 List<Shop> shopList= App.session.getShopDao().loadAll();
 		 TreeSet<String> strings= new TreeSet<>();
 		 for(Shop shop : shopList)
@@ -122,26 +146,22 @@ public class AddShopDialog extends DialogFragment
 		 return result;
 		 }
 
-	 @Nullable
-	 @Override
-	 public View onCreateView(LayoutInflater inflater,@Nullable ViewGroup container,Bundle savedInstanceState)
+	 /**
+	  * Инициализация mainView и передача ее диалогу. Попутно инициализация адаптеров автодополнения, установка Listener-ов и т.д.
+	  */
+	 public void createAndShow()
 		 {
-		 View mainView= inflater.inflate(R.layout.add_shop_dialog_layout,container,false);
-		 if(savedInstanceState!=null)
-			 {
-			 shopId= savedInstanceState.getLong(O.mapKeys.savedState.SAVED_STATE_SHOP_ID,0);
-			 action= savedInstanceState.getString(O.mapKeys.savedState.SAVED_STATE_ACTION);
-			 title= savedInstanceState.getString(O.mapKeys.savedState.SAVED_STATE_TITLE);
-			 }
-		 getDialog().setTitle(title);
+		 View mainView= LayoutInflater.from(context).inflate(R.layout.add_shop_dialog_layout,parent,false);
+		 AlertDialog.Builder builder= new AlertDialog.Builder(context);
+		 builder.setTitle(title);
 
 		 Button okBtn= (Button)mainView.findViewById(R.id.btnOk);
 		 inputShopName= (AutoCompleteTextView) mainView.findViewById(R.id.autoTitle);
 		 inputShopCity= (AutoCompleteTextView)mainView.findViewById(R.id.autoCity);
 		 inputAdr= (EditText)mainView.findViewById(R.id.adrInput);
 
-		 ArrayAdapter<String> adapterTitle= new ArrayAdapter<>(getContext(),android.R.layout.simple_dropdown_item_1line,getShopStrs() );
-		 ArrayAdapter<String> adapterCity= new ArrayAdapter<>(getContext(),android.R.layout.simple_dropdown_item_1line,getCityStrs() );
+		 ArrayAdapter<String> adapterTitle= new ArrayAdapter<>(context,android.R.layout.simple_dropdown_item_1line,getShopStrs() );
+		 ArrayAdapter<String> adapterCity= new ArrayAdapter<>(context,android.R.layout.simple_dropdown_item_1line,getCityStrs() );
 		 inputShopName.setAdapter(adapterTitle);
 		 inputShopCity.setAdapter(adapterCity);
 
@@ -153,15 +173,9 @@ public class AddShopDialog extends DialogFragment
 			 inputAdr.setText(shop.getAdr() );
 			 }
 		 okBtn.setOnClickListener(new OkListener() );
-		 return mainView;
-		 }
-	 @Override
-	 public void onSaveInstanceState(Bundle outState)
-		 {
-		 if(shopId!=0)
-			 outState.putLong(O.mapKeys.savedState.SAVED_STATE_SHOP_ID,shopId);
-		 outState.putString(O.mapKeys.savedState.SAVED_STATE_ACTION,action);
-		 outState.putString(O.mapKeys.savedState.SAVED_STATE_TITLE,title);
-		 super.onSaveInstanceState(outState);
+
+		 builder.setView(mainView);
+		 dialog= builder.create();
+		 dialog.show();
 		 }
 	 }

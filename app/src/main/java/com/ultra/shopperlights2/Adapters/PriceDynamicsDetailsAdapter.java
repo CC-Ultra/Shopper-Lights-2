@@ -12,13 +12,11 @@ import com.ultra.shopperlights2.Units.PriceDynamicsUnit;
 import com.ultra.shopperlights2.Units.Product;
 import com.ultra.shopperlights2.Utils.Calc;
 import com.ultra.shopperlights2.Utils.DateUtil;
-
 import java.util.ArrayList;
 
 /**
- * <p></p>
+ * <p>Адаптер для списка динамики цен по одному продукту</p>
  * <p><sub>(18.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 

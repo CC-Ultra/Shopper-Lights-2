@@ -7,13 +7,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.Frequency;
-
 import java.util.ArrayList;
 
 /**
- * <p></p>
+ * <p>Адаптер для списка самых востребованных продуктов</p>
  * <p><sub>(17.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 

@@ -6,16 +6,16 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import com.ultra.shopperlights2.Adapters.EditPurchaseAdapter;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.EditPurchasePriceUpdate;
-import com.ultra.shopperlights2.Callbacks.InitDialogFragment;
-import com.ultra.shopperlights2.Fragments.EditProductDialog;
+import com.ultra.shopperlights2.Callbacks.EditProductCallback;
+import com.ultra.shopperlights2.Dialogs.EditProductDialog;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.Product;
 import com.ultra.shopperlights2.Units.ProductDao;
@@ -29,13 +29,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p></p>
+ * <p>Активность для редактирования покупки</p>
  * <p><sub>(11.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
-public class EditPurchaseActivity extends AppCompatActivity implements EditPurchasePriceUpdate,InitDialogFragment
+public class EditPurchaseActivity extends AppCompatActivity implements EditPurchasePriceUpdate,EditProductCallback
 	{
 	private RecyclerView productsList;
 	private long purchaseId;
@@ -53,13 +52,16 @@ public class EditPurchaseActivity extends AppCompatActivity implements EditPurch
 			}
 		}
 
+	/**
+	 * @param parent нужен для диалога
+	 * @param id изменяемый продукт
+	 */
 	@Override
-	public void initDialog(long id)
+	public void initDialog(ViewGroup parent,long id)
 		{
 		EditProductDialog dialog= new EditProductDialog();
-		dialog.init(O.actions.ACTION_EDIT_PURCHASE_ACTIVITY,id,true);
-		FragmentTransaction transaction= getSupportFragmentManager().beginTransaction();
-		dialog.show(transaction,"");
+		dialog.init(EditPurchaseActivity.this,parent,O.actions.ACTION_EDIT_PURCHASE_ACTIVITY,id,true);
+		dialog.createAndShow();
 		}
 	@Override
 	public void updatePrice()

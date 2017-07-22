@@ -19,9 +19,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * <p></p>
+ * <p>Здесь отображаются подробности покупок по тегу</p>
  * <p><sub>(12.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
@@ -31,15 +30,17 @@ public class TagDetailsActivity extends AppCompatActivity
 	private Tag tag;
 	private Date dateFrom,dateTo;
 
-	private void initAdapter()
+	/**
+	 * @return список продуктов по тегу в диапазоне дат
+	 */
+	private ArrayList<Product> getProductList()
 		{
 		ArrayList<Product> result= new ArrayList<>();
 		ArrayList<Product> products= new ArrayList<>();
 		List<Purchase> purchases= App.session.getPurchaseDao().queryBuilder().where(PurchaseDao.Properties.Date.gt(dateFrom),
 																			PurchaseDao.Properties.Date.le(dateTo)).list();
 		for(Purchase purchase : purchases)
-			for(Product product : purchase.getProducts())
-				products.add(product);
+			products.addAll(purchase.getProducts());
 		List<TagToProduct> ttps= App.session.getTagToProductDao().queryBuilder().where(TagToProductDao.Properties.TagId.eq(tag.getId() ) ).list();
 		for(TagToProduct ttp : ttps)
 			{
@@ -52,11 +53,19 @@ public class TagDetailsActivity extends AppCompatActivity
 					}
 				}
 			}
-		TagDetailsAdapter adapter= new TagDetailsAdapter(result);
+		return result;
+		}
+
+	private void initAdapter(ArrayList<Product> src)
+		{
+		TagDetailsAdapter adapter= new TagDetailsAdapter(src);
 		this.list.setLayoutManager(new LinearLayoutManager(this) );
 		this.list.setAdapter(adapter);
 		}
 
+	/**
+	 * Получение дат, инициализация текстовых полей и списка, инициализация адаптера. Транспортный тег учтен
+	 */
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState)
 		{
@@ -78,6 +87,6 @@ public class TagDetailsActivity extends AppCompatActivity
 		txtTitle.setText(title);
 		txtTitle.setTextColor(tag.getColor() );
 		price.setText(""+ Calc.round(tag.getTotalPrice() ) );
-		initAdapter();
+		initAdapter(getProductList() );
 		}
 	}

@@ -16,9 +16,8 @@ import com.ultra.shopperlights2.Utils.DateUtil;
 import java.util.ArrayList;
 
 /**
- * <p></p>
+ * <p>Адаптер для списка результатов частичнго совпадения с искомым словом</p>
  * <p><sub>(18.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 

@@ -37,6 +37,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="Ok"
+			android:layout_marginTop="40dp"
 			android:textColor="@color/pure_black"
 			android:background="@drawable/button_selector_green"
 			android:id="@+id/btnOk"/>

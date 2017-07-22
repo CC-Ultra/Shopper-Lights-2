@@ -28,9 +28,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
- * <p></p>
+ * <p>В этой активности происходит поиск по базе с помощью оператора {@code like}</p>
  * <p><sub>(18.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
@@ -75,11 +74,6 @@ public class SearchActivity extends AppCompatActivity
 			dialog.dismiss();
 			}
 		}
-	private class DummyListener implements View.OnClickListener
-		{
-		@Override
-		public void onClick(View v) {}
-		}
 	private class SubmitButtonListener implements View.OnClickListener
 		{
 		@Override
@@ -97,6 +91,11 @@ public class SearchActivity extends AppCompatActivity
 			return true;
 			}
 		}
+
+	/**
+	 * Упаковка дат с id в массивы, а те в intent на {@link PriceDynamicsDetailsActivity} или {@link PartialMatchListActivity}
+	 * которые почти не отличаются друг от друга
+	 */
 	private class LayoutMatchListener implements View.OnClickListener
 		{
 		@Override
@@ -130,7 +129,7 @@ public class SearchActivity extends AppCompatActivity
 					i++;
 					}
 				}
-			else
+			else //но такого быть не может
 				{
 				ids= new long[1];
 				dates= new long[1];
@@ -141,6 +140,9 @@ public class SearchActivity extends AppCompatActivity
 			}
 		}
 
+	/**
+	 * Проверка ввода и запуск {@code BackgroundTask}
+	 */
 	private void submitAction()
 		{
 		if(input.getText().toString().length()==0)
@@ -152,6 +154,10 @@ public class SearchActivity extends AppCompatActivity
 		backgroundTask.setSubscriber(new XSubscriber(backgroundTask.getDialog() ) );
 		backgroundTask.start();
 		}
+
+	/**
+	 * в зависимости от списков совпадений инициализируются текстовые поля и layout-поля вокруг них слушателями
+	 */
 	private void initViews()
 		{
 		layoutFullMatch.setVisibility(View.VISIBLE);
@@ -159,7 +165,7 @@ public class SearchActivity extends AppCompatActivity
 		if(listLongsFullMatch.size()==0)
 			{
 			txtFullMatch.setText("Полных совпадений не найдено");
-			layoutFullMatch.setOnClickListener(new DummyListener() );
+			layoutFullMatch.setOnClickListener(null);
 			}
 		else
 			{
@@ -169,7 +175,7 @@ public class SearchActivity extends AppCompatActivity
 		if(listLongsPartialMatch.size()==0)
 			{
 			txtPartialMatch.setText("Частичных совпадений не найдено");
-			layoutPartialMatch.setOnClickListener(new DummyListener() );
+			layoutPartialMatch.setOnClickListener(null);
 			}
 		else
 			{
@@ -177,6 +183,13 @@ public class SearchActivity extends AppCompatActivity
 			layoutPartialMatch.setOnClickListener(new LayoutMatchListener() );
 			}
 		}
+
+	/**
+	 * запрашиваю не больше 150 продуктов, в названии которых встречается данное слово. Затем извлекаю покупку и проверяю
+	 * ее дату. Если дата в диапазине, проверяю полное или частичное совпадение, записывая id с датой в longs, который записываю
+	 * в один из списков (полного или частичного совпадения)
+	 * @param key слово для поиска
+	 */
 	private void getMatchLists(String key)
 		{
 		listLongsFullMatch= new ArrayList<>();
@@ -199,6 +212,9 @@ public class SearchActivity extends AppCompatActivity
 			}
 		}
 
+	/**
+	 * Получение дат, инициализация View и 2 Listener-а: на кнопку и на поле ввода
+	 */
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState)
 		{

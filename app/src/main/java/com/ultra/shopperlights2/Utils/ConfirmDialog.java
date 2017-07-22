@@ -16,15 +16,11 @@ import com.ultra.shopperlights2.Callbacks.DialogDecision;
  */
 public class ConfirmDialog
 	 {
-	 AppCompatActivity activity;
-	 DialogDecision parent;
-	 int yesId,noId=-1;
-
 	 /**
 	  * {@link #yesId} связан с реализацией метода {@link DialogDecision#sayYes(int)}, указывает какому именно действию было
 	  * сказано {@code Да}
 	  */
-	 static class YesListener implements DialogInterface.OnClickListener
+	 private static class YesListener implements DialogInterface.OnClickListener
 		 {
 		 DialogDecision parent;
 		 int yesId;
@@ -44,7 +40,7 @@ public class ConfirmDialog
 	  * {@link #noId} связан с реализацией метода {@link DialogDecision#sayNo(int)}, указывает какому именно действию было
 	  * сказано {@code Нет}
 	  */
-	 static class NoListener implements DialogInterface.OnClickListener
+	 private static class NoListener implements DialogInterface.OnClickListener
 		 {
 		 DialogDecision parent;
 		 int noId;

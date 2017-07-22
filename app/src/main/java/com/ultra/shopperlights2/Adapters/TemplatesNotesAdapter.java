@@ -1,32 +1,26 @@
 package com.ultra.shopperlights2.Adapters;
 
-import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.*;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
-import com.ultra.shopperlights2.Utils.ConfirmDialog;
 
 import java.util.ArrayList;
 
 /**
- * <p></p>
+ * <p>Адаптер для списка записей у шаблона</p>
  * <p><sub>(05.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
 public class TemplatesNotesAdapter extends RecyclerView.Adapter<TemplatesNotesAdapter.Holder>
 	{
-	private Context context;
 	private ArrayList<Note> elements;
 	private EditNoteTemplateCallback editCallback;
 
@@ -67,7 +61,7 @@ public class TemplatesNotesAdapter extends RecyclerView.Adapter<TemplatesNotesAd
 		@Override
 		public void onClick(View v)
 			{
-			editCallback.initNoteFragment(element.getId(),element.getTemplateId() );
+			editCallback.initNoteFragment((ViewGroup)v.getParent(),element.getId(),element.getTemplateId() );
 			}
 		}
 	private class DelListener implements View.OnClickListener
@@ -99,9 +93,8 @@ public class TemplatesNotesAdapter extends RecyclerView.Adapter<TemplatesNotesAd
 			}
 		}
 
-	public TemplatesNotesAdapter(Context _context,long templateId,EditNoteTemplateCallback _editCallback)
+	public TemplatesNotesAdapter(long templateId,EditNoteTemplateCallback _editCallback)
 		{
-		context=_context;
 		editCallback=_editCallback;
 		elements= new ArrayList<>(App.session.getTemplateDao().load(templateId).getNotes() );
 		}

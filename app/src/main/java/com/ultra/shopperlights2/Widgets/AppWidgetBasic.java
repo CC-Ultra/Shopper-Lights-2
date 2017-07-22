@@ -11,14 +11,18 @@ import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Utils.O;
 
 /**
- * <p></p>
+ * <p>Класс основа для виджетов</p>
+ * Наследующие виджеты отличаются только значением {@code int layoutId}
  * <p><sub>(10.07.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
 public class AppWidgetBasic extends AppWidgetProvider
 	{
+	/**
+	 * Создание трех PendingIntent с Intent-ами, настроенными на {@code MainActivity}, и несущими информацию о цвете экрана,
+	 * и установка их на кнопки виджета
+	 */
 	public void onUpdate(Context context,AppWidgetManager appWidgetManager,int[] appWidgetIds,int layoutId)
 		{
 		for(int appWidgetId : appWidgetIds)

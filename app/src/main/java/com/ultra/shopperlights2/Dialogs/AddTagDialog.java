@@ -1,18 +1,19 @@
-package com.ultra.shopperlights2.Fragments;
+package com.ultra.shopperlights2.Dialogs;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
-import android.widget.Toast;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.Tag;
@@ -20,14 +21,17 @@ import com.ultra.shopperlights2.Units.TagDao;
 import com.ultra.shopperlights2.Utils.O;
 
 /**
- * <p></p>
+ * <p>Класс-обертка над диалогом добавления/редактирования тега.</p>
  * <p><sub>(27.04.2017)</sub></p>
  *
  * @author CC-Ultra
  */
 
-public class AddTagDialog extends DialogFragment
+public class AddTagDialog
 	 {
+	 private Context context;
+	 private AlertDialog dialog;
+	 private ViewGroup parent;
 	 private int r,g,b;
 	 private View colorView;
 	 private EditText inputTagName;
@@ -35,11 +39,15 @@ public class AddTagDialog extends DialogFragment
 	 private long tagId=0;
 	 private String action;
 
+	 /**
+	  * Каждый {@code SeekBarListener} инициализирован своим цветом, прогресс которого и изменяется. Каждый делает свой цветной
+	  * вклад в строящийся в конце цвет
+	  */
 	 private class SeekBarListener implements SeekBar.OnSeekBarChangeListener
 		 {
 		 int seekbarColor;
 
-		 public SeekBarListener(int _color)
+		 SeekBarListener(int _color)
 			 {
 			 seekbarColor=_color;
 			 }
@@ -84,6 +92,8 @@ public class AddTagDialog extends DialogFragment
 				 else
 					 tag=tagDao.load(tagId);
 				 int size=tagDao.queryBuilder().where(TagDao.Properties.Title.eq(tagName)).list().size();
+				 //если это создание тега и такой уже есть ИЛИ
+				 //это редктирование, такой тег уже есть и он отличается от загруженного по id
 				 if((tagId == 0 && size>0) || (tagId != 0 && size>0 && !tag.getTitle().equals(tagName)))
 					 {
 					 inputTagName.setError("Имя тега занято");
@@ -95,36 +105,43 @@ public class AddTagDialog extends DialogFragment
 					 tagDao.insert(tag);
 				 else
 					 tagDao.update(tag);
-				 dismiss();
-				 getContext().sendBroadcast(new Intent(action));
+				 dialog.dismiss();
+				 context.sendBroadcast(new Intent(action) ); //чтобы обновить список в вызывающей активности/фрагменте
 				 }
 			 }
 		 }
 
-	 public void init(String _action,String _title)
+	 /**
+	  * создать тег
+	  */
+	 public void init(Context _context,ViewGroup _parent,String _action,String _title)
 		 {
+		 context=_context;
+		 parent=_parent;
 		 action=_action;
 		 title=_title;
 		 }
-	 public void init(String _action,String _title,long _id)
+
+	 /**
+	  * изменить тег
+	  */
+	 public void init(Context _context,ViewGroup _parent,String _action,String _title,long _id)
 		 {
+		 context=_context;
+		 parent=_parent;
 		 action=_action;
 		 tagId=_id;
 		 title=_title;
 		 }
 
-	 @Nullable
-	 @Override
-	 public View onCreateView(LayoutInflater inflater,@Nullable ViewGroup container,Bundle savedInstanceState)
+	 /**
+	  * Инициализация mainView и передача ее диалогу. Попутно инициализация seekBar-ов, цветной view, listener-ов и т.д.
+	  */
+	 public void createAndShow()
 		 {
-		 View mainView= inflater.inflate(R.layout.add_tag_dialog_layout,container,false);
-		 if(savedInstanceState!=null)
-			 {
-			 tagId= savedInstanceState.getLong(O.mapKeys.savedState.SAVED_STATE_TAG_ID,0);
-			 action= savedInstanceState.getString(O.mapKeys.savedState.SAVED_STATE_ACTION);
-			 title= savedInstanceState.getString(O.mapKeys.savedState.SAVED_STATE_TITLE);
-			 }
-		 getDialog().setTitle(title);
+		 View mainView= LayoutInflater.from(context).inflate(R.layout.add_tag_dialog_layout,parent,false);
+		 AlertDialog.Builder builder= new AlertDialog.Builder(context);
+		 builder.setTitle(title);
 
 		 SeekBar seekBar_Red= (SeekBar)mainView.findViewById(R.id.seekBarRed);
 		 SeekBar seekBar_Green= (SeekBar)mainView.findViewById(R.id.seekBarGreen);
@@ -155,15 +172,9 @@ public class AddTagDialog extends DialogFragment
 			 seekBar_Green.setProgress(Color.green(tag.getColor() ) );
 			 seekBar_Blue.setProgress(Color.blue(tag.getColor() ) );
 			 }
-		 return mainView;
-		 }
-	 @Override
-	 public void onSaveInstanceState(Bundle outState)
-		 {
-		 if(tagId!=0)
-			 outState.putLong(O.mapKeys.savedState.SAVED_STATE_TAG_ID,tagId);
-		 outState.putString(O.mapKeys.savedState.SAVED_STATE_ACTION,action);
-		 outState.putString(O.mapKeys.savedState.SAVED_STATE_TITLE,title);
-		 super.onSaveInstanceState(outState);
+
+		 builder.setView(mainView);
+		 dialog= builder.create();
+		 dialog.show();
 		 }
 	 }

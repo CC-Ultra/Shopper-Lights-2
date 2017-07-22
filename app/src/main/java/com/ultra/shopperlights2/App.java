@@ -6,9 +6,9 @@ import com.ultra.shopperlights2.Units.DaoSession;
 import org.greenrobot.greendao.database.Database;
 
 /**
- * <p></p>
+ * <p>Application</p>
+ * Нужен для постоянного доступа к DaoSession
  * <p><sub>(28.04.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 

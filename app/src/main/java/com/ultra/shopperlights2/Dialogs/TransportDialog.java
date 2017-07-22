@@ -1,8 +1,10 @@
-package com.ultra.shopperlights2.Fragments;
+package com.ultra.shopperlights2.Dialogs;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,18 +17,19 @@ import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.Purchase;
 import com.ultra.shopperlights2.Utils.Calc;
-
 import java.util.Date;
 
 /**
- * <p></p>
+ * <p>Класс-обертка над транспортным диалогом</p>
  * <p><sub>(04.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
-public class TransportDialog extends DialogFragment
+public class TransportDialog
 	{
+	private Context context;
+	private AlertDialog dialog;
+	private ViewGroup parent;
 	private EditText inputPrice;
 
 	private class OkListener implements View.OnClickListener
@@ -67,21 +70,31 @@ public class TransportDialog extends DialogFragment
 		purchase.setDate(new Date() );
 		purchase.setShopId(0);
 		App.session.getPurchaseDao().insert(purchase);
-		Toast.makeText(getContext(),"Оплачено: "+ Calc.round(priceF),Toast.LENGTH_SHORT).show();
-		dismiss();
+		Toast.makeText(context,"Оплачено: "+ Calc.round(priceF),Toast.LENGTH_SHORT).show();
+		dialog.dismiss();
+		}
+	public void init(Context _context,ViewGroup _parent)
+		{
+		context=_context;
+		parent=_parent;
 		}
 
-	@Nullable
-	@Override
-	public View onCreateView(LayoutInflater inflater,@Nullable ViewGroup container,@Nullable Bundle savedInstanceState)
+	/**
+	 * Инициализация mainView и передача ее диалогу
+	 */
+	public void createAndShow()
 		{
-		getDialog().setTitle("Транспорт");
-		View mainView= inflater.inflate(R.layout.transport_dialog_layout,container,false);
+		View mainView= LayoutInflater.from(context).inflate(R.layout.transport_dialog_layout,parent,false);
+		AlertDialog.Builder builder= new AlertDialog.Builder(context);
+		builder.setTitle("Транспорт");
 
 		inputPrice= (EditText)mainView.findViewById(R.id.inputPrice);
 		Button btnSubmit= (Button)mainView.findViewById(R.id.btnOk);
 
 		btnSubmit.setOnClickListener(new OkListener() );
-		return mainView;
+
+		builder.setView(mainView);
+		dialog= builder.create();
+		dialog.show();
 		}
 	}

@@ -3,9 +3,7 @@ package com.ultra.shopperlights2.Units;
 import java.util.Date;
 
 /**
- * <p></p>
  * <p><sub>(18.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 

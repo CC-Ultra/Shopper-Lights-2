@@ -5,9 +5,7 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
 
 /**
- * <p></p>
  * <p><sub>(11.05.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 

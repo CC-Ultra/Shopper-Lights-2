@@ -9,9 +9,10 @@ import android.widget.TextView;
 import com.ultra.shopperlights2.R;
 
 /**
- * <p></p>
+ * <p>Экран help-а</p>
+ * Здесь есть номер текущего экрана, 2 кнопки, меняющие это значение и два массива, по которым по номеру инициализируются
+ * два {@code TextView}
  * <p><sub>(11.07.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 

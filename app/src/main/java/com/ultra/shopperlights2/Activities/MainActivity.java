@@ -13,24 +13,25 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.ChangeYellowFragmentCallback;
+import com.ultra.shopperlights2.Dialogs.HelpPropositionDialog;
 import com.ultra.shopperlights2.Fragments.*;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.PurchaseDao;
 import com.ultra.shopperlights2.Utils.Calc;
 import com.ultra.shopperlights2.Utils.O;
-
 import java.util.ArrayList;
 
+/**
+ * <p>Главная активность с тремя-четырьмя цветными фрагментами, drawer-ом и светофором</p>
+ */
 public class MainActivity extends AppCompatActivity implements ChangeYellowFragmentCallback
 	 {
 	 public static boolean purchaseState;
@@ -39,15 +40,17 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 	 private ViewPager pager;
 	 private ViewPagerFragment_Lights lightsFragment;
 	 private int selectedScreen;
-	 private XPagerAdapter pagerAdapter;
 
+	 /**
+	  * Здесь устанавливается ширина pager-а в зависимости от ориентации и выбранной страницы
+	  */
 	 private class PagerListener implements ViewPager.OnPageChangeListener
 		 {
 		 ViewGroup.LayoutParams layoutParams= pager.getLayoutParams();
 		 int minWidth= Calc.dpToPx(MainActivity.this,O.dimens.ARROW_PAGER_WIDTH);
 		 int maxWidth;
 
-		 public PagerListener()
+		 PagerListener()
 			 {
 			 int orientation= getResources().getConfiguration().orientation;
 			 if(orientation == Configuration.ORIENTATION_LANDSCAPE)
@@ -70,12 +73,15 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 				 pager.setLayoutParams(layoutParams);
 				 }
 			 }
-
 		 @Override
 		 public void onPageScrolled(int position,float positionOffset,int positionOffsetPixels) {}
 		 @Override
 		 public void onPageScrollStateChanged(int state) {}
 		 }
+
+	 /**
+	  * Если ширина pager-а равна ширине стрелки, то устанавливается нулевая страница (со стрелкой)
+	  */
 	 private class PagerSizeListener implements View.OnLayoutChangeListener
 		 {
 		 @Override
@@ -89,11 +95,16 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 				 }
 			 }
 		 }
+
+	 /**
+	  * Здесь инициализация фрагментов PendingIntent-ом, и списка фрагментов. Список фрагментов спользуется в {@link #getItem(int)}
+	  * и {@link #getCount()}
+	  */
 	 private class XPagerAdapter extends FragmentPagerAdapter
 		 {
 		 ArrayList<ViewPagerFragment_Basic> fragments= new ArrayList<>();
 
-		 public XPagerAdapter(FragmentManager fm)
+		 XPagerAdapter(FragmentManager fm)
 			 {
 			 super(fm);
 			 PendingIntent pendingIntent= createPendingResult(0,new Intent(),0);
@@ -118,17 +129,29 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 			 }
 		 }
 
+	 /**
+	  * режим покупки определяется количеством открытых покупок в базе
+	  */
 	 private void checkPurchaseState()
 		 {
 		 int size= App.session.getPurchaseDao().queryBuilder().where(PurchaseDao.Properties.Completed.eq(false) ).list().size();
 		 purchaseState= size!=0;
 		 }
+
+	 /**
+	  * @param state состояние режима покупки на желтом экране
+	  */
 	 @Override
 	 public void changeYellowFragment(boolean state)
 		 {
 		 purchaseState=state;
 		 refreshFragments();
 		 }
+
+	 /**
+	  * С зеленым и красным фрагментами все просто, а желтый инициализируется {@link ChangeYellowFragmentCallback} и,
+	  * возможно, drawer-ом. Желтого фрагмента 2 вида, и выбирается определенный в зависимости от включенности режима покупки
+	  */
 	 private void refreshFragments()
 		 {
 		 checkPurchaseState();
@@ -141,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 else
 			 {
 			 fragments[O.interaction.SCREEN_CODE_YELLOW]= new Fragment_Yellow_Shop();
-			 ( (Fragment_Yellow_Shop)fragments[O.interaction.SCREEN_CODE_YELLOW] ).initFragment(this,getSupportFragmentManager() );
+			 ( (Fragment_Yellow_Shop)fragments[O.interaction.SCREEN_CODE_YELLOW] ).initFragment(this);
 			 }
 		 fragments[O.interaction.SCREEN_CODE_RED]= new Fragment_Red();
 		 selectScreen(selectedScreen);
@@ -155,6 +178,12 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 transaction.commit();
 		 }
 
+	 /**
+	  * Получаю код стартового фрагмента. Строю drawer и замыкаю его. Инициализация pager-а со светофором, установка его
+	  * ширины в минимум и слушателей на его размер и страницы. Если выбрана страница со светофором, ширина увеличится силами
+	  * listener-а. Код стартового экрана передается в память фрагмента светофора. Если это первый старт приложения, покажется
+	  * диалог с предложением почитать help
+	  */
 	 @Override
 	 protected void onCreate(Bundle savedInstanceState)
 		 {
@@ -173,11 +202,11 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 Toolbar toolbar= (Toolbar)findViewById(R.id.toolbar);
 		 pager= (ViewPager)findViewById(R.id.pager);
 
-		 pagerAdapter= new XPagerAdapter(getSupportFragmentManager() );
+		 setSupportActionBar(toolbar);
+		 XPagerAdapter pagerAdapter=new XPagerAdapter(getSupportFragmentManager() );
 		 pager.setAdapter(pagerAdapter);
 		 pager.addOnPageChangeListener(new PagerListener() );
 		 pager.addOnLayoutChangeListener(new PagerSizeListener() );
-		 setSupportActionBar(toolbar);
 		 lightsFragment.lightMemory= selectedScreen;
 
 		 ViewGroup.LayoutParams layoutParams= pager.getLayoutParams();
@@ -188,8 +217,8 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 if(prefs.getBoolean(O.PREFS_FIRST_START,true) )
 			 {
 			 HelpPropositionDialog dialog= new HelpPropositionDialog();
-			 FragmentTransaction transaction= getSupportFragmentManager().beginTransaction();
-			 dialog.show(transaction,"");
+			 dialog.init(this,(ViewGroup)toolbar.getParent() );
+			 dialog.createAndShow();
 			 }
 		 }
 	 @Override
@@ -198,6 +227,12 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 super.onResume();
 		 refreshFragments();
 		 }
+
+	 /**
+	  * Сюда можно попасть через действие pendingIntent-а во фрагментах светофора
+	  * @param resultCode был нажат один из цветов (тогда переключиться на этот цвет) или стрелка (тогда открыть или закрыть pager)
+	  * @param data код экрана или приказ на открытие/закрытие
+	  */
 	 @Override
 	 protected void onActivityResult(int requestCode,int resultCode,Intent data)
 		 {
@@ -232,6 +267,10 @@ public class MainActivity extends AppCompatActivity implements ChangeYellowFragm
 		 getMenuInflater().inflate(R.menu.main_nenu, menu);
 		 return true;
 		 }
+
+	 /**
+	  * если влючен режим покупки, запрещено показывать пунты меню, в которых можно изменить группу, шаблон, теги... Только help
+	  */
 	 @Override
 	 public boolean onPrepareOptionsMenu(Menu menu)
 		 {

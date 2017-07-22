@@ -6,29 +6,28 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import com.ultra.shopperlights2.Adapters.TemplatesAdapter;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.EditTemplateCallback;
-import com.ultra.shopperlights2.Fragments.AddTemplateDialog;
+import com.ultra.shopperlights2.Dialogs.AddTemplateDialog;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.Template;
 import com.ultra.shopperlights2.Units.TemplateDao;
 import com.ultra.shopperlights2.Utils.O;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p></p>
+ * <p>Активность списка вроде GTS, только для шаблонов.</p>
+ * Здесь можно добавить шаблон
  * <p><sub>(05.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
@@ -51,19 +50,21 @@ public class AddTemplateActivity extends AppCompatActivity implements EditTempla
 		public void onClick(View v)
 			{
 			AddTemplateDialog dialog= new AddTemplateDialog();
-			dialog.init(O.actions.ACTION_ADD_TEMPLATE_ACTIVITY,"Добавить шаблон");
-			FragmentTransaction transaction= getSupportFragmentManager().beginTransaction();
-			dialog.show(transaction,"");
+			dialog.init(AddTemplateActivity.this,(ViewGroup)v.getParent(),O.actions.ACTION_ADD_TEMPLATE_ACTIVITY,"Добавить шаблон");
+			dialog.createAndShow();
 			}
 		}
 
+	/**
+	 * @param parent нужен для диалога
+	 * @param templateId шаблон, который надо изменить
+	 */
 	@Override
-	public void editTemplate(long templateId)
+	public void editTemplate(ViewGroup parent,long templateId)
 		{
 		AddTemplateDialog dialog= new AddTemplateDialog();
-		dialog.init(O.actions.ACTION_ADD_TEMPLATE_ACTIVITY,"Изменить шаблон",templateId);
-		FragmentTransaction transaction= getSupportFragmentManager().beginTransaction();
-		dialog.show(transaction,"");
+		dialog.init(AddTemplateActivity.this,parent,O.actions.ACTION_ADD_TEMPLATE_ACTIVITY,"Изменить шаблон",templateId);
+		dialog.createAndShow();
 		}
 	private void initAdapter()
 		{

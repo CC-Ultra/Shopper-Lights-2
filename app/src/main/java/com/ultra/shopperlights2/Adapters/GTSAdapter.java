@@ -5,18 +5,16 @@ import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.DialogDecision;
-import com.ultra.shopperlights2.Fragments.AddGroupDialog;
-import com.ultra.shopperlights2.Fragments.AddShopDialog;
-import com.ultra.shopperlights2.Fragments.AddTagDialog;
+import com.ultra.shopperlights2.Dialogs.AddGroupDialog;
+import com.ultra.shopperlights2.Dialogs.AddShopDialog;
+import com.ultra.shopperlights2.Dialogs.AddTagDialog;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
 import com.ultra.shopperlights2.Utils.ConfirmDialog;
@@ -24,27 +22,26 @@ import com.ultra.shopperlights2.Utils.O;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ultra.shopperlights2.Utils.O.TAG;
-
 /**
- * <p></p>
+ * <p>Адаптер для списка GTS-активности. Работает со списком тегов, групп, записей и магазинов</p>
  * <p><sub>(07.05.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
 public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 	{
 	private String action;
-	private FragmentManager fragmentManager;
 	private ArrayList<GreenRecyclerListElement> elements= new ArrayList<>();
 	private Context context;
 
-	class ConfirmDialogDecision implements DialogDecision
+	/**
+	 * Реализация интерфейса, удаляющая gts-элемент, соответствующим его типу образом
+	 */
+	private class ConfirmDialogDecision implements DialogDecision
 		{
 		GreenRecyclerListElement element;
 
-		public ConfirmDialogDecision(GreenRecyclerListElement _element)
+		ConfirmDialogDecision(GreenRecyclerListElement _element)
 			{
 			element=_element;
 			}
@@ -71,7 +68,11 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 			delElement(element,position);
 			}
 		}
-	class DelListener implements View.OnClickListener
+
+	/**
+	 * удаление элемента идет с подтверждением, так что его описал в {@link ConfirmDialogDecision}
+	 */
+	private class DelListener implements View.OnClickListener
 		{
 		GreenRecyclerListElement element;
 		ConfirmDialogDecision dialogDecision;
@@ -89,7 +90,10 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 			}
 		}
 
-	class EditListener implements View.OnClickListener
+	/**
+	 * запуск диалога в зависимости от типа. context и action нужны для этого
+	 */
+	private class EditListener implements View.OnClickListener
 		{
 		GreenRecyclerListElement element;
 
@@ -101,31 +105,30 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 		@Override
 		public void onClick(View v)
 			{
-			FragmentTransaction transaction= fragmentManager.beginTransaction();
 			switch(element.getGTSType() )
 				{
 				case O.interaction.ELEMENT_TYPE_GROUP:
 					{
 					Group group= (Group)element;
 					AddGroupDialog dialog= new AddGroupDialog();
-					dialog.init(action,"Изменить группу",group.getId() );
-					dialog.show(transaction,"");
+					dialog.init(context,(ViewGroup)v.getParent(),action,"Изменить группу",group.getId() );
+					dialog.createAndShow();
 					break;
 					}
 				case O.interaction.ELEMENT_TYPE_TAG:
 					{
-					Tag tag=(Tag) element;
+					Tag tag= (Tag)element;
 					AddTagDialog dialog=new AddTagDialog();
-					dialog.init(action,"Изменить группу",tag.getId());
-					dialog.show(transaction,"");
+					dialog.init(context,(ViewGroup)v.getParent(),action,"Изменить тег",tag.getId());
+					dialog.createAndShow();
 					break;
 					}
 				case O.interaction.ELEMENT_TYPE_SHOP:
 					{
 					Shop shop= (Shop)element;
 					AddShopDialog dialog=new AddShopDialog();
-					dialog.init(action,"Изменить магазин",shop.getId() );
-					dialog.show(transaction,"");
+					dialog.init(context,(ViewGroup)v.getParent(),action,"Изменить магазин",shop.getId() );
+					dialog.createAndShow();
 					break;
 					}
 				}
@@ -152,18 +155,25 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 			}
 		}
 
-	public GTSAdapter(Context _context,ArrayList<GreenRecyclerListElement> _elements,String _action,FragmentManager _fragmentManager)
+	public GTSAdapter(Context _context,ArrayList<GreenRecyclerListElement> _elements,String _action)
 		{
 		action=_action;
-		fragmentManager=_fragmentManager;
 		context=_context;
 		elements=_elements;
 		}
+
+	/**
+	 * магазины не удаляются, а просто "деактивируются"
+	 */
 	private void deleteShop(Shop shop)
 		{
 		shop.setAlive(false);
 		App.session.getShopDao().update(shop);
 		}
+
+	/**
+	 * Кроме удаления тега надо удалить упоминания о нем в {@code TagToNote} и {@code TagToProduct}
+	 */
 	private void deleteTag(Tag tag)
 		{
 		DaoSession session= App.session;
@@ -175,6 +185,10 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 			session.getTagToProductDao().delete(tagToProduct);
 		session.getTagDao().delete(tag);
 		}
+
+	/**
+	 * все записи, которые были в группе, становятся самостоятельными, без группы
+	 */
 	private void deleteGroup(Group group)
 		{
 		ArrayList<Note> notes= new ArrayList<>(group.getNotes() );
@@ -182,6 +196,10 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 			note.setGroupId(0);
 		App.session.getGroupDao().delete(group);
 		}
+
+	/**
+	 * удалить из gts-списка
+	 */
 	private void delElement(GreenRecyclerListElement element,int position)
 		{
 		elements.remove(element);
@@ -194,6 +212,10 @@ public class GTSAdapter extends RecyclerView.Adapter<GTSAdapter.Holder>
 		View view= LayoutInflater.from(parent.getContext() ).inflate(R.layout.gts_list_element,parent,false);
 		return new Holder(view);
 		}
+
+	/**
+	 * В зависимости от типа заполняются разные поля holder-а
+	 */
 	@Override
 	public void onBindViewHolder(Holder holder,int position)
 		{

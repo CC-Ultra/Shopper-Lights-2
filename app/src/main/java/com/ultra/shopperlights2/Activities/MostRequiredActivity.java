@@ -20,9 +20,8 @@ import java.util.*;
 import java.util.concurrent.Callable;
 
 /**
- * <p></p>
+ * <p>Активность, в которой считается частота употребления продуктов</p>
  * <p><sub>(17.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
@@ -31,6 +30,9 @@ public class MostRequiredActivity extends AppCompatActivity
 	private RecyclerView recyclerList;
 	private Date to,from;
 
+	/**
+	 * Возвращает список частот для адаптера
+	 */
 	private class XCallable implements Callable<ArrayList<Frequency> >
 		{
 		@Override
@@ -39,6 +41,10 @@ public class MostRequiredActivity extends AppCompatActivity
 			return getFrequencyList(from,to);
 			}
 		}
+
+	/**
+	 * Передает список частот адаптеру и тушит диалог
+	 */
 	private class XSubscriber extends Subscriber<ArrayList<Frequency> >
 		{
 		ProgressDialog dialog;
@@ -64,6 +70,9 @@ public class MostRequiredActivity extends AppCompatActivity
 			}
 		}
 
+	/**
+	 * Очистка таблицы частот, потом получение всех продуктов в диапазоне дат, подсчет частот и заполнение таблицы частотами
+	 */
 	private void fillFrequencyTable(Date from,Date to)
 		{
 		App.session.getFrequencyDao().deleteAll();
@@ -90,6 +99,11 @@ public class MostRequiredActivity extends AppCompatActivity
 			App.session.getFrequencyDao().insert(frequency);
 			}
 		}
+
+	/**
+	 * Заполнение таблицы частот, запрос частот в порядке убывания, отсечение всех, у кого частота ниже 2 раз
+	 * @return список оставшихся частот
+	 */
 	private ArrayList<Frequency> getFrequencyList(Date from,Date to)
 		{
 		ArrayList<Frequency> result= new ArrayList<>();
@@ -110,6 +124,9 @@ public class MostRequiredActivity extends AppCompatActivity
 		recyclerList.setLayoutManager(new LinearLayoutManager(this) );
 		}
 
+	/**
+	 * получение дат и запуск {@code BackgroundTask}
+	 */
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState)
 		{
@@ -122,7 +139,7 @@ public class MostRequiredActivity extends AppCompatActivity
 
 		recyclerList= (RecyclerView)findViewById(R.id.list);
 
-		BackgroundTask backgroundTask= new BackgroundTask(this,new XCallable() );
+		BackgroundTask<ArrayList<Frequency> > backgroundTask= new BackgroundTask<>(this,new XCallable() );
 		backgroundTask.setSubscriber(new XSubscriber(backgroundTask.getDialog() ) );
 		backgroundTask.start();
 		}

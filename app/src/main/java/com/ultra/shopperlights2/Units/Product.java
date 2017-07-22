@@ -10,9 +10,7 @@ import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.DaoException;
 
 /**
- * <p></p>
  * <p><sub>(10.05.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 @Entity
@@ -34,7 +32,7 @@ public class Product
 			sourceProperty = "productId",
 			targetProperty = "tagId"
 			)
-	List<Tag> tags;
+	private List<Tag> tags;
 
 	/** Used to resolve relations */
 	@Generated(hash = 2040040024)

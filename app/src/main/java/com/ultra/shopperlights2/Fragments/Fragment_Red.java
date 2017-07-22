@@ -18,9 +18,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * <p></p>
+ * <p>Фрагмент красного экрана</p>
  * <p><sub>(07.08.2016)</sub></p>
- *
  * @author CC-Ultra
  */
 public class Fragment_Red extends Fragment
@@ -31,6 +30,9 @@ public class Fragment_Red extends Fragment
 
 	private class StartListener implements View.OnClickListener
 		{
+		/**
+		 * Выбор направления intent-а, внесение в него дат и старт активности
+		 */
 		@Override
 		public void onClick(View v)
 			{
@@ -68,9 +70,13 @@ public class Fragment_Red extends Fragment
 			getContext().startActivity(jumper);
 			}
 		}
+
+	/**
+	 * Здесь запоминается дата после установки ее в диалоге и устанавливается текстовое поле
+	 */
 	private class DateDialogListener implements DatePickerDialog.OnDateSetListener
 		{
-		boolean from;
+		boolean from; //from или to
 
 		DateDialogListener(boolean _from)
 			{
@@ -92,6 +98,10 @@ public class Fragment_Red extends Fragment
 				}
 			}
 		}
+
+	/**
+	 * получаю {@link DateUtil.DateDMY} из соответственной даты и стартую по нему диалог
+	 */
 	private class ClockButtonListener implements View.OnClickListener
 		{
 		@Override
@@ -108,7 +118,8 @@ public class Fragment_Red extends Fragment
 				DateUtil.DateDMY dateDMY= DateUtil.getDMYfromDate(dateTo);
 				dialog= new DatePickerDialog(getContext(),new DateDialogListener(false),dateDMY.year,dateDMY.month,dateDMY.day);
 				}
-			dialog.show();
+			if(dialog!=null)
+				dialog.show();
 			}
 		}
 
@@ -145,6 +156,10 @@ public class Fragment_Red extends Fragment
 
 		return mainView;
 		}
+
+	/**
+	 * работает когда возвращаешься в активность
+	 */
 	@Override
 	public void onResume()
 		{

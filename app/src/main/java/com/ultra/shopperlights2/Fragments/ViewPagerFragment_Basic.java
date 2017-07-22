@@ -6,9 +6,8 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 
 /**
- * <p></p>
+ * <p>Базовый для элементов светофорного pager-а класс</p>
  * <p><sub>(06.05.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 

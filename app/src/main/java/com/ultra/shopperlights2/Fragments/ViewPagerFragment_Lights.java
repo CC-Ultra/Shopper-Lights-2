@@ -16,9 +16,8 @@ import com.ultra.shopperlights2.Utils.O;
 import static com.ultra.shopperlights2.Utils.O.TAG;
 
 /**
- * <p></p>
+ * <p>Фрагмент со светофором</p>
  * <p><sub>(06.05.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
@@ -27,6 +26,9 @@ public class ViewPagerFragment_Lights extends ViewPagerFragment_Basic
 	private ImageView light_Red,light_Yellow,light_Green;
 	public static int lightMemory;
 
+	/**
+	 * Listener, который через pendingIntent отправляет сигнал о переключении на фрагмент со стрелкой
+	 */
 	private class CloseListener implements View.OnClickListener
 		{
 		@Override
@@ -44,6 +46,11 @@ public class ViewPagerFragment_Lights extends ViewPagerFragment_Basic
 				}
 			}
 		}
+
+	/**
+	 * Listener, который через pendingIntent отправляет сигнал о переключении экрана. Сначала ставится всем пассивный свет,
+	 * а потом кто-то один зажигается
+	 */
 	private class LightsListener implements View.OnClickListener
 		{
 		@Override
@@ -80,6 +87,9 @@ public class ViewPagerFragment_Lights extends ViewPagerFragment_Basic
 			}
 		}
 
+	/**
+	 * задействовать lightMemory
+	 */
 	private void setLightToBtn()
 		{
 		switch(lightMemory)
@@ -96,6 +106,9 @@ public class ViewPagerFragment_Lights extends ViewPagerFragment_Basic
 			}
 		}
 
+	/**
+	 * инициализация фрагмента и {@link #setLightToBtn()}
+	 */
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater,@Nullable ViewGroup container,@Nullable Bundle savedInstanceState)

@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
- * <p></p>
+ * <p>Активность для просмотра и редактирования истории</p>
+ * Здесь идет запрос к базе через {@link BackgroundTask}
  * <p><sub>(11.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
@@ -40,6 +40,9 @@ public class EditHistoryActivity extends AppCompatActivity
 	private ArrayList<Purchase> purchases;
 	private Date dateTo,dateFrom;
 
+	/**
+	 * В задаче для {@code BackgroundTask} получаю список покупок и чищу пустые покупки
+	 */
 	private class XCallable implements Callable<List<Purchase> >
 		{
 		@Override
@@ -51,6 +54,10 @@ public class EditHistoryActivity extends AppCompatActivity
 			return p;
 			}
 		}
+
+	/**
+	 * В основном потоке считаю и оновляю {@code txtTotalPrice}, инициализирую список и тушу диалог
+	 */
 	private class XSubscriber extends Subscriber<List<Purchase> >
 		{
 		ProgressDialog dialog;
@@ -97,6 +104,10 @@ public class EditHistoryActivity extends AppCompatActivity
 		list.setAdapter(adapter);
 		list.setLayoutManager(new LinearLayoutManager(this) );
 		}
+
+	/**
+	 * Пустой покупкой считается покупка с нулевой стоимостью, пустым продукт-списком и завершенная
+	 */
 	private void cleanEmptyPurchases(List<Purchase> p)
 		{
 		for(Purchase purchase : p)
@@ -128,7 +139,7 @@ public class EditHistoryActivity extends AppCompatActivity
 	protected void onResume()
 		{
 		super.onResume();
-		BackgroundTask backgroundTask= new BackgroundTask(this,new XCallable() );
+		BackgroundTask<List<Purchase> > backgroundTask= new BackgroundTask<>(this,new XCallable() );
 		backgroundTask.setSubscriber(new XSubscriber(backgroundTask.getDialog() ) );
 		backgroundTask.start();
 		}

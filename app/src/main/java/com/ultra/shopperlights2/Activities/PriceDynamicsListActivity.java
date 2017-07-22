@@ -24,9 +24,8 @@ import java.util.*;
 import java.util.concurrent.Callable;
 
 /**
- * <p></p>
+ * <p>Активность, на которой получается список продуктов, упоминаемых больше одного раза, и список упоминаний каждого</p>
  * <p><sub>(18.06.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
@@ -38,6 +37,9 @@ public class PriceDynamicsListActivity extends AppCompatActivity
 	private Date to;
 	private ArrayAdapter<String> adapter;
 
+	/**
+	 * заполнить карту продуктов и отсеять тех, у кого меньше двух упоминаний
+	 */
 	private class XCallable implements Callable<Boolean>
 		{
 		@Override
@@ -48,6 +50,10 @@ public class PriceDynamicsListActivity extends AppCompatActivity
 			return true;
 			}
 		}
+
+	/**
+	 * инициализация списка и закрытие диалога
+	 */
 	private class XSubscriber extends Subscriber<Boolean>
 		{
 		ProgressDialog dialog;
@@ -72,6 +78,11 @@ public class PriceDynamicsListActivity extends AppCompatActivity
 			dialog.dismiss();
 			}
 		}
+
+	/**
+	 * получаю имя продукта, по которому из карты получаю список дат-id, который заношу в dates[]-ids[], и передаю в intent-е,
+	 * по которому стартую активность
+	 */
 	private class ListListener implements AdapterView.OnItemClickListener
 		{
 		@Override
@@ -101,11 +112,16 @@ public class PriceDynamicsListActivity extends AppCompatActivity
 		adapter= new ArrayAdapter<>(this,R.layout.simple_list_item_1,new ArrayList<>(productMap.keySet() ) );
 		list.setAdapter(adapter);
 		}
+
+	/**
+	 * заполнение карты продуктов. Если продукт не встречался - ему создается новый список с одним упоминанием, а иначе список
+	 * продукта продолжается
+	 */
 	private void initMap()
 		{
 		productMap= new TreeMap<>();
 		List<Purchase> purchases=App.session.getPurchaseDao().queryBuilder().where(PurchaseDao.Properties.Date.gt(from),
-				PurchaseDao.Properties.Date.le(to) ).list();
+																			PurchaseDao.Properties.Date.le(to) ).list();
 		for(Purchase purchase : purchases)
 			{
 			for(Product product : purchase.getProducts() )
@@ -121,6 +137,10 @@ public class PriceDynamicsListActivity extends AppCompatActivity
 				}
 			}
 		}
+
+	/**
+	 * Оставляю только тех, у кого больше одного упоминания
+	 */
 	private void filterMap()
 		{
 		TreeMap<String,ArrayList<Longs> > resMap= new TreeMap<>();
@@ -130,6 +150,9 @@ public class PriceDynamicsListActivity extends AppCompatActivity
 		productMap=resMap;
 		}
 
+	/**
+	 * Получение дат и запуск {@code BackgroundTask}
+	 */
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState)
 		{

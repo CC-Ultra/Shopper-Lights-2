@@ -2,29 +2,25 @@ package com.ultra.shopperlights2.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.ultra.shopperlights2.App;
 import com.ultra.shopperlights2.Callbacks.DialogDecision;
 import com.ultra.shopperlights2.Callbacks.YellowScreenDelElement;
-import com.ultra.shopperlights2.Callbacks.InitDialogFragment;
+import com.ultra.shopperlights2.Callbacks.EditProductCallback;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
 import com.ultra.shopperlights2.Utils.ConfirmDialog;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p></p>
+ * <p>Адаптер для списка продуктов на желтом экране</p>
  * <p><sub>(10.05.2017)</sub></p>
- *
  * @author CC-Ultra
  */
 
@@ -34,14 +30,14 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 	private Context context;
 	private long purchaseId;
 	private YellowScreenDelElement delCallback;
-	private InitDialogFragment initCallback;
+	private EditProductCallback editProductCallback;
 	private ArrayList<Product> elements;
 
 	private class DelDecision implements DialogDecision
 		{
 		Product product;
 
-		public DelDecision(Product _product)
+		DelDecision(Product _product)
 			{
 			product=_product;
 			}
@@ -53,7 +49,7 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 			{
 			int position= elements.indexOf(product);
 			delElement(position);
-			context.sendBroadcast(new Intent(action) );
+			context.sendBroadcast(new Intent(action) ); //обновить список на желтом экране покупки
 			delCallback.delElement(product.getTitle() );
 			}
 		}
@@ -70,7 +66,7 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 		public void onClick(View v)
 			{
 			int position= elements.indexOf(product);
-			initCallback.initDialog(product.getId() );
+			editProductCallback.initDialog( (ViewGroup)v.getParent(),product.getId() );
 			notifyItemChanged(position);
 			}
 		}
@@ -112,19 +108,23 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 		}
 
 	public YellowPurchaseListAdapter(Context _context,ArrayList<Product> _elements,long _purchaseId,String _action,
-									 YellowScreenDelElement _delCallback,InitDialogFragment _initCallback)
+									 YellowScreenDelElement _delCallback,EditProductCallback _initCallback)
 		{
 		action=_action;
 		context=_context;
 		purchaseId=_purchaseId;
 		delCallback=_delCallback;
-		initCallback=_initCallback;
+		editProductCallback=_initCallback;
 		elements=_elements;
 		}
+
+	/**
+	 * Метод для добавления элемента извне. Принимает на вход запись, а сохраняет продукт
+	 */
 	public void addElement(Note note)
 		{
 		Product product= new Product();
-		if(note.getProductId()!=0)
+		if(note.getProductId()!=0) //если продукт был взят из истории
 			{
 			Product p2= App.session.getProductDao().load(note.getProductId() );
 			product.setTitle(p2.getTitle() );
@@ -162,6 +162,10 @@ public class YellowPurchaseListAdapter extends RecyclerView.Adapter<YellowPurcha
 		notifyItemInserted(elements.size() );
 		elements.add(product);
 		}
+
+	/**
+	 * Удалить элемент, продукт, связи с тегами
+	 */
 	private void delElement(int position)
 		{
 		Product product= elements.get(position);

@@ -13,6 +13,7 @@ import com.ultra.shopperlights2.Callbacks.EditPurchasePriceUpdate;
 import com.ultra.shopperlights2.Callbacks.EditProductCallback;
 import com.ultra.shopperlights2.R;
 import com.ultra.shopperlights2.Units.*;
+import com.ultra.shopperlights2.Utils.Calc;
 import com.ultra.shopperlights2.Utils.ConfirmDialog;
 
 import java.util.ArrayList;
@@ -95,7 +96,7 @@ public class EditPurchaseAdapter extends RecyclerView.Adapter<EditPurchaseAdapte
 		}
 	class Holder extends RecyclerView.ViewHolder
 		{
-		TextView title,n;
+		TextView title,n,price;
 		TextView tag[]= new TextView[3];
 		EditProductListener editListener;
 		DelElementListener delListener;
@@ -105,6 +106,7 @@ public class EditPurchaseAdapter extends RecyclerView.Adapter<EditPurchaseAdapte
 			{
 			super(itemView);
 			mainView=itemView;
+			price= (TextView)mainView.findViewById(R.id.price);
 			title= (TextView)mainView.findViewById(R.id.title);
 			n= (TextView)mainView.findViewById(R.id.n);
 			tag[0]= (TextView)mainView.findViewById(R.id.tag1);
@@ -134,7 +136,7 @@ public class EditPurchaseAdapter extends RecyclerView.Adapter<EditPurchaseAdapte
 	@Override
 	public Holder onCreateViewHolder(ViewGroup parent,int viewType)
 		{
-		View mainView= LayoutInflater.from(parent.getContext() ).inflate(R.layout.list_element_green_screen,parent,false);
+		View mainView= LayoutInflater.from(parent.getContext() ).inflate(R.layout.list_element_red_screen,parent,false);
 		return new Holder(mainView);
 		}
 	@Override
@@ -144,6 +146,7 @@ public class EditPurchaseAdapter extends RecyclerView.Adapter<EditPurchaseAdapte
 		holder.mainView.setBackgroundResource(R.drawable.list_element_border_red);
 		holder.title.setText(element.getTitle() );
 		holder.n.setText(""+ element.getN() );
+		holder.price.setText(""+ Calc.round(element.getPrice() * (element.getN()==0 ? 1 : element.getN() ) ) );
 		if(element.getN()!=0)
 			holder.n.setVisibility(View.VISIBLE);
 		ArrayList<Tag> tags= new ArrayList<>(element.getTags() );
